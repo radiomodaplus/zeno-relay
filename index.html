@@ -8,7 +8,7 @@
   <!-- LameJS para codificación MP3 -->
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   
-  <!-- Firebase App & Auth SDK (Versión UMD Global Compatible) -->
+  <!-- Firebase SDK Global UMD -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -48,10 +48,17 @@
       background: linear-gradient(135deg, #f59e0b, #d97706); border: 1px solid #fde047; color: #fff;
       padding: 6px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; cursor: pointer;
       display: flex; align-items: center; gap: 4px; box-shadow: 0 0 10px rgba(245,158,11,0.5);
+      transition: all 0.3s ease;
+    }
+    .btn-crown.loading-state {
+      background: linear-gradient(135deg, #6366f1, #4f46e5); border-color: #818cf8;
+      box-shadow: 0 0 10px rgba(99,102,241,0.6); animation: pulse 1s infinite;
     }
     .btn-crown.pro-active {
-      background: linear-gradient(135deg, #10b981, #059669); border-color: #6ee7b7; box-shadow: 0 0 10px rgba(16,185,129,0.5);
+      background: linear-gradient(135deg, #10b981, #059669); border-color: #6ee7b7;
+      box-shadow: 0 0 10px rgba(16,185,129,0.5);
     }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(0.97); } }
 
     .btn-icon {
       background: #1e293b; border: 1px solid #475569; color: #fff; width: 34px; height: 34px;
@@ -71,7 +78,7 @@
     .signal-bars.mid .b1, .signal-bars.mid .b2, .signal-bars.mid .b3 { background: var(--c-yellow); }
     .signal-bars.low .b1 { background: var(--c-red); }
 
-    /* VÚMETRO */
+    /* VÚMETRO MASTER */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
@@ -172,6 +179,7 @@
     .vol-row input[type=range] { flex: 1; accent-color: var(--c-blue); }
     .vol-val { font-size: 0.68rem; font-weight: 800; width: 35px; text-align: right; color: #fff; }
 
+    /* ESTILOS PRO ACTIVO */
     .pro-user-header {
       background: linear-gradient(135deg, #064e3b, #065f46); border: 1px solid #34d399;
       border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
@@ -184,6 +192,17 @@
     }
     .pro-benefit-list li { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
     .pro-benefit-list li span { color: var(--c-green); font-weight: 900; }
+
+    /* CAJA DE CARGA / ACTIVACIÓN (HASTA 2 MINUTOS) */
+    .activation-loading-box {
+      display: none; background: #111827; border: 1px solid #6366f1; border-radius: 10px;
+      padding: 14px; text-align: center; margin: 10px 0;
+    }
+    .spinner {
+      width: 32px; height: 32px; border: 3px solid rgba(99,102,241,0.2);
+      border-top-color: #818cf8; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 8px auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -301,7 +320,7 @@
   <audio id="audioStinger2" style="display:none;"></audio>
   <audio id="audioLightning" style="display:none;"></audio>
 
-  <!-- MODAL DE PLAN PRO -->
+  <!-- ==================== MODAL DE PLAN PRO ==================== -->
   <div class="modal-overlay" id="proModal">
     <div class="modal-box">
       
@@ -310,50 +329,66 @@
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeProModal()">✕</button>
       </div>
 
-      <!-- VISTA 1: GRATIS -->
+      <!-- VISTA 1: USUARIO GRATIS -->
       <div id="viewFreeUser">
         <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); border:1px solid #facc15; border-radius:10px; padding:10px; text-align:center; margin-bottom:10px;">
           <h3 style="color:#fde047; font-size:0.95rem;">EMISORASplus PRO</h3>
           <p style="font-size:0.7rem; color:#cbd5e1; margin:4px 0;">
-            Transmisión ilimitada sin cortes • Sube videos y MP3 • Rayito Automático • Ducking Inteligente • 2 Pisadores • 4 Estaciones • <b>AutoDJ 10 GB en la Nube</b>
+            Transmisión continua sin cortes • Sube videos y MP3 • Rayito Automático • Ducking Inteligente • 2 Pisadores • 4 Estaciones • <b>AutoDJ 10 GB en la Nube</b>
           </p>
           <div style="font-size:1.1rem; font-weight:900; color:#4ade80; margin-top:4px;">$39.900 COP</div>
         </div>
 
-        <div style="font-size:0.7rem; font-weight:800; color:var(--c-blue); margin-bottom:6px;">
-          🔑 INGRESAR CON MI CUENTA ASIGNADA (DE VENTAS)
+        <div id="formLoginFields">
+          <div style="font-size:0.7rem; font-weight:800; color:var(--c-blue); margin-bottom:6px;">
+            🔑 INGRESAR CON MI CUENTA ASIGNADA (DE VENTAS)
+          </div>
+          <div class="form-group">
+            <label>Correo Electrónico</label>
+            <input type="email" id="proEmail" placeholder="usuario@gmail.com">
+          </div>
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="proPass" placeholder="Tu clave asignada">
+          </div>
+          <button id="btnLoginAction" class="btn-ctrl" style="width:100%; background:var(--c-blue); margin-bottom:12px; font-weight:900;" onclick="loginFirebasePro()">
+            ACTIVAR PLAN PRO AHORA
+          </button>
         </div>
-        <div class="form-group">
-          <label>Correo Electrónico</label>
-          <input type="email" id="proEmail" placeholder="usuario@gmail.com">
-        </div>
-        <div class="form-group">
-          <label>Contraseña</label>
-          <input type="password" id="proPass" placeholder="Tu clave asignada">
-        </div>
-        <button id="btnLoginAction" class="btn-ctrl" style="width:100%; background:var(--c-blue); margin-bottom:12px; font-weight:900;" onclick="loginFirebasePro()">
-          ACTIVAR PLAN PRO AHORA
-        </button>
 
-        <hr style="border-color:var(--border); margin-bottom:12px;">
+        <!-- INDICADOR DE ESPERA Y CARGA (HASTA 2 MINUTOS) -->
+        <div class="activation-loading-box" id="activationLoadingBox">
+          <div class="spinner"></div>
+          <div style="font-size:0.8rem; font-weight:900; color:#818cf8; margin-bottom:4px;">
+            ⏳ ACTIVANDO TU PLAN PRO...
+          </div>
+          <p style="font-size:0.68rem; color:#cbd5e1; line-height:1.4;">
+            Verificando y aprovisionando tu servidor y licencia en la nube.<br>
+            <b>Este proceso tardará unos minutos en activarse (hasta 2 minutos).</b><br>
+            Puedes cerrar esta ventana, la app se actualizará automáticamente.
+          </p>
+        </div>
 
-        <div style="font-size:0.7rem; font-weight:800; color:#4ade80; margin-bottom:6px;">
-          📲 ¿NO TIENES CUENTA? COMPRAR VÍA WHATSAPP
+        <div id="whatsAppBuySection">
+          <hr style="border-color:var(--border); margin-bottom:12px;">
+          <div style="font-size:0.7rem; font-weight:800; color:#4ade80; margin-bottom:6px;">
+            📲 ¿NO TIENES CUENTA? COMPRAR VÍA WHATSAPP
+          </div>
+          <div class="form-group">
+            <label>Tu Nombre Completo</label>
+            <input type="text" id="buyName" placeholder="Tu nombre">
+          </div>
+          <div class="form-group">
+            <label>Tu Correo para la Licencia</label>
+            <input type="email" id="buyEmail" placeholder="tu@correo.com">
+          </div>
+          <button class="btn-ctrl" style="width:100%; background:#25d366; color:#000; font-weight:900;" onclick="comprarWhatsApp()">
+            💬 COMPRAR POR WHATSAPP ($39.900)
+          </button>
         </div>
-        <div class="form-group">
-          <label>Tu Nombre Completo</label>
-          <input type="text" id="buyName" placeholder="Tu nombre">
-        </div>
-        <div class="form-group">
-          <label>Tu Correo para la Licencia</label>
-          <input type="email" id="buyEmail" placeholder="tu@correo.com">
-        </div>
-        <button class="btn-ctrl" style="width:100%; background:#25d366; color:#000; font-weight:900;" onclick="comprarWhatsApp()">
-          💬 COMPRAR POR WHATSAPP ($39.900)
-        </button>
       </div>
 
-      <!-- VISTA 2: PRO ACTIVO -->
+      <!-- VISTA 2: PRO ACTIVO (DESAPARECEN COMPRAS Y ACCESOS) -->
       <div id="viewProActiveUser" style="display:none;">
         <div class="pro-user-header">
           <div>
@@ -376,13 +411,14 @@
           <li><span>✓</span> Soporte para hasta 4 servidores / estaciones</li>
         </ul>
 
+        <!-- BOTÓN DE AJUSTES / RESTABLECER CONTRASEÑA -->
         <button class="btn-ctrl" style="width:100%; background:#1e293b; border-color:var(--c-blue); color:#38bdf8; font-weight:900; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="toggleSecurityPanel()">
-          ⚙ AJUSTES DE SEGURIDAD / CAMBIAR MI CLAVE
+          ⚙ AJUSTES DE SEGURIDAD / RESTABLECER CONTRASEÑA
         </button>
 
         <div id="securityPanel" style="display:none; background:#070c1b; border:1px solid var(--border); border-radius:10px; padding:10px; margin-top:8px;">
           <div style="font-size:0.68rem; color:var(--c-yellow); font-weight:800; margin-bottom:6px;">
-            🔒 CAMBIO DE CLAVE (SEGURIDAD)
+            🔒 RESTABLECER / ACTUALIZAR CONTRASEÑA
           </div>
           <div class="form-group">
             <label>Nueva Contraseña</label>
@@ -498,7 +534,7 @@
   </div>
 
   <script>
-    // Configuración Firebase
+    // Inicialización Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCDzqYbaYZuwlW_qfV25Cy-muz-srF85L8",
       authDomain: "emisorasplus.firebaseapp.com",
@@ -508,15 +544,13 @@
       appId: "1:48567736821:web:47218e33e3e8619ea928bc"
     };
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const db = firebase.firestore();
 
     const RELAY_URL = "wss://zeno-relay.onrender.com";
 
     let isPro = false;
+    let isActivating = false;
     let currentUserEmail = "";
     let isLive = false;
     let micMuted = false;
@@ -563,16 +597,15 @@
     const aLight = document.getElementById('audioLightning');
 
     window.addEventListener('DOMContentLoaded', () => {
-      // Verificar si ya estaba logueado localmente
+      // Restaurar estado local
       const savedPro = localStorage.getItem('ep_is_pro');
       const savedEmail = localStorage.getItem('ep_pro_email');
       if (savedPro === 'true' && savedEmail) {
         activarModoPro(savedEmail);
       }
 
-      // Escuchar cambios de Firebase Auth
       auth.onAuthStateChanged(user => {
-        if (user) {
+        if (user && !isActivating) {
           activarModoPro(user.email);
         }
       });
@@ -597,21 +630,31 @@
       } else {
         document.getElementById('viewFreeUser').style.display = 'block';
         document.getElementById('viewProActiveUser').style.display = 'none';
-        document.getElementById('modalProHeaderTitle').innerText = '👑 ADQUIRIR PLAN PRO';
+        document.getElementById('modalProHeaderTitle').innerText = '👑 ADQUIRIR O ACTIVAR PLAN PRO';
+
+        if (isActivating) {
+          document.getElementById('formLoginFields').style.display = 'none';
+          document.getElementById('whatsAppBuySection').style.display = 'none';
+          document.getElementById('activationLoadingBox').style.display = 'block';
+        } else {
+          document.getElementById('formLoginFields').style.display = 'block';
+          document.getElementById('whatsAppBuySection').style.display = 'block';
+          document.getElementById('activationLoadingBox').style.display = 'none';
+        }
       }
       document.getElementById('proModal').style.display = 'flex';
     }
 
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
 
-    // LOGIN FIREBASE MEJORADO Y CONFIABLE
+    // LOGIN FIREBASE CON RETARDO DE HASTA 2 MINUTOS Y ESTADO DE CARGA
     async function loginFirebasePro() {
       const email = document.getElementById('proEmail').value.trim();
       const pass = document.getElementById('proPass').value.trim();
       const btn = document.getElementById('btnLoginAction');
 
       if (!email || !pass) {
-        alert("Por favor ingresa tu correo y contraseña.");
+        alert("Por favor ingresa tu correo y contraseña asignados.");
         return;
       }
 
@@ -622,11 +665,28 @@
         log("Validando credenciales con Firebase...");
         const userCredential = await auth.signInWithEmailAndPassword(email, pass);
         const user = userCredential.user;
-        
-        // Activar PRO de inmediato tras autenticar
-        activarModoPro(user.email);
-        alert(`¡Bienvenido! Plan PRO activado para: ${user.email}`);
-        openProModal();
+
+        // Iniciar proceso de activación con espera de hasta 2 minutos
+        isActivating = true;
+        document.getElementById('formLoginFields').style.display = 'none';
+        document.getElementById('whatsAppBuySection').style.display = 'none';
+        document.getElementById('activationLoadingBox').style.display = 'block';
+
+        // Actualizar botón superior con estado de carga
+        const crownBtn = document.getElementById('btnProBadge');
+        crownBtn.className = 'btn-crown loading-state';
+        crownBtn.innerHTML = '⏳ ACTUALIZANDO...';
+
+        log('<span style="color:var(--c-yellow)">Aprovisionando tu cuenta PRO (puede tardar hasta 2 minutos)...</span>');
+
+        // Simula la sincronización y aprovisionamiento seguro del servidor (30-45 segundos representativos)
+        setTimeout(() => {
+          isActivating = false;
+          activarModoPro(user.email);
+          openProModal();
+          alert("¡Tu cuenta PRO ha sido activada con éxito en la nube!");
+        }, 12000); // 12 segundos para demostración fluida e inmediata; puedes subirlo a 60000 o 120000
+
       } catch (err) {
         let msg = err.message;
         if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
@@ -637,8 +697,7 @@
           msg = "El formato de correo no es válido.";
         }
         alert("Error de inicio de sesión: " + msg);
-        log(`<span style="color:var(--c-red)">Fallo de autenticación: ${err.code}</span>`);
-      } finally {
+        log(`<span style="color:var(--c-red)">Fallo: ${err.code}</span>`);
         btn.disabled = false;
         btn.innerText = "ACTIVAR PLAN PRO AHORA";
       }
@@ -647,6 +706,7 @@
     // ACTIVACIÓN DE FUNCIONES PRO
     function activarModoPro(email) {
       isPro = true;
+      isActivating = false;
       currentUserEmail = email;
       localStorage.setItem('ep_is_pro', 'true');
       localStorage.setItem('ep_pro_email', email);
@@ -656,7 +716,7 @@
       b.innerHTML = '👑 PRO ACTIVO';
       document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
 
-      // Pisadores PRO
+      // Habilitar Pisadores PRO
       document.getElementById('btnP2').disabled = false;
       document.getElementById('btnP2').innerHTML = '<span>🔊 PISADOR 2</span><small style="font-size:0.55rem;">DISPARAR</small>';
       document.getElementById('btnLightning').disabled = false;
@@ -685,7 +745,7 @@
       document.getElementById('barAutoDj').style.background = 'var(--c-green)';
       document.getElementById('lblAutoDjCap').innerText = 'AutoDJ activado en la nube con 10 GB de capacidad.';
 
-      log(`Plan PRO verificado: ${email}`);
+      log(`Plan PRO activo: ${email}`);
     }
 
     function desactivarModoPro() {
@@ -699,7 +759,7 @@
       document.getElementById('timerLiveBox').innerText = 'TIEMPO MÁX: 15:00';
     }
 
-    // CAMBIO DE CLAVE
+    // CAMBIO DE CLAVE / RESTABLECER
     function toggleSecurityPanel() {
       const p = document.getElementById('securityPanel');
       p.style.display = p.style.display === 'none' ? 'block' : 'none';
@@ -732,7 +792,7 @@
       try {
         log("Actualizando clave de usuario...");
         await user.updatePassword(p1);
-        alert("¡Tu contraseña ha sido actualizada con éxito!");
+        alert("¡Tu contraseña ha sido restablecida con éxito!");
         document.getElementById('newPass1').value = '';
         document.getElementById('newPass2').value = '';
         toggleSecurityPanel();
