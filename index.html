@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>EMISORASplus isecas</title>
   
-  <!-- LameJS para codificación MP3 en tiempo real -->
+  <!-- LameJS para codificación MP3 -->
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   
   <!-- Firebase SDK Global UMD -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
   <style>
     :root {
@@ -21,7 +20,6 @@
       --border: #1e3a6d;
       --text: #f8fafc;
       --text-muted: #94a3b8;
-      
       --c-green: #10b981;
       --c-blue: #06b6d4;
       --c-yellow: #facc15;
@@ -34,7 +32,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 8px; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-    /* BARRA SUPERIOR */
     .top-bar {
       display: flex; justify-content: space-between; align-items: center;
       background: linear-gradient(90deg, #1e1b4b, #0f172a, #1e293b);
@@ -64,7 +61,6 @@
     }
     .btn-icon.monitor-active { background: #0284c7; border-color: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
 
-    /* MEDIDOR DE RED */
     .net-box {
       background: #090e1a; border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px;
       margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.65rem; font-weight: 800;
@@ -76,20 +72,17 @@
     .signal-bars.mid .b1, .signal-bars.mid .b2, .signal-bars.mid .b3 { background: var(--c-yellow); }
     .signal-bars.low .b1 { background: var(--c-red); }
 
-    /* VÚMETRO */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
     .vu-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--c-green) 50%, var(--c-yellow) 80%, var(--c-red) 100%); transition: width 0.05s linear; }
 
-    /* BANNER PISADOR */
     .stinger-banner {
       display: none; background: linear-gradient(135deg, #3b0764, #1e1b4b);
       border: 2px solid var(--c-purple); border-radius: 8px; padding: 6px 10px;
       margin-bottom: 6px; align-items: center; justify-content: space-between;
     }
 
-    /* COLA DE 3 PISTAS */
     .queue-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
     .track-box {
       border-radius: 8px; padding: 6px 10px; background: #070c1b; border-width: 2px; border-style: solid;
@@ -106,7 +99,6 @@
     .track-name { font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
     .track-time { font-size: 0.65rem; color: var(--text-muted); }
 
-    /* MIC Y DUCKING */
     .mic-duck-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 6px; margin-bottom: 6px; }
     .btn-broadcast {
       padding: 10px; border: none; border-radius: 8px; font-weight: 900; font-size: 0.78rem;
@@ -121,7 +113,6 @@
     }
     .btn-ducking.active { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border-color: #a78bfa; }
 
-    /* PISADORES Y RAYITO */
     .stinger-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
     .btn-stinger {
       padding: 8px 4px; border-radius: 8px; font-size: 0.7rem; font-weight: 800;
@@ -134,7 +125,6 @@
     .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 900; }
     .btn-stinger:disabled { opacity: 0.35; filter: grayscale(1); }
 
-    /* CONTROLES Y CARGA */
     .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
     .btn-ctrl { padding: 9px 4px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-sub); color: #fff; font-size: 0.7rem; font-weight: 800; cursor: pointer; }
     
@@ -145,7 +135,6 @@
       color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 0.72rem; text-align: center;
     }
 
-    /* BOTÓN AL AIRE */
     .btn-main-stream {
       width: 100%; padding: 13px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: #fff; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 900; cursor: pointer;
@@ -154,10 +143,9 @@
 
     .terminal-box {
       background: #030712; border: 1px solid var(--border); border-radius: 6px; padding: 6px;
-      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 44px; overflow-y: auto; margin-top: 6px;
+      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 50px; overflow-y: auto; margin-top: 6px;
     }
 
-    /* MODALES */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(4px);
       display: none; align-items: center; justify-content: center; z-index: 999; padding: 12px;
@@ -177,7 +165,6 @@
     .vol-row input[type=range] { flex: 1; accent-color: var(--c-blue); }
     .vol-val { font-size: 0.68rem; font-weight: 800; width: 35px; text-align: right; color: #fff; }
 
-    /* ESTILOS PRO ACTIVO */
     .pro-user-header {
       background: linear-gradient(135deg, #064e3b, #065f46); border: 1px solid #34d399;
       border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
@@ -191,7 +178,6 @@
     .pro-benefit-list li { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
     .pro-benefit-list li span { color: var(--c-green); font-weight: 900; }
 
-    /* CAJA DE CARGA (HASTA 2 MINUTOS) */
     .activation-loading-box {
       display: none; background: #111827; border: 1px solid #6366f1; border-radius: 10px;
       padding: 14px; text-align: center; margin: 10px 0;
@@ -223,7 +209,7 @@
       <div id="netBars" class="signal-bars good">
         <div class="bar b1"></div><div class="bar b2"></div><div class="bar b3"></div><div class="bar b4"></div>
       </div>
-      <span id="netStatusText">ESTABLE (PING: 40ms)</span>
+      <span id="netStatusText">ESTABLE</span>
     </div>
     <div style="color:var(--c-gold); font-size:0.6rem;" id="timerLiveBox">TIEMPO MÁX: 15:00</div>
   </div>
@@ -321,13 +307,11 @@
   <!-- ==================== MODAL DE PLAN PRO ==================== -->
   <div class="modal-overlay" id="proModal">
     <div class="modal-box">
-      
       <div class="modal-header">
         <div id="modalProHeaderTitle" style="font-size:0.9rem; font-weight:900; color:var(--c-gold);">👑 PLAN PRO</div>
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeProModal()">✕</button>
       </div>
 
-      <!-- VISTA 1: USUARIO GRATIS -->
       <div id="viewFreeUser">
         <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); border:1px solid #facc15; border-radius:10px; padding:10px; text-align:center; margin-bottom:10px;">
           <h3 style="color:#fde047; font-size:0.95rem;">EMISORASplus PRO</h3>
@@ -354,16 +338,14 @@
           </button>
         </div>
 
-        <!-- INDICADOR DE ESPERA (HASTA 2 MINUTOS) -->
         <div class="activation-loading-box" id="activationLoadingBox">
           <div class="spinner"></div>
           <div style="font-size:0.8rem; font-weight:900; color:#818cf8; margin-bottom:4px;">
             ⏳ ACTIVANDO TU PLAN PRO...
           </div>
           <p style="font-size:0.68rem; color:#cbd5e1; line-height:1.4;">
-            Verificando y aprovisionando tu servidor y licencia en la nube.<br>
-            <b>Este proceso tardará unos minutos en activarse (hasta 2 minutos).</b><br>
-            Puedes cerrar esta ventana, la app se actualizará automáticamente.
+            Verificando tu servidor y credenciales.<br>
+            <b>Este proceso tardará unos minutos en activarse (hasta 2 minutos).</b>
           </p>
         </div>
 
@@ -386,7 +368,6 @@
         </div>
       </div>
 
-      <!-- VISTA 2: PRO ACTIVO -->
       <div id="viewProActiveUser" style="display:none;">
         <div class="pro-user-header">
           <div>
@@ -409,7 +390,7 @@
           <li><span>✓</span> Soporte para hasta 4 servidores / estaciones</li>
         </ul>
 
-        <button class="btn-ctrl" style="width:100%; background:#1e293b; border-color:var(--c-blue); color:#38bdf8; font-weight:900; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="toggleSecurityPanel()">
+        <button class="btn-ctrl" style="width:100%; background:#1e293b; border-color:var(--c-blue); color:#38bdf8; font-weight:900; margin-top:8px;" onclick="toggleSecurityPanel()">
           ⚙ AJUSTES DE SEGURIDAD / RESTABLECER CONTRASEÑA
         </button>
 
@@ -469,23 +450,22 @@
         📡 SERVIDOR ICECAST / CUALQUIER PROVEEDOR
       </div>
       <div class="form-group">
-        <label>Servidor / Host</label>
+        <label>Servidor / Host (ej. link.zeno.fm o tu IP)</label>
         <input type="text" id="host" value="link.zeno.fm">
       </div>
       <div style="display:flex; gap:6px;">
         <div class="form-group" style="flex:1;"><label>Puerto</label><input type="number" id="port" value="80"></div>
-        <div class="form-group" style="flex:2;"><label>Punto Anclaje</label><input type="text" id="mount" value="/f04sfgq6138uv/source"></div>
+        <div class="form-group" style="flex:2;"><label>Punto Anclaje (/mount)</label><input type="text" id="mount" value="/f04sfgq6138uv"></div>
       </div>
       <div class="form-group"><label>Usuario</label><input type="text" id="user" value="source"></div>
       <div class="form-group">
         <div style="display:flex; justify-content:space-between;">
-          <label>Contraseña</label>
+          <label>Contraseña (Stream Key)</label>
           <span style="font-size:0.65rem; color:var(--c-blue); cursor:pointer;" onclick="togglePasswordVisibility()">👁 Ver / Ocultar</span>
         </div>
         <input type="password" id="password" placeholder="Tu Stream Key">
       </div>
 
-      <!-- AUTODJ EN NUBE -->
       <div style="background:#131d36; border:1px solid #3b82f6; border-radius:8px; padding:8px; margin:8px 0;">
         <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-weight:900; color:var(--c-gold);">
           <span>☁ AUTODJ EN NUBE</span>
@@ -497,7 +477,6 @@
         <span style="font-size:0.6rem; color:var(--text-muted);" id="lblAutoDjCap">Espacio disponible para programar canciones sin teléfono.</span>
       </div>
 
-      <!-- VOLÚMENES -->
       <div style="font-size:0.7rem; font-weight:900; color:var(--c-yellow); margin-bottom:4px;">🎚 VOLÚMENES</div>
       <div class="vol-row">
         <span class="vol-label">🎤 Mic</span>
@@ -515,7 +494,6 @@
         <span class="vol-val" id="valStinger">90%</span>
       </div>
 
-      <!-- PISADORES -->
       <div style="font-size:0.7rem; font-weight:900; color:var(--c-purple); margin:8px 0 4px 0;">🎙 CARGAR PISADORES</div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
         <label class="btn-ctrl" style="text-align:center; display:block;">PISADOR 1 📂<input type="file" accept="audio/mpeg, audio/mp3" style="display:none;" onchange="loadCustomStinger(1, event)"></label>
@@ -531,7 +509,6 @@
   </div>
 
   <script>
-    // Configuración Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCDzqYbaYZuwlW_qfV25Cy-muz-srF85L8",
       authDomain: "emisorasplus.firebaseapp.com",
@@ -566,7 +543,7 @@
 
     let currentStation = 1;
     let stationsData = {
-      1: { host: "link.zeno.fm", port: "80", mount: "/f04sfgq6138uv/source", user: "source", password: "" },
+      1: { host: "link.zeno.fm", port: "80", mount: "/f04sfgq6138uv", user: "source", password: "" },
       2: { host: "", port: "80", mount: "", user: "source", password: "" },
       3: { host: "", port: "80", mount: "", user: "source", password: "" },
       4: { host: "", port: "80", mount: "", user: "source", password: "" }
@@ -587,6 +564,7 @@
     let processorNode = null;
     let mp3Encoder = null;
     let ws = null;
+    let audioBytesSent = 0;
 
     const aMusic = document.getElementById('audioMusic');
     const aS1 = document.getElementById('audioStinger1');
@@ -669,13 +647,13 @@
         crownBtn.className = 'btn-crown loading-state';
         crownBtn.innerHTML = '⏳ ACTUALIZANDO...';
 
-        log('<span style="color:var(--c-yellow)">Aprovisionando tu cuenta PRO (puede tardar unos minutos)...</span>');
+        log('<span style="color:var(--c-yellow)">Aprovisionando tu cuenta PRO en la nube...</span>');
 
         setTimeout(() => {
           isActivating = false;
           activarModoPro(user.email);
           openProModal();
-          alert("¡Tu cuenta PRO ha sido activada con éxito en la nube!");
+          alert("¡Tu cuenta PRO ha sido activada con éxito!");
         }, 8000);
 
       } catch (err) {
@@ -684,8 +662,6 @@
           msg = "Contraseña incorrecta. Verifica tu clave de ventas.";
         } else if (err.code === 'auth/user-not-found') {
           msg = "No existe una cuenta asignada con este correo.";
-        } else if (err.code === 'auth/invalid-email') {
-          msg = "El formato de correo no es válido.";
         }
         alert("Error de inicio de sesión: " + msg);
         log(`<span style="color:var(--c-red)">Fallo: ${err.code}</span>`);
@@ -782,11 +758,7 @@
         document.getElementById('newPass2').value = '';
         toggleSecurityPanel();
       } catch (err) {
-        if (err.code === 'auth/requires-recent-login') {
-          alert("Por seguridad, debes cerrar sesión e ingresar nuevamente antes de cambiar la clave.");
-        } else {
-          alert("Error al actualizar: " + err.message);
-        }
+        alert("Error al actualizar: " + err.message);
       }
     }
 
@@ -862,7 +834,7 @@
     }
 
     function applyStationToInputs(id) {
-      const st = stationsData[id] || { host: "link.zeno.fm", port: "80", mount: "/f04sfgq6138uv/source", user: "source", password: "" };
+      const st = stationsData[id] || { host: "link.zeno.fm", port: "80", mount: "/f04sfgq6138uv", user: "source", password: "" };
       document.getElementById('host').value = st.host;
       document.getElementById('port').value = st.port;
       document.getElementById('mount').value = st.mount;
@@ -899,9 +871,9 @@
       if (isLive && aMusic.paused) playTrack(0);
     }
 
-    // ==========================================
-    // SISTEMA DE TRANSMISIÓN EN VIVO CORREGIDO
-    // ==========================================
+    // ===============================================
+    // TRANSMISIÓN ROBUSTA EN TIEMPO REAL
+    // ===============================================
     async function toggleStream() {
       if (isLive) {
         stopAll();
@@ -913,15 +885,14 @@
     async function startBroadcast() {
       saveStationData();
       
-      // Lectura en tiempo real directa de los inputs para evitar claves vacías
-      let host = document.getElementById('host').value.trim();
-      let port = document.getElementById('port').value.trim();
+      const host = document.getElementById('host').value.trim();
+      const port = document.getElementById('port').value.trim();
       let mount = document.getElementById('mount').value.trim();
-      let user = document.getElementById('user').value.trim();
-      let password = document.getElementById('password').value.trim();
+      const user = document.getElementById('user').value.trim();
+      const password = document.getElementById('password').value.trim();
 
       if (!host || !port || !mount || !password) {
-        alert("Completa todos los campos del servidor en Ajustes (Host, Puerto, Mount y Contraseña).");
+        alert("Ingresa todos los datos de tu emisora en Ajustes ⚙ (Host, Puerto, Mount y Contraseña).");
         openSettingsModal();
         return;
       }
@@ -931,24 +902,30 @@
         document.getElementById('mount').value = mount;
       }
 
-      log("Solicitando acceso a micrófono...");
+      log("Solicitando acceso al micrófono...");
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+          audio: {
+            channelCount: 1,
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
         });
       } catch (err) {
-        log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
-        alert("No se pudo acceder al micrófono. Verifica los permisos de la app.");
+        log(`<span style="color:var(--c-red)">Error de micrófono: ${err.name} - ${err.message}</span>`);
+        alert("Permiso de micrófono denegado. Actívalo en la app.");
         return;
       }
 
-      log(`Conectando con relay y autenticando con ${host}...`);
+      log(`Conectando con relay y autenticando en ${host}...`);
+
       try {
         ws = new WebSocket(RELAY_URL);
         ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {
-          log("Enviando credenciales de Icecast...");
+          log("Enviando credenciales al servidor Icecast...");
           ws.send(JSON.stringify({
             action: 'AUTH_ICECAST',
             host: host,
@@ -963,29 +940,30 @@
           try {
             const resp = JSON.parse(e.data);
             if (resp.status === 'SUCCESS') {
-              log('<span style="color:var(--c-green); font-weight:bold;">¡AL AIRE! Conectado con éxito.</span>');
+              log('<span style="color:var(--c-green); font-weight:bold;">¡AUTENTICADO! Conectado con éxito a Icecast.</span>');
               await initAudioEngine();
             } else {
-              log(`<span style="color:var(--c-red); font-weight:bold;">Rechazado por servidor: ${resp.message} (Código ${resp.code || ''})</span>`);
+              log(`<span style="color:var(--c-red); font-weight:bold;">Rechazado: ${resp.message} (${resp.code || ''})</span>`);
               stopAll();
-              alert(`Error de autenticación Icecast: ${resp.message}`);
+              alert(`Error del servidor Icecast: ${resp.message}`);
             }
           } catch (errParse) {
-            log(`Respuesta del servidor: ${e.data}`);
+            log(`Mensaje servidor: ${e.data}`);
           }
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">El relay en Render está despertando. Pulsa transmitir nuevamente en unos segundos.</span>');
+          log('<span style="color:var(--c-yellow)">El servidor relay se está despertando en Render. Presiona nuevamente en 10 segundos.</span>');
           stopAll();
         };
 
         ws.onclose = () => {
           if (isLive) {
-            log('<span style="color:var(--c-red)">Transmisión finalizada en servidor.</span>');
+            log('<span style="color:var(--c-red)">Desconectado del servidor Icecast.</span>');
             stopAll();
           }
         };
+
       } catch (e) {
         log(`<span style="color:var(--c-red)">Error de conexión WebSocket: ${e.message}</span>`);
         stopAll();
@@ -995,10 +973,10 @@
     async function initAudioEngine() {
       isLive = true;
       liveSeconds = 0;
+      audioBytesSent = 0;
       document.getElementById('btnLive').className = 'btn-main-stream live';
       document.getElementById('btnLive').innerText = 'DETENER TRANSMISIÓN EN VIVO';
 
-      // Control 15 minutos en versión gratis
       if (!isPro) {
         liveTimerInterval = setInterval(() => {
           liveSeconds++;
@@ -1015,29 +993,27 @@
         }, 1000);
       }
 
-      // Inicializar y desbloquear AudioContext en móvil
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
       if (audioContext.state === 'suspended') {
         await audioContext.resume();
       }
-      const sampleRate = audioContext.sampleRate;
+
+      const inputSampleRate = audioContext.sampleRate;
+      log(`Motor de audio activo: ${inputSampleRate}Hz`);
 
       masterGainNode = audioContext.createGain();
 
-      // Monitoreo de audífonos
       monitorGainNode = audioContext.createGain();
       monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
       masterGainNode.connect(monitorGainNode);
       monitorGainNode.connect(audioContext.destination);
 
-      // Micrófono
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
       micGainNode = audioContext.createGain();
       micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
       micSourceNode.connect(micGainNode);
       micGainNode.connect(masterGainNode);
 
-      // Música
       if (!musicSourceNode) {
         musicSourceNode = audioContext.createMediaElementSource(aMusic);
       }
@@ -1046,7 +1022,6 @@
       musicSourceNode.connect(musicGainNode);
       musicGainNode.connect(masterGainNode);
 
-      // Pisadores
       stingerGainNode = audioContext.createGain();
       stingerGainNode.gain.value = parseFloat(document.getElementById('volStinger').value);
       if (!stinger1SourceNode) stinger1SourceNode = audioContext.createMediaElementSource(aS1);
@@ -1058,7 +1033,6 @@
       lightningSourceNode.connect(stingerGainNode);
       stingerGainNode.connect(masterGainNode);
 
-      // Vúmetro Master
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 128;
       masterGainNode.connect(analyser);
@@ -1080,29 +1054,33 @@
       }
       updateMeter();
 
-      // Inicialización de LameJS MP3
+      // Codificador MP3 configurado con la frecuencia real del contexto de audio
       if (typeof lamejs !== 'undefined') {
-        mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
-      } else {
-        log('<span style="color:var(--c-red)">Error: Librería lamejs no disponible.</span>');
+        mp3Encoder = new lamejs.Mp3Encoder(1, inputSampleRate, 128);
       }
 
-      // Procesador de audio para paquetizar y enviar al relay
       processorNode = audioContext.createScriptProcessor(4096, 1, 1);
       processorNode.onaudioprocess = (e) => {
         if (!isLive || !ws || ws.readyState !== WebSocket.OPEN || !mp3Encoder) return;
+
         const inputData = e.inputBuffer.getChannelData(0);
         const sampleBuffer = new Int16Array(inputData.length);
         for (let i = 0; i < inputData.length; i++) {
           let s = Math.max(-1, Math.min(1, inputData[i]));
           sampleBuffer[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
         }
+
         const mp3Chunk = mp3Encoder.encodeBuffer(sampleBuffer);
-        if (mp3Chunk.length > 0) ws.send(mp3Chunk.buffer);
+        if (mp3Chunk && mp3Chunk.length > 0) {
+          ws.send(mp3Chunk.buffer);
+          audioBytesSent += mp3Chunk.length;
+        }
       };
 
       masterGainNode.connect(processorNode);
       processorNode.connect(audioContext.destination);
+
+      log('<span style="color:var(--c-green)">Transmitiendo flujo MP3 continuo a Icecast.</span>');
 
       if (playlist.length > 0 && aMusic.paused) {
         playTrack(currentIndex);
