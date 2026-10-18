@@ -2,103 +2,117 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Mi radio en vivo Isecats</title>
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   <style>
     :root {
-      --bg: #070913;
-      --card-bg: #0f172a;
-      --card-sub: #1e293b;
-      --border: #334155;
+      --bg: #060813;
+      --card-bg: #0d1527;
+      --card-sub: #162038;
+      --border: #24324f;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       
-      /* Paleta vibrante y multicolor */
       --c-green: #10b981;
       --c-blue: #06b6d4;
-      --c-blue-dark: #3b82f6;
       --c-yellow: #eab308;
       --c-purple: #a855f7;
       --c-red: #ef4444;
       --c-amber: #f97316;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 12px; min-height: 100vh; display: flex; flex-direction: column; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 10px; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-    /* CABECERA CON BOTÓN DE AJUSTES */
+    /* BARRA SUPERIOR */
     .top-bar {
       display: flex; justify-content: space-between; align-items: center;
       background: linear-gradient(90deg, #1e1b4b, #0f172a, #172554);
-      padding: 10px 14px; border-radius: 12px; border: 1px solid #4338ca; margin-bottom: 10px;
+      padding: 10px 12px; border-radius: 12px; border: 1px solid #4338ca; margin-bottom: 8px;
     }
-    .app-title { font-size: 1.05rem; font-weight: 900; letter-spacing: 0.5px; color: #fff; display: flex; align-items: center; gap: 6px; }
-    .app-title span { color: var(--c-green); text-shadow: 0 0 8px rgba(16,185,129,0.6); }
+    .app-title { font-size: 0.95rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 5px; }
+    .app-title span { color: var(--c-green); text-shadow: 0 0 8px rgba(16,185,129,0.5); }
 
+    .top-actions { display: flex; align-items: center; gap: 6px; }
     .btn-icon {
-      background: #1e293b; border: 1px solid #475569; color: #fff; width: 36px; height: 36px;
+      background: #1e293b; border: 1px solid #475569; color: #fff; width: 38px; height: 38px;
       border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s;
+      transition: transform 0.1s, border-color 0.2s;
     }
-    .btn-icon:active { transform: scale(0.92); border-color: var(--c-blue); }
+    .btn-icon:active { transform: scale(0.92); }
+    .btn-icon.monitor-active {
+      background: linear-gradient(135deg, #0284c7, #0369a1); border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56,189,248,0.5);
+    }
 
     .status-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 12px; border-radius: 999px; font-size: 0.72rem; font-weight: 800;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 800;
       background: #1e293b; color: var(--text-muted); border: 1px solid var(--border);
     }
     .status-badge.live { background: var(--c-red); color: #fff; border-color: #f87171; animation: pulse 1.2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 
-    /* VÚMETRO MASTER CON GRADIENTE MULTICOLOR */
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
-    .vu-header { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); margin-bottom: 4px; }
-    .vu-container { height: 12px; background: #030712; border-radius: 6px; overflow: hidden; border: 1px solid #1f2937; }
+    /* VÚMETRO MASTER */
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 8px; }
+    .vu-header { display: flex; justify-content: space-between; font-size: 0.68rem; font-weight: 800; color: var(--text-muted); margin-bottom: 4px; }
+    .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
     .vu-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--c-green) 50%, var(--c-yellow) 80%, var(--c-red) 100%); transition: width 0.05s linear; }
 
-    /* 3 CUADROS DE PISTAS (VERDE, AZUL, AMARILLO) */
-    .queue-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-    
-    .track-box {
-      border-radius: 10px; padding: 10px 12px; background: #0b1329; border-width: 2px; border-style: solid;
-      display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;
+    /* ALERTA EN PANTALLA: PISADOR EN CURSO */
+    .stinger-banner {
+      display: none; background: linear-gradient(135deg, #3b0764, #1e1b4b);
+      border: 2px solid var(--c-purple); border-radius: 10px; padding: 8px 12px;
+      margin-bottom: 8px; align-items: center; justify-content: space-between;
+      box-shadow: 0 0 12px rgba(168,85,247,0.3);
     }
-    .track-box.current { border-color: var(--c-green); box-shadow: 0 0 12px rgba(16,185,129,0.25); }
+    .stinger-info { display: flex; flex-direction: column; }
+    .stinger-title { font-size: 0.78rem; font-weight: 900; color: #f0abfc; }
+    .stinger-timer { font-size: 0.68rem; font-weight: 700; color: #e9d5ff; }
+    .btn-stop-stinger {
+      background: var(--c-red); border: none; color: #fff; padding: 6px 12px;
+      border-radius: 6px; font-weight: 800; font-size: 0.72rem; cursor: pointer;
+    }
+
+    /* 3 CUADROS DE COLA DE PISTAS */
+    .queue-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+    .track-box {
+      border-radius: 10px; padding: 8px 10px; background: #0b1329; border-width: 2px; border-style: solid;
+      display: flex; flex-direction: column; justify-content: center; min-height: 48px;
+    }
+    .track-box.current { border-color: var(--c-green); box-shadow: 0 0 10px rgba(16,185,129,0.25); }
     .track-box.next { border-color: var(--c-blue); }
     .track-box.third { border-color: var(--c-yellow); }
 
-    .track-tag { font-size: 0.65rem; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
+    .track-tag { font-size: 0.62rem; font-weight: 900; text-transform: uppercase; margin-bottom: 2px; }
     .track-box.current .track-tag { color: var(--c-green); }
     .track-box.next .track-tag { color: var(--c-blue); }
     .track-box.third .track-tag { color: var(--c-yellow); }
 
-    .track-name { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-    .track-time { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+    .track-name { font-size: 0.82rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+    .track-time { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
-    /* CONTROLES DE MICRÓFONO Y DUCKING */
-    .mic-duck-row { display: grid; grid-template-columns: 1.4fr 1fr; gap: 8px; margin-bottom: 10px; }
-
+    /* FILA MICRÓFONO Y DUCKING */
+    .mic-duck-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 8px; margin-bottom: 8px; }
     .btn-broadcast {
-      padding: 12px; border: none; border-radius: 10px; font-weight: 800; font-size: 0.85rem;
+      padding: 12px 8px; border: none; border-radius: 10px; font-weight: 900; font-size: 0.82rem;
       cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
-      transition: all 0.2s;
     }
-    .btn-mic-on { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 0 12px rgba(16,185,129,0.4); }
+    .btn-mic-on { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 0 10px rgba(16,185,129,0.35); }
     .btn-mic-mute { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
 
     .btn-ducking {
       background: #1e293b; border: 1px solid #475569; color: var(--text-muted);
-      border-radius: 10px; font-size: 0.72rem; font-weight: 800; display: flex;
+      border-radius: 10px; font-size: 0.7rem; font-weight: 800; display: flex;
       flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
     }
-    .btn-ducking.active { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border-color: #a78bfa; box-shadow: 0 0 12px rgba(139,92,246,0.4); }
+    .btn-ducking.active { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border-color: #a78bfa; }
 
-    /* SECCIÓN DE PISADORES Y MODO RAYITO */
-    .stinger-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-    
+    /* PISADORES Y MODO RAYITO */
+    .stinger-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 8px; }
     .btn-stinger {
-      padding: 10px 4px; border-radius: 10px; font-size: 0.75rem; font-weight: 800;
+      padding: 10px 4px; border-radius: 10px; font-size: 0.72rem; font-weight: 800;
       border: 1px solid #475569; background: #1e293b; color: #fff; cursor: pointer;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
     }
@@ -107,78 +121,78 @@
     .btn-stinger.p2 { border-color: var(--c-amber); background: #451a03; }
     
     .btn-stinger.lightning { border-color: var(--c-yellow); background: #3b2d04; }
-    .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; box-shadow: 0 0 14px rgba(234,179,8,0.5); }
+    .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 900; }
 
-    /* CONTROLES DE REPRODUCCIÓN */
-    .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+    /* CONTROLES DE REPRODUCTOR */
+    .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 8px; }
     .btn-ctrl {
-      padding: 10px; border-radius: 8px; border: 1px solid var(--border);
-      background: var(--card-sub); color: #fff; font-size: 0.75rem; font-weight: 800; cursor: pointer;
+      padding: 10px 4px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--card-sub); color: #fff; font-size: 0.72rem; font-weight: 800; cursor: pointer;
     }
-    .btn-ctrl:active { background: #334155; }
 
-    /* BOTÓN CARGAR AUDIO */
-    .file-loader {
-      position: relative; overflow: hidden; margin-bottom: 10px;
-    }
+    /* CARGADOR EXCLUSIVO DE MP3 / VIDEO */
+    .file-loader { position: relative; overflow: hidden; margin-bottom: 8px; }
     .file-loader input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
     .btn-load-files {
-      width: 100%; padding: 10px; background: linear-gradient(90deg, #1d4ed8, #0284c7);
-      color: #fff; border: none; border-radius: 10px; font-weight: 800; font-size: 0.78rem; text-align: center;
+      width: 100%; padding: 11px; background: linear-gradient(90deg, #1d4ed8, #0284c7);
+      color: #fff; border: none; border-radius: 10px; font-weight: 800; font-size: 0.75rem; text-align: center;
     }
 
-    /* BOTÓN PRINCIPAL AL AIRE */
+    /* BOTÓN TRANSMITIR AL AIRE */
     .btn-main-stream {
       width: 100%; padding: 14px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: #fff; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 900;
-      cursor: pointer; letter-spacing: 0.5px; box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+      cursor: pointer; letter-spacing: 0.5px;
     }
     .btn-main-stream.live { background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 4px 14px rgba(239,68,68,0.4); }
 
-    /* MODAL DE AJUSTES Y VOLÚMENES */
+    .terminal-box {
+      background: #030712; border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px;
+      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 42px; overflow-y: auto; margin-top: 6px;
+    }
+
+    /* MODAL DE AJUSTES */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
+      position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(4px);
       display: none; align-items: center; justify-content: center; z-index: 999; padding: 14px;
     }
     .modal-box {
       background: #0f172a; border: 1px solid #3b82f6; border-radius: 16px;
-      width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; padding: 16px;
+      width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; padding: 14px;
     }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-    .modal-title { font-size: 0.95rem; font-weight: 900; color: #38bdf8; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    .modal-title { font-size: 0.9rem; font-weight: 900; color: #38bdf8; }
 
-    .vol-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-    .vol-label { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); width: 85px; text-transform: uppercase; }
+    .vol-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .vol-label { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); width: 80px; text-transform: uppercase; }
     .vol-row input[type=range] { flex: 1; accent-color: var(--c-blue); }
-    .vol-val { font-size: 0.72rem; font-weight: 800; width: 35px; text-align: right; color: #fff; }
+    .vol-val { font-size: 0.7rem; font-weight: 800; width: 35px; text-align: right; color: #fff; }
 
-    .form-group { margin-bottom: 8px; }
-    .form-group label { display: block; font-size: 0.68rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
-    .form-group input { width: 100%; padding: 8px 10px; background: #030712; border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.82rem; }
-
-    .terminal-box {
-      background: #030712; border: 1px solid var(--border); border-radius: 8px; padding: 8px;
-      font-family: ui-monospace, monospace; font-size: 0.68rem; color: #38bdf8; height: 50px; overflow-y: auto; margin-top: 8px;
-    }
+    .form-group { margin-bottom: 6px; }
+    .form-group label { display: block; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
+    .form-group input { width: 100%; padding: 8px; background: #030712; border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.8rem; }
   </style>
 </head>
 <body>
 
-  <!-- BARRA SUPERIOR CON AJUSTES -->
+  <!-- BARRA SUPERIOR -->
   <div class="top-bar">
     <div class="app-title">
       📻 <span>Mi radio en vivo Isecats</span>
     </div>
-    <div style="display:flex; align-items:center; gap:8px;">
+    <div class="top-actions">
       <div id="liveBadge" class="status-badge">● OFF</div>
-      <button class="btn-icon" onclick="openSettingsModal()" title="Ajustes y Datos">⚙</button>
+      <!-- Botón Monitoreo Local (Solo Ícono) -->
+      <button id="btnMonitor" class="btn-icon" onclick="toggleLocalMonitoring()" title="Monitoreo local en vivo">🎧</button>
+      <!-- Botón Ajustes -->
+      <button class="btn-icon" onclick="openSettingsModal()" title="Ajustes">⚙</button>
     </div>
   </div>
 
-  <!-- VÚMETRO MASTER AL AIRE -->
-  <div class="card" style="padding: 8px 12px;">
+  <!-- VÚMETRO MASTER -->
+  <div class="card" style="padding: 6px 10px;">
     <div class="vu-header">
-      <span>MODULACIÓN AL AIRE (MASTER)</span>
+      <span>MODULACIÓN AL AIRE</span>
       <span id="vuPct">0%</span>
     </div>
     <div class="vu-container">
@@ -186,54 +200,60 @@
     </div>
   </div>
 
-  <!-- CUADROS DE PISTAS (VERDE, AZUL, AMARILLO) -->
+  <!-- BANNER EN PANTALLA: PISADOR EN CURSO -->
+  <div class="stinger-banner" id="stingerBanner">
+    <div class="stinger-info">
+      <span class="stinger-title" id="bannerStingerName">🔊 PISADOR SONANDO</span>
+      <span class="stinger-timer" id="bannerStingerTime">0:00 / 0:00</span>
+    </div>
+    <button class="btn-stop-stinger" onclick="stopCurrentStinger()">⏹ DETENER</button>
+  </div>
+
+  <!-- COLA DE PISTAS (VERDE, AZUL, AMARILLO) -->
   <div class="queue-grid">
-    <!-- 1. Pista Actual (Verde) -->
     <div class="track-box current">
-      <div class="track-tag">● 1. EN EL AIRE AHORA (ACTUAL)</div>
+      <div class="track-tag">● 1. EN EL AIRE (ACTUAL)</div>
       <div class="track-name" id="track1">Sin reproducción</div>
       <div class="track-time" id="track1Time">0:00 / 0:00</div>
     </div>
 
-    <!-- 2. Siguiente (Azul) -->
     <div class="track-box next">
       <div class="track-tag">▶ 2. SIGUIENTE EN COLA</div>
       <div class="track-name" id="track2">En espera...</div>
     </div>
 
-    <!-- 3. Tercera (Amarillo) -->
     <div class="track-box third">
-      <div class="track-tag">⏭ 3. EN ESPERA (TERCERA)</div>
+      <div class="track-tag">⏭ 3. TERCERA EN ESPERA</div>
       <div class="track-name" id="track3">En espera...</div>
     </div>
   </div>
 
-  <!-- CONTROL DE MICRÓFONO Y DUCKING INTELIGENTE -->
+  <!-- MICRÓFONO Y DUCKING INTELIGENTE -->
   <div class="mic-duck-row">
     <button id="btnMic" class="btn-broadcast btn-mic-on" onclick="toggleMic()">
       🎤 MIC: AL AIRE
     </button>
     <button id="btnDucking" class="btn-ducking active" onclick="toggleDucking()">
       <span>DUCKING AUTO</span>
-      <small id="duckStatus" style="font-size:0.65rem; color:#86efac;">ON (BAJA MÚSICA)</small>
+      <small id="duckStatus" style="font-size:0.62rem; color:#86efac;">ON (BAJA MÚSICA)</small>
     </button>
   </div>
 
-  <!-- PISADORES (MÁXIMO 2) + MODO RAYITO -->
+  <!-- PISADORES Y MODO RAYITO -->
   <div class="stinger-grid">
     <button class="btn-stinger p1" onclick="triggerStinger(1)">
       <span>🔊 PISADOR 1</span>
-      <small style="font-size:0.6rem; opacity:0.8;">DISPARAR</small>
+      <small style="font-size:0.58rem; opacity:0.8;">DISPARAR</small>
     </button>
 
     <button class="btn-stinger p2" onclick="triggerStinger(2)">
       <span>🔊 PISADOR 2</span>
-      <small style="font-size:0.6rem; opacity:0.8;">DISPARAR</small>
+      <small style="font-size:0.58rem; opacity:0.8;">DISPARAR</small>
     </button>
 
     <button id="btnLightning" class="btn-stinger lightning" onclick="toggleLightningMode()">
       <span>⚡ RAYITO</span>
-      <small id="lightningStatus" style="font-size:0.6rem; font-weight:800;">AUTO INTRO (>1:40)</small>
+      <small style="font-size:0.58rem; font-weight:800;">AUTO (>1:40)</small>
     </button>
   </div>
 
@@ -244,10 +264,10 @@
     <button id="btnMode" class="btn-ctrl" onclick="toggleMode()">MODO: CONTINUO</button>
   </div>
 
-  <!-- CARGADOR DE PISTAS -->
+  <!-- CARGAR EXCLUSIVAMENTE MP3 O VIDEO -->
   <div class="file-loader">
-    <div class="btn-load-files">📂 CARGAR MÚSICA / PISTAS DESDE DISPOSITIVO</div>
-    <input type="file" id="fileTracks" multiple accept="audio/*" onchange="handleMusicFiles(event)">
+    <div class="btn-load-files">📂 CARGAR MP3 O VIDEO DESDE EL DISPOSITIVO</div>
+    <input type="file" id="fileTracks" multiple accept="audio/mpeg, audio/mp3, video/mp4, video/webm, video/*" onchange="handleStrictFiles(event)">
   </div>
 
   <!-- BOTÓN TRANSMITIR AL AIRE -->
@@ -255,26 +275,24 @@
     INICIAR TRANSMISIÓN EN VIVO
   </button>
 
-  <!-- CONSOLA DE DIAGNÓSTICO -->
   <div class="terminal-box" id="terminal">> Listo. Configura o inicia tu transmisión.</div>
 
-  <!-- ELEMENTOS DE AUDIO INTERNOS -->
+  <!-- ELEMENTOS DE AUDIO/VIDEO -->
   <audio id="audioMusic" style="display:none;"></audio>
   <audio id="audioStinger1" style="display:none;"></audio>
   <audio id="audioStinger2" style="display:none;"></audio>
   <audio id="audioLightning" style="display:none;"></audio>
 
-  <!-- ==================== MODAL DE AJUSTES ==================== -->
+  <!-- MODAL DE AJUSTES -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div class="modal-title">⚙ AJUSTES Y CONSOLA DE VOLUMEN</div>
+        <div class="modal-title">⚙ AJUSTES Y MEZCLADOR</div>
         <button class="btn-icon" style="width:28px; height:28px;" onclick="closeSettingsModal()">✕</button>
       </div>
 
-      <!-- SECCIÓN CONSOLA DE VOLÚMENES -->
-      <div style="font-size:0.75rem; font-weight:900; color:var(--c-yellow); margin-bottom:8px; text-transform:uppercase;">
-        🎚 Volúmenes y Mezclador
+      <div style="font-size:0.72rem; font-weight:900; color:var(--c-yellow); margin-bottom:6px; text-transform:uppercase;">
+        🎚 Volúmenes de Salida
       </div>
 
       <div class="vol-row">
@@ -295,56 +313,37 @@
         <span class="vol-val" id="valStinger">90%</span>
       </div>
 
-      <!-- CARGAR AUDIOS DE PISADORES -->
-      <div style="font-size:0.75rem; font-weight:900; color:var(--c-purple); margin:12px 0 6px 0; text-transform:uppercase;">
-        🎙 Cargar Audios de Pisadores
+      <div style="font-size:0.72rem; font-weight:900; color:var(--c-purple); margin:10px 0 4px 0; text-transform:uppercase;">
+        🎙 Cargar Audios de Pisadores (Solo MP3)
       </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
         <label class="btn-ctrl" style="text-align:center; display:block;">
           PISADOR 1 📂
-          <input type="file" accept="audio/*" style="display:none;" onchange="loadCustomStinger(1, event)">
+          <input type="file" accept="audio/mpeg, audio/mp3" style="display:none;" onchange="loadCustomStinger(1, event)">
         </label>
         <label class="btn-ctrl" style="text-align:center; display:block;">
           PISADOR 2 📂
-          <input type="file" accept="audio/*" style="display:none;" onchange="loadCustomStinger(2, event)">
+          <input type="file" accept="audio/mpeg, audio/mp3" style="display:none;" onchange="loadCustomStinger(2, event)">
         </label>
       </div>
-      <label class="btn-ctrl" style="text-align:center; display:block; border-color:var(--c-yellow); color:var(--c-yellow); margin-bottom:12px;">
-        ⚡ AUDIO PISADOR RAYITO (>1:40) 📂
-        <input type="file" accept="audio/*" style="display:none;" onchange="loadLightningStinger(event)">
+      <label class="btn-ctrl" style="text-align:center; display:block; border-color:var(--c-yellow); color:var(--c-yellow); margin-bottom:10px;">
+        ⚡ PISADOR RAYITO (>1:40) 📂
+        <input type="file" accept="audio/mpeg, audio/mp3" style="display:none;" onchange="loadLightningStinger(event)">
       </label>
 
-      <!-- DATOS DE TRANSMISIÓN ICECAST / ZENO -->
-      <div style="font-size:0.75rem; font-weight:900; color:var(--c-blue); margin-bottom:8px; text-transform:uppercase;">
-        📡 Datos Servidor Icecast (Zeno)
+      <div style="font-size:0.72rem; font-weight:900; color:var(--c-blue); margin-bottom:6px; text-transform:uppercase;">
+        📡 Servidor Icecast (Zeno Media)
       </div>
 
-      <div class="form-group">
-        <label>Servidor / Host</label>
-        <input type="text" id="host" value="link.zeno.fm">
-      </div>
+      <div class="form-group"><label>Host</label><input type="text" id="host" value="link.zeno.fm"></div>
       <div style="display:flex; gap:6px;">
-        <div class="form-group" style="flex:1;">
-          <label>Puerto</label>
-          <input type="number" id="port" value="80">
-        </div>
-        <div class="form-group" style="flex:2;">
-          <label>Punto Anclaje</label>
-          <input type="text" id="mount" value="/f04sfgq6138uv/source">
-        </div>
+        <div class="form-group" style="flex:1;"><label>Puerto</label><input type="number" id="port" value="80"></div>
+        <div class="form-group" style="flex:2;"><label>Mount</label><input type="text" id="mount" value="/f04sfgq6138uv/source"></div>
       </div>
-      <div class="form-group">
-        <label>Usuario</label>
-        <input type="text" id="user" value="source">
-      </div>
-      <div class="form-group">
-        <label>Contraseña (Stream Key)</label>
-        <input type="password" id="password" placeholder="Tu Stream Key">
-      </div>
+      <div class="form-group"><label>Usuario</label><input type="text" id="user" value="source"></div>
+      <div class="form-group"><label>Contraseña</label><input type="password" id="password" placeholder="Tu Stream Key"></div>
 
-      <button class="btn-main-stream" style="padding:10px; margin-top:6px;" onclick="closeSettingsModal()">
-        GUARDAR Y CERRAR
-      </button>
+      <button class="btn-main-stream" style="padding:10px; margin-top:6px;" onclick="closeSettingsModal()">GUARDAR Y CERRAR</button>
     </div>
   </div>
 
@@ -356,9 +355,12 @@
     let duckingEnabled = true;
     let lightningEnabled = false;
     let isShuffle = false;
+    let isMonitoring = false;
 
     let playlist = [];
     let currentIndex = 0;
+    let activeStingerAudio = null;
+    let activeStingerName = "";
 
     // Web Audio Nodes
     let audioContext = null;
@@ -375,17 +377,16 @@
     let stingerGainNode = null;
 
     let masterGainNode = null;
+    let monitorGainNode = null;
     let processorNode = null;
     let mp3Encoder = null;
     let ws = null;
 
-    // Elementos de audio
     const aMusic = document.getElementById('audioMusic');
     const aS1 = document.getElementById('audioStinger1');
     const aS2 = document.getElementById('audioStinger2');
     const aLight = document.getElementById('audioLightning');
 
-    // Restaurar datos guardados
     window.addEventListener('DOMContentLoaded', () => {
       ['host', 'port', 'mount', 'user', 'password'].forEach(id => {
         const s = localStorage.getItem(`zeno_${id}`);
@@ -405,17 +406,54 @@
       t.scrollTop = t.scrollHeight;
     }
 
-    // Modal
     function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
     function closeSettingsModal() { saveSettings(); document.getElementById('settingsModal').style.display = 'none'; }
 
-    // Conexión y Transmisión
-    async function toggleStream() {
-      if (isLive) {
-        stopAll();
-      } else {
-        await startBroadcast();
+    // FILTRO ESTRICTO DE ARCHIVOS: SOLO MP3 O VIDEO
+    function handleStrictFiles(e) {
+      const rawFiles = Array.from(e.target.files);
+      const allowed = rawFiles.filter(f => {
+        const name = f.name.toLowerCase();
+        const type = f.type.toLowerCase();
+        return name.endsWith('.mp3') || type === 'audio/mpeg' || type === 'audio/mp3' ||
+               name.endsWith('.mp4') || name.endsWith('.webm') || name.endsWith('.m4v') || name.endsWith('.mov') ||
+               type.startsWith('video/');
+      });
+
+      if (allowed.length === 0) {
+        alert("Formato no válido. Solo se permite cargar archivos en formato MP3 o Video.");
+        return;
       }
+
+      playlist = allowed;
+      currentIndex = 0;
+      updateTrackBoxes();
+      log(`${allowed.length} archivo(s) aceptado(s) (MP3/Video).`);
+      if (isLive && aMusic.paused) playTrack(0);
+    }
+
+    // MONITOREO LOCAL EN TIEMPO REAL (AUDÍFONOS)
+    function toggleLocalMonitoring() {
+      isMonitoring = !isMonitoring;
+      const btn = document.getElementById('btnMonitor');
+      if (isMonitoring) {
+        btn.classList.add('monitor-active');
+        if (monitorGainNode && audioContext) {
+          monitorGainNode.gain.setValueAtTime(1.0, audioContext.currentTime);
+        }
+        log('🎧 Monitoreo de audífonos ACTIVADO.');
+      } else {
+        btn.classList.remove('monitor-active');
+        if (monitorGainNode && audioContext) {
+          monitorGainNode.gain.setValueAtTime(0.0, audioContext.currentTime);
+        }
+        log('🎧 Monitoreo de audífonos DESACTIVADO.');
+      }
+    }
+
+    async function toggleStream() {
+      if (isLive) stopAll();
+      else await startBroadcast();
     }
 
     async function startBroadcast() {
@@ -428,7 +466,7 @@
 
       if (mount && !mount.startsWith('/')) mount = '/' + mount;
 
-      log("Solicitando micrófono...");
+      log("Accediendo al micrófono...");
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
@@ -438,7 +476,7 @@
         return;
       }
 
-      log("Conectando con relay y autenticando en Zeno...");
+      log("Conectando con relay en Render...");
       try {
         ws = new WebSocket(RELAY_URL);
         ws.binaryType = "arraybuffer";
@@ -459,7 +497,7 @@
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">Relay iniciando... Presiona transmitir nuevamente si tarda.</span>');
+          log('<span style="color:var(--c-yellow)">El relay se está reactivando. Pulsa conectar nuevamente.</span>');
           stopAll();
         };
 
@@ -488,21 +526,27 @@
 
       masterGainNode = audioContext.createGain();
 
-      // Canal Micrófono
+      // Nodo de Monitoreo Local
+      monitorGainNode = audioContext.createGain();
+      monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
+      masterGainNode.connect(monitorGainNode);
+      monitorGainNode.connect(audioContext.destination);
+
+      // Micrófono
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
       micGainNode = audioContext.createGain();
       micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
       micSourceNode.connect(micGainNode);
       micGainNode.connect(masterGainNode);
 
-      // Canal Música
+      // Música
       if (!musicSourceNode) musicSourceNode = audioContext.createMediaElementSource(aMusic);
       musicGainNode = audioContext.createGain();
       musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
       musicSourceNode.connect(musicGainNode);
       musicGainNode.connect(masterGainNode);
 
-      // Canal Pisadores
+      // Pisadores
       stingerGainNode = audioContext.createGain();
       stingerGainNode.gain.value = parseFloat(document.getElementById('volStinger').value);
       if (!stinger1SourceNode) stinger1SourceNode = audioContext.createMediaElementSource(aS1);
@@ -514,7 +558,7 @@
       lightningSourceNode.connect(stingerGainNode);
       stingerGainNode.connect(masterGainNode);
 
-      // Vúmetro Master
+      // Vúmetro
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 128;
       masterGainNode.connect(analyser);
@@ -555,40 +599,34 @@
       };
 
       masterGainNode.connect(processorNode);
-      processorNode.connect(audioContext.destination);
 
-      // Iniciar música automáticamente si hay canciones en lista
       if (playlist.length > 0 && aMusic.paused) {
         playTrack(currentIndex);
       }
     }
 
-    // Toggle Micrófono con DUCKING AUTOMÁTICO
+    // DUCKING AUTOMÁTICO AL HABLAR
     function toggleMic() {
       const btn = document.getElementById('btnMic');
       const baseMusicVol = parseFloat(document.getElementById('volMusic').value);
 
       if (micMuted) {
-        // Encender Micrófono
         micMuted = false;
         btn.className = 'btn-broadcast btn-mic-on';
         btn.innerText = '🎤 MIC: AL AIRE';
         if (micGainNode && audioContext) {
           micGainNode.gain.setValueAtTime(parseFloat(document.getElementById('volMic').value), audioContext.currentTime);
         }
-        // Aplicar Ducking si está activo (baja la música al 20% para hacer cortina)
         if (duckingEnabled && musicGainNode && audioContext) {
           musicGainNode.gain.setTargetAtTime(baseMusicVol * 0.20, audioContext.currentTime, 0.2);
         }
       } else {
-        // Mutear Micrófono
         micMuted = true;
         btn.className = 'btn-broadcast btn-mic-mute';
         btn.innerText = '🔇 MIC: MUTE';
         if (micGainNode && audioContext) {
           micGainNode.gain.setValueAtTime(0.0, audioContext.currentTime);
         }
-        // Subir música a volumen normal
         if (musicGainNode && audioContext) {
           musicGainNode.gain.setTargetAtTime(baseMusicVol, audioContext.currentTime, 0.3);
         }
@@ -610,7 +648,65 @@
       }
     }
 
-    // MODO RAYITO ⚡
+    // PISADORES Y BANNER EN PANTALLA
+    function triggerStinger(num) {
+      if (num === 1 && aS1.src) startStingerPlayback(aS1, "PISADOR 1");
+      if (num === 2 && aS2.src) startStingerPlayback(aS2, "PISADOR 2");
+    }
+
+    function startStingerPlayback(audioEl, name) {
+      stopCurrentStinger();
+      activeStingerAudio = audioEl;
+      activeStingerName = name;
+      audioEl.currentTime = 0;
+      audioEl.play();
+
+      const banner = document.getElementById('stingerBanner');
+      document.getElementById('bannerStingerName').innerText = `🔊 ${name} EN VIVO`;
+      banner.style.display = 'flex';
+
+      audioEl.ontimeupdate = () => {
+        if (!isNaN(audioEl.duration)) {
+          const cur = Math.floor(audioEl.currentTime);
+          const dur = Math.floor(audioEl.duration);
+          document.getElementById('bannerStingerTime').innerText = `0:${cur.toString().padStart(2,'0')} / 0:${dur.toString().padStart(2,'0')}`;
+        }
+      };
+
+      audioEl.onended = () => { stopCurrentStinger(); };
+    }
+
+    function stopCurrentStinger() {
+      if (activeStingerAudio) {
+        activeStingerAudio.pause();
+        activeStingerAudio.currentTime = 0;
+        activeStingerAudio = null;
+      }
+      document.getElementById('stingerBanner').style.display = 'none';
+    }
+
+    function loadCustomStinger(num, e) {
+      const f = e.target.files[0];
+      if (!f || !f.name.toLowerCase().endsWith('.mp3')) {
+        alert("Los pisadores solo aceptan formato MP3.");
+        return;
+      }
+      const url = URL.createObjectURL(f);
+      if (num === 1) aS1.src = url;
+      if (num === 2) aS2.src = url;
+      log(`Pisador ${num} cargado: ${f.name}`);
+    }
+
+    function loadLightningStinger(e) {
+      const f = e.target.files[0];
+      if (!f || !f.name.toLowerCase().endsWith('.mp3')) {
+        alert("El pisador del rayito solo acepta formato MP3.");
+        return;
+      }
+      aLight.src = URL.createObjectURL(f);
+      log(`⚡ Audio Pisador Rayito cargado: ${f.name}`);
+    }
+
     function toggleLightningMode() {
       lightningEnabled = !lightningEnabled;
       const btn = document.getElementById('btnLightning');
@@ -623,55 +719,17 @@
       }
     }
 
-    // Pisadores manuales
-    function triggerStinger(num) {
-      if (num === 1 && aS1.src) { aS1.currentTime = 0; aS1.play(); log('Pisador 1 al aire'); }
-      if (num === 2 && aS2.src) { aS2.currentTime = 0; aS2.play(); log('Pisador 2 al aire'); }
-    }
-
-    function loadCustomStinger(num, e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      const url = URL.createObjectURL(f);
-      if (num === 1) aS1.src = url;
-      if (num === 2) aS2.src = url;
-      log(`Pisador ${num} cargado: ${f.name}`);
-    }
-
-    function loadLightningStinger(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      aLight.src = URL.createObjectURL(f);
-      log(`⚡ Audio de Pisador Rayito cargado: ${f.name}`);
-    }
-
-    // Gestión de Pistas y Visualizador de 3 Cuadros
-    function handleMusicFiles(e) {
-      const files = Array.from(e.target.files);
-      if (files.length === 0) return;
-      playlist = files;
-      currentIndex = 0;
-      updateTrackBoxes();
-      log(`${files.length} canciones cargadas a la lista.`);
-      if (isLive && aMusic.paused) playTrack(0);
-    }
-
+    // COLA DE PISTAS (VERDE, AZUL, AMARILLO)
     function updateTrackBoxes() {
       if (playlist.length === 0) return;
-
-      // 1. Actual (Verde)
       const t1 = playlist[currentIndex];
       document.getElementById('track1').innerText = t1 ? t1.name : 'Sin pista';
 
-      // 2. Siguiente (Azul)
       const nextIdx = (currentIndex + 1) % playlist.length;
-      const t2 = playlist[nextIdx];
-      document.getElementById('track2').innerText = playlist.length > 1 ? t2.name : 'No hay más canciones';
+      document.getElementById('track2').innerText = playlist.length > 1 ? playlist[nextIdx].name : 'No hay más archivos';
 
-      // 3. Tercera (Amarillo)
       const thirdIdx = (currentIndex + 2) % playlist.length;
-      const t3 = playlist[thirdIdx];
-      document.getElementById('track3').innerText = playlist.length > 2 ? t3.name : 'No hay más canciones';
+      document.getElementById('track3').innerText = playlist.length > 2 ? playlist[thirdIdx].name : 'No hay más archivos';
     }
 
     function playTrack(idx) {
@@ -684,15 +742,13 @@
       aMusic.load();
 
       aMusic.onloadedmetadata = () => {
-        const dur = aMusic.duration; // en segundos
+        const dur = aMusic.duration;
         aMusic.play();
         document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
 
-        // LÓGICA DEL RAYITO ⚡ (> 1:40 min = 100 segundos)
+        // CONDICIÓN RAYITO ⚡ (> 100 segundos = 1m 40s)
         if (lightningEnabled && dur > 100 && aLight.src) {
-          log(`⚡ Rayito disparado: pista de duración ${Math.round(dur)}s (> 1:40).`);
-          aLight.currentTime = 0;
-          aLight.play();
+          startStingerPlayback(aLight, "⚡ PISADOR RAYITO");
         }
       };
     }
@@ -711,11 +767,8 @@
 
     function playNextTrack() {
       if (playlist.length === 0) return;
-      if (isShuffle) {
-        currentIndex = Math.floor(Math.random() * playlist.length);
-      } else {
-        currentIndex = (currentIndex + 1) % playlist.length;
-      }
+      if (isShuffle) currentIndex = Math.floor(Math.random() * playlist.length);
+      else currentIndex = (currentIndex + 1) % playlist.length;
       playTrack(currentIndex);
     }
 
@@ -736,31 +789,24 @@
       document.getElementById('btnMode').innerText = isShuffle ? 'MODO: ALEATORIO' : 'MODO: CONTINUO';
     }
 
-    // Controles de Volúmenes en vivo
+    // AJUSTES DE VOLUMEN
     function setMicVol(v) {
       document.getElementById('valMic').innerText = `${Math.round(v * 100)}%`;
-      if (micGainNode && audioContext && !micMuted) {
-        micGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
-      }
+      if (micGainNode && audioContext && !micMuted) micGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
     }
-
     function setMusicVol(v) {
       document.getElementById('valMusic').innerText = `${Math.round(v * 100)}%`;
-      if (musicGainNode && audioContext) {
-        musicGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
-      }
+      if (musicGainNode && audioContext) musicGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
     }
-
     function setStingerVol(v) {
       document.getElementById('valStinger').innerText = `${Math.round(v * 100)}%`;
-      if (stingerGainNode && audioContext) {
-        stingerGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
-      }
+      if (stingerGainNode && audioContext) stingerGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
     }
 
     function stopAll() {
       isLive = false;
       aMusic.pause();
+      stopCurrentStinger();
       document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
 
       if (processorNode) { processorNode.disconnect(); processorNode = null; }
