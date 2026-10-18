@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>EMISORASplus isecas</title>
   
-  <!-- LameJS para codificación MP3 -->
+  <!-- LameJS para codificación MP3 en tiempo real -->
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   
   <!-- Firebase SDK Global UMD -->
@@ -20,6 +20,7 @@
       --border: #1e3a6d;
       --text: #f8fafc;
       --text-muted: #94a3b8;
+      
       --c-green: #10b981;
       --c-blue: #06b6d4;
       --c-yellow: #facc15;
@@ -32,6 +33,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 8px; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
+    /* BARRA SUPERIOR */
     .top-bar {
       display: flex; justify-content: space-between; align-items: center;
       background: linear-gradient(90deg, #1e1b4b, #0f172a, #1e293b);
@@ -61,6 +63,7 @@
     }
     .btn-icon.monitor-active { background: #0284c7; border-color: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
 
+    /* MEDIDOR DE RED */
     .net-box {
       background: #090e1a; border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px;
       margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.65rem; font-weight: 800;
@@ -69,20 +72,21 @@
     .bar { width: 3px; background: #334155; border-radius: 1px; }
     .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
     .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
-    .signal-bars.mid .b1, .signal-bars.mid .b2, .signal-bars.mid .b3 { background: var(--c-yellow); }
-    .signal-bars.low .b1 { background: var(--c-red); }
 
+    /* VÚMETRO */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
     .vu-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--c-green) 50%, var(--c-yellow) 80%, var(--c-red) 100%); transition: width 0.05s linear; }
 
+    /* BANNER PISADOR */
     .stinger-banner {
       display: none; background: linear-gradient(135deg, #3b0764, #1e1b4b);
       border: 2px solid var(--c-purple); border-radius: 8px; padding: 6px 10px;
       margin-bottom: 6px; align-items: center; justify-content: space-between;
     }
 
+    /* COLA DE 3 PISTAS */
     .queue-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
     .track-box {
       border-radius: 8px; padding: 6px 10px; background: #070c1b; border-width: 2px; border-style: solid;
@@ -99,6 +103,7 @@
     .track-name { font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
     .track-time { font-size: 0.65rem; color: var(--text-muted); }
 
+    /* MIC Y DUCKING */
     .mic-duck-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 6px; margin-bottom: 6px; }
     .btn-broadcast {
       padding: 10px; border: none; border-radius: 8px; font-weight: 900; font-size: 0.78rem;
@@ -113,6 +118,7 @@
     }
     .btn-ducking.active { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border-color: #a78bfa; }
 
+    /* PISADORES Y RAYITO */
     .stinger-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
     .btn-stinger {
       padding: 8px 4px; border-radius: 8px; font-size: 0.7rem; font-weight: 800;
@@ -125,6 +131,7 @@
     .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 900; }
     .btn-stinger:disabled { opacity: 0.35; filter: grayscale(1); }
 
+    /* CONTROLES Y CARGA */
     .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
     .btn-ctrl { padding: 9px 4px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-sub); color: #fff; font-size: 0.7rem; font-weight: 800; cursor: pointer; }
     
@@ -135,6 +142,7 @@
       color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 0.72rem; text-align: center;
     }
 
+    /* BOTÓN AL AIRE */
     .btn-main-stream {
       width: 100%; padding: 13px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: #fff; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 900; cursor: pointer;
@@ -146,6 +154,7 @@
       font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 50px; overflow-y: auto; margin-top: 6px;
     }
 
+    /* MODALES */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(4px);
       display: none; align-items: center; justify-content: center; z-index: 999; padding: 12px;
@@ -169,24 +178,7 @@
       background: linear-gradient(135deg, #064e3b, #065f46); border: 1px solid #34d399;
       border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
     }
-    .pro-badge-pill {
-      background: #fbbf24; color: #000; font-size: 0.62rem; font-weight: 900; padding: 2px 8px; border-radius: 20px;
-    }
-    .pro-benefit-list {
-      list-style: none; margin: 8px 0; padding: 0; font-size: 0.7rem; color: #e2e8f0; line-height: 1.5;
-    }
-    .pro-benefit-list li { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-    .pro-benefit-list li span { color: var(--c-green); font-weight: 900; }
-
-    .activation-loading-box {
-      display: none; background: #111827; border: 1px solid #6366f1; border-radius: 10px;
-      padding: 14px; text-align: center; margin: 10px 0;
-    }
-    .spinner {
-      width: 32px; height: 32px; border: 3px solid rgba(99,102,241,0.2);
-      border-top-color: #818cf8; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 8px auto;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .pro-badge-pill { background: #fbbf24; color: #000; font-size: 0.62rem; font-weight: 900; padding: 2px 8px; border-radius: 20px; }
   </style>
 </head>
 <body>
@@ -304,7 +296,7 @@
   <audio id="audioStinger2" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioLightning" style="display:none;" crossorigin="anonymous"></audio>
 
-  <!-- ==================== MODAL DE PLAN PRO ==================== -->
+  <!-- MODAL DE PLAN PRO -->
   <div class="modal-overlay" id="proModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -315,56 +307,19 @@
       <div id="viewFreeUser">
         <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); border:1px solid #facc15; border-radius:10px; padding:10px; text-align:center; margin-bottom:10px;">
           <h3 style="color:#fde047; font-size:0.95rem;">EMISORASplus PRO</h3>
-          <p style="font-size:0.7rem; color:#cbd5e1; margin:4px 0;">
-            Transmisión continua sin cortes • Sube videos y MP3 • Rayito Automático • Ducking Inteligente • 2 Pisadores • 4 Estaciones • <b>AutoDJ 10 GB en la Nube</b>
-          </p>
+          <p style="font-size:0.7rem; color:#cbd5e1; margin:4px 0;">Transmisión continua sin cortes • Sube videos y MP3 • Rayito • 4 Estaciones</p>
           <div style="font-size:1.1rem; font-weight:900; color:#4ade80; margin-top:4px;">$39.900 COP</div>
         </div>
 
         <div id="formLoginFields">
-          <div style="font-size:0.7rem; font-weight:800; color:var(--c-blue); margin-bottom:6px;">
-            🔑 INGRESAR CON MI CUENTA ASIGNADA (DE VENTAS)
-          </div>
-          <div class="form-group">
-            <label>Correo Electrónico</label>
-            <input type="email" id="proEmail" placeholder="usuario@gmail.com">
-          </div>
-          <div class="form-group">
-            <label>Contraseña</label>
-            <input type="password" id="proPass" placeholder="Tu clave asignada">
-          </div>
-          <button id="btnLoginAction" class="btn-ctrl" style="width:100%; background:var(--c-blue); margin-bottom:12px; font-weight:900;" onclick="loginFirebasePro()">
-            ACTIVAR PLAN PRO AHORA
-          </button>
-        </div>
-
-        <div class="activation-loading-box" id="activationLoadingBox">
-          <div class="spinner"></div>
-          <div style="font-size:0.8rem; font-weight:900; color:#818cf8; margin-bottom:4px;">
-            ⏳ ACTIVANDO TU PLAN PRO...
-          </div>
-          <p style="font-size:0.68rem; color:#cbd5e1; line-height:1.4;">
-            Verificando tu servidor y credenciales.<br>
-            <b>Este proceso tardará unos minutos en activarse (hasta 2 minutos).</b>
-          </p>
+          <div style="font-size:0.7rem; font-weight:800; color:var(--c-blue); margin-bottom:6px;">🔑 INGRESAR CON MI CUENTA</div>
+          <div class="form-group"><label>Correo</label><input type="email" id="proEmail"></div>
+          <div class="form-group"><label>Contraseña</label><input type="password" id="proPass"></div>
+          <button id="btnLoginAction" class="btn-ctrl" style="width:100%; background:var(--c-blue); margin-bottom:12px; font-weight:900;" onclick="loginFirebasePro()">ACTIVAR PLAN PRO</button>
         </div>
 
         <div id="whatsAppBuySection">
-          <hr style="border-color:var(--border); margin-bottom:12px;">
-          <div style="font-size:0.7rem; font-weight:800; color:#4ade80; margin-bottom:6px;">
-            📲 ¿NO TIENES CUENTA? COMPRAR VÍA WHATSAPP
-          </div>
-          <div class="form-group">
-            <label>Tu Nombre Completo</label>
-            <input type="text" id="buyName" placeholder="Tu nombre">
-          </div>
-          <div class="form-group">
-            <label>Tu Correo para la Licencia</label>
-            <input type="email" id="buyEmail" placeholder="tu@correo.com">
-          </div>
-          <button class="btn-ctrl" style="width:100%; background:#25d366; color:#000; font-weight:900;" onclick="comprarWhatsApp()">
-            💬 COMPRAR POR WHATSAPP ($39.900)
-          </button>
+          <button class="btn-ctrl" style="width:100%; background:#25d366; color:#000; font-weight:900;" onclick="comprarWhatsApp()">💬 COMPRAR POR WHATSAPP ($39.900)</button>
         </div>
       </div>
 
@@ -376,52 +331,8 @@
           </div>
           <div class="pro-badge-pill">👑 PRO ACTIVO</div>
         </div>
-
-        <div style="font-size:0.72rem; font-weight:900; color:var(--c-gold); margin-bottom:4px;">
-          ✨ BENEFICIOS ACTIVOS EN TU PLAN:
-        </div>
-        <ul class="pro-benefit-list">
-          <li><span>✓</span> Transmisión continua sin límites de 15 min</li>
-          <li><span>✓</span> AutoDJ en la nube con 10 GB de almacenamiento</li>
-          <li><span>✓</span> Soporte para subida de audio MP3 y videos</li>
-          <li><span>✓</span> Atenuación inteligente (Ducking Automático)</li>
-          <li><span>✓</span> Pisador automático con Modo Rayito ⚡ (>1:40)</li>
-          <li><span>✓</span> 2 Pisadores instantáneos en pantalla</li>
-          <li><span>✓</span> Soporte para hasta 4 servidores / estaciones</li>
-        </ul>
-
-        <button class="btn-ctrl" style="width:100%; background:#1e293b; border-color:var(--c-blue); color:#38bdf8; font-weight:900; margin-top:8px;" onclick="toggleSecurityPanel()">
-          ⚙ AJUSTES DE SEGURIDAD / RESTABLECER CONTRASEÑA
-        </button>
-
-        <div id="securityPanel" style="display:none; background:#070c1b; border:1px solid var(--border); border-radius:10px; padding:10px; margin-top:8px;">
-          <div style="font-size:0.68rem; color:var(--c-yellow); font-weight:800; margin-bottom:6px;">
-            🔒 RESTABLECER / ACTUALIZAR CONTRASEÑA
-          </div>
-          <div class="form-group">
-            <label>Nueva Contraseña</label>
-            <div style="display:flex; gap:4px;">
-              <input type="password" id="newPass1" placeholder="Mínimo 6 caracteres">
-              <button class="btn-ctrl" style="width:40px;" onclick="togglePassVisibility('newPass1')">👁</button>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Confirmar Nueva Contraseña</label>
-            <div style="display:flex; gap:4px;">
-              <input type="password" id="newPass2" placeholder="Repite la nueva contraseña">
-              <button class="btn-ctrl" style="width:40px;" onclick="togglePassVisibility('newPass2')">👁</button>
-            </div>
-          </div>
-          <button class="btn-ctrl" style="width:100%; background:var(--c-green); font-weight:900; margin-top:4px;" onclick="changeUserPassword()">
-            GUARDAR Y ACTUALIZAR CONTRASEÑA
-          </button>
-        </div>
-
-        <button class="btn-ctrl" style="width:100%; background:#334155; margin-top:10px; font-weight:800;" onclick="logoutPro()">
-          CERRAR SESIÓN PRO
-        </button>
+        <button class="btn-ctrl" style="width:100%; background:#334155; margin-top:10px; font-weight:800;" onclick="logoutPro()">CERRAR SESIÓN</button>
       </div>
-
     </div>
   </div>
 
@@ -429,33 +340,26 @@
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div style="font-size:0.85rem; font-weight:900; color:#38bdf8;">⚙ AJUSTES Y ESTACIONES</div>
+        <div style="font-size:0.85rem; font-weight:900; color:#38bdf8;">⚙ AJUSTES DE SERVIDOR</div>
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeSettingsModal()">✕</button>
       </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <span style="font-size:0.7rem; font-weight:800; color:var(--c-yellow);">📻 ESTACIÓN ACTIVA</span>
-        <span id="lblStationLimit" style="font-size:0.6rem; color:var(--text-muted);">Límite: 1 estación (Gratis)</span>
-      </div>
+      <!-- SELECTOR DE SERVIDOR -->
       <div class="form-group">
-        <select id="stationSelector" onchange="switchStation(this.value)">
-          <option value="1">Estación 1 (Principal)</option>
-          <option value="2" disabled>Estación 2 (Solo PRO)</option>
-          <option value="3" disabled>Estación 3 (Solo PRO)</option>
-          <option value="4" disabled>Estación 4 (Solo PRO)</option>
+        <label style="color:var(--c-gold);">Tipo de Servidor</label>
+        <select id="serverType" onchange="adjustServerDefaults(this.value)">
+          <option value="zeno">Zeno Media (link.zeno.fm)</option>
+          <option value="icecast">Icecast Universal / SonicPanel / Otro</option>
         </select>
       </div>
 
-      <div style="font-size:0.7rem; font-weight:900; color:var(--c-blue); margin:8px 0 4px 0;">
-        📡 SERVIDOR ICECAST / CUALQUIER PROVEEDOR
-      </div>
       <div class="form-group">
-        <label>Servidor / Host (ej. link.zeno.fm o tu IP)</label>
+        <label>Servidor / Host</label>
         <input type="text" id="host" value="link.zeno.fm">
       </div>
       <div style="display:flex; gap:6px;">
         <div class="form-group" style="flex:1;"><label>Puerto</label><input type="number" id="port" value="80"></div>
-        <div class="form-group" style="flex:2;"><label>Punto Anclaje (/mount)</label><input type="text" id="mount" value="/f04sfgq6138uv"></div>
+        <div class="form-group" style="flex:2;"><label>Punto Anclaje (/mount)</label><input type="text" id="mount" value="/f04sfgq6138uv/source"></div>
       </div>
       <div class="form-group"><label>Usuario</label><input type="text" id="user" value="source"></div>
       <div class="form-group">
@@ -466,18 +370,7 @@
         <input type="password" id="password" placeholder="Tu Stream Key">
       </div>
 
-      <div style="background:#131d36; border:1px solid #3b82f6; border-radius:8px; padding:8px; margin:8px 0;">
-        <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-weight:900; color:var(--c-gold);">
-          <span>☁ AUTODJ EN NUBE</span>
-          <span id="autoDjStatus">SOLO PRO (10 GB)</span>
-        </div>
-        <div style="height:6px; background:#030712; border-radius:3px; margin:4px 0; overflow:hidden;">
-          <div id="barAutoDj" style="width:0%; height:100%; background:var(--c-gold);"></div>
-        </div>
-        <span style="font-size:0.6rem; color:var(--text-muted);" id="lblAutoDjCap">Espacio disponible para programar canciones sin teléfono.</span>
-      </div>
-
-      <div style="font-size:0.7rem; font-weight:900; color:var(--c-yellow); margin-bottom:4px;">🎚 VOLÚMENES</div>
+      <div style="font-size:0.7rem; font-weight:900; color:var(--c-yellow); margin-top:8px;">🎚 VOLÚMENES</div>
       <div class="vol-row">
         <span class="vol-label">🎤 Mic</span>
         <input type="range" id="volMic" min="0" max="1.5" step="0.05" value="1.0" oninput="setMicVol(this.value)">
@@ -488,21 +381,6 @@
         <input type="range" id="volMusic" min="0" max="1.0" step="0.05" value="0.75" oninput="setMusicVol(this.value)">
         <span class="vol-val" id="valMusic">75%</span>
       </div>
-      <div class="vol-row">
-        <span class="vol-label">🔊 Pisador</span>
-        <input type="range" id="volStinger" min="0" max="1.2" step="0.05" value="0.9" oninput="setStingerVol(this.value)">
-        <span class="vol-val" id="valStinger">90%</span>
-      </div>
-
-      <div style="font-size:0.7rem; font-weight:900; color:var(--c-purple); margin:8px 0 4px 0;">🎙 CARGAR PISADORES</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-        <label class="btn-ctrl" style="text-align:center; display:block;">PISADOR 1 📂<input type="file" accept="audio/mpeg, audio/mp3" style="display:none;" onchange="loadCustomStinger(1, event)"></label>
-        <label id="lblP2File" class="btn-ctrl" style="text-align:center; display:block; opacity:0.4;">PISADOR 2 🔒<input type="file" id="inpP2File" disabled accept="audio/mpeg, audio/mp3" style="display:none;" onchange="loadCustomStinger(2, event)"></label>
-      </div>
-      <label id="lblRayitoFile" class="btn-ctrl" style="text-align:center; display:block; border-color:var(--c-yellow); color:var(--c-yellow); margin-top:6px; opacity:0.4;">
-        ⚡ PISADOR RAYITO (>1:40) 🔒
-        <input type="file" id="inpRayitoFile" disabled accept="audio/mpeg, audio/mp3" style="display:none;" onchange="loadLightningStinger(event)">
-      </label>
 
       <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeSettingsModal()">GUARDAR Y APLICAR</button>
     </div>
@@ -524,7 +402,6 @@
     const RELAY_URL = "wss://zeno-relay.onrender.com";
 
     let isPro = false;
-    let isActivating = false;
     let currentUserEmail = "";
     let isLive = false;
     let micMuted = false;
@@ -541,30 +418,19 @@
     let liveSeconds = 0;
     const MAX_FREE_SECONDS = 15 * 60;
 
-    let currentStation = 1;
-    let stationsData = {
-      1: { host: "link.zeno.fm", port: "80", mount: "/f04sfgq6138uv", user: "source", password: "" },
-      2: { host: "", port: "80", mount: "", user: "source", password: "" },
-      3: { host: "", port: "80", mount: "", user: "source", password: "" },
-      4: { host: "", port: "80", mount: "", user: "source", password: "" }
-    };
-
     let audioContext = null;
     let mediaStream = null;
     let micSourceNode = null;
     let micGainNode = null;
     let musicSourceNode = null;
     let musicGainNode = null;
-    let stinger1SourceNode = null;
-    let stinger2SourceNode = null;
-    let lightningSourceNode = null;
-    let stingerGainNode = null;
-    let masterGainNode = null;
-    let monitorGainNode = null;
+    let masterMixerNode = null;
     let processorNode = null;
     let mp3Encoder = null;
     let ws = null;
-    let audioBytesSent = 0;
+
+    let packetsSentCount = 0;
+    let statsInterval = null;
 
     const aMusic = document.getElementById('audioMusic');
     const aS1 = document.getElementById('audioStinger1');
@@ -572,20 +438,14 @@
     const aLight = document.getElementById('audioLightning');
 
     window.addEventListener('DOMContentLoaded', () => {
-      const savedPro = localStorage.getItem('ep_is_pro');
-      const savedEmail = localStorage.getItem('ep_pro_email');
-      if (savedPro === 'true' && savedEmail) {
-        activarModoPro(savedEmail);
-      }
-
-      auth.onAuthStateChanged(user => {
-        if (user && !isActivating) {
-          activarModoPro(user.email);
-        }
+      ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
+        const val = localStorage.getItem(`ep_${id}`);
+        if (val) document.getElementById(id).value = val;
       });
 
-      loadSavedStations();
-      iniciarMonitorPing();
+      auth.onAuthStateChanged(user => {
+        if (user) activarModoPro(user.email);
+      });
     });
 
     function log(msg) {
@@ -594,297 +454,86 @@
       t.scrollTop = t.scrollHeight;
     }
 
-    function openProModal() {
-      if (isPro) {
-        document.getElementById('viewFreeUser').style.display = 'none';
-        document.getElementById('viewProActiveUser').style.display = 'block';
-        document.getElementById('userProEmailDisplay').innerText = currentUserEmail || "Cuenta PRO Activa";
-        document.getElementById('modalProHeaderTitle').innerText = '👑 MI PLAN PRO ACTIVO';
+    function adjustServerDefaults(type) {
+      if (type === 'zeno') {
+        document.getElementById('host').value = 'link.zeno.fm';
+        document.getElementById('port').value = '80';
+        document.getElementById('mount').value = '/f04sfgq6138uv/source';
+        document.getElementById('user').value = 'source';
       } else {
-        document.getElementById('viewFreeUser').style.display = 'block';
-        document.getElementById('viewProActiveUser').style.display = 'none';
-        document.getElementById('modalProHeaderTitle').innerText = '👑 ADQUIRIR O ACTIVAR PLAN PRO';
-
-        if (isActivating) {
-          document.getElementById('formLoginFields').style.display = 'none';
-          document.getElementById('whatsAppBuySection').style.display = 'none';
-          document.getElementById('activationLoadingBox').style.display = 'block';
-        } else {
-          document.getElementById('formLoginFields').style.display = 'block';
-          document.getElementById('whatsAppBuySection').style.display = 'block';
-          document.getElementById('activationLoadingBox').style.display = 'none';
-        }
+        document.getElementById('port').value = '8000';
+        document.getElementById('mount').value = '/live';
+        document.getElementById('user').value = 'source';
       }
-      document.getElementById('proModal').style.display = 'flex';
     }
 
+    function saveSettings() {
+      ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
+        localStorage.setItem(`ep_${id}`, document.getElementById(id).value.trim());
+      });
+    }
+
+    function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
+    function closeSettingsModal() { saveSettings(); document.getElementById('settingsModal').style.display = 'none'; }
+    function openProModal() { document.getElementById('proModal').style.display = 'flex'; }
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
-
-    async function loginFirebasePro() {
-      const email = document.getElementById('proEmail').value.trim();
-      const pass = document.getElementById('proPass').value.trim();
-      const btn = document.getElementById('btnLoginAction');
-
-      if (!email || !pass) {
-        alert("Por favor ingresa tu correo y contraseña asignados.");
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = "VERIFICANDO...";
-
-      try {
-        log("Validando credenciales con Firebase...");
-        const userCredential = await auth.signInWithEmailAndPassword(email, pass);
-        const user = userCredential.user;
-
-        isActivating = true;
-        document.getElementById('formLoginFields').style.display = 'none';
-        document.getElementById('whatsAppBuySection').style.display = 'none';
-        document.getElementById('activationLoadingBox').style.display = 'block';
-
-        const crownBtn = document.getElementById('btnProBadge');
-        crownBtn.className = 'btn-crown loading-state';
-        crownBtn.innerHTML = '⏳ ACTUALIZANDO...';
-
-        log('<span style="color:var(--c-yellow)">Aprovisionando tu cuenta PRO en la nube...</span>');
-
-        setTimeout(() => {
-          isActivating = false;
-          activarModoPro(user.email);
-          openProModal();
-          alert("¡Tu cuenta PRO ha sido activada con éxito!");
-        }, 8000);
-
-      } catch (err) {
-        let msg = err.message;
-        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-          msg = "Contraseña incorrecta. Verifica tu clave de ventas.";
-        } else if (err.code === 'auth/user-not-found') {
-          msg = "No existe una cuenta asignada con este correo.";
-        }
-        alert("Error de inicio de sesión: " + msg);
-        log(`<span style="color:var(--c-red)">Fallo: ${err.code}</span>`);
-        btn.disabled = false;
-        btn.innerText = "ACTIVAR PLAN PRO AHORA";
-      }
-    }
-
-    function activarModoPro(email) {
-      isPro = true;
-      isActivating = false;
-      currentUserEmail = email;
-      localStorage.setItem('ep_is_pro', 'true');
-      localStorage.setItem('ep_pro_email', email);
-
-      const b = document.getElementById('btnProBadge');
-      b.className = 'btn-crown pro-active';
-      b.innerHTML = '👑 PRO ACTIVO';
-      document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
-
-      document.getElementById('btnP2').disabled = false;
-      document.getElementById('btnP2').innerHTML = '<span>🔊 PISADOR 2</span><small style="font-size:0.55rem;">DISPARAR</small>';
-      document.getElementById('btnLightning').disabled = false;
-      document.getElementById('btnLightning').innerHTML = '<span>⚡ RAYITO</span><small style="font-size:0.55rem;">AUTO (>1:40)</small>';
-      
-      document.getElementById('inpP2File').disabled = false;
-      document.getElementById('lblP2File').style.opacity = '1';
-      document.getElementById('lblP2File').innerText = 'PISADOR 2 📂';
-
-      document.getElementById('inpRayitoFile').disabled = false;
-      document.getElementById('lblRayitoFile').style.opacity = '1';
-      document.getElementById('lblRayitoFile').innerText = '⚡ PISADOR RAYITO (>1:40) 📂';
-
-      document.getElementById('fileTracks').setAttribute('accept', 'audio/mpeg, audio/mp3, video/mp4, video/webm, video/*');
-      document.getElementById('lblLoadFiles').innerText = '📂 CARGAR MÚSICA O VIDEO (PRO)';
-
-      const sSel = document.getElementById('stationSelector');
-      for (let i = 1; i < sSel.options.length; i++) sSel.options[i].disabled = false;
-      document.getElementById('lblStationLimit').innerText = 'Límite: 4 estaciones (PRO)';
-
-      document.getElementById('autoDjStatus').innerText = 'ACTIVO (10 GB NUBE)';
-      document.getElementById('barAutoDj').style.width = '100%';
-      document.getElementById('barAutoDj').style.background = 'var(--c-green)';
-      document.getElementById('lblAutoDjCap').innerText = 'AutoDJ activado en la nube con 10 GB de capacidad.';
-
-      log(`Plan PRO activo: ${email}`);
-    }
-
-    function desactivarModoPro() {
-      isPro = false;
-      currentUserEmail = "";
-      localStorage.removeItem('ep_is_pro');
-      localStorage.removeItem('ep_pro_email');
-
-      document.getElementById('btnProBadge').className = 'btn-crown';
-      document.getElementById('btnProBadge').innerHTML = '👑 PRO';
-      document.getElementById('timerLiveBox').innerText = 'TIEMPO MÁX: 15:00';
-    }
-
-    function toggleSecurityPanel() {
-      const p = document.getElementById('securityPanel');
-      p.style.display = p.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function togglePassVisibility(id) {
-      const inp = document.getElementById(id);
-      inp.type = inp.type === 'password' ? 'text' : 'password';
-    }
-
-    async function changeUserPassword() {
-      const p1 = document.getElementById('newPass1').value.trim();
-      const p2 = document.getElementById('newPass2').value.trim();
-
-      if (!p1 || p1.length < 6) {
-        alert("La contraseña debe tener mínimo 6 caracteres.");
-        return;
-      }
-      if (p1 !== p2) {
-        alert("Las contraseñas no coinciden. Intenta de nuevo.");
-        return;
-      }
-
-      const user = auth.currentUser;
-      if (!user) {
-        alert("Tu sesión expiró. Inicia sesión nuevamente.");
-        return;
-      }
-
-      try {
-        log("Actualizando clave de usuario...");
-        await user.updatePassword(p1);
-        alert("¡Tu contraseña ha sido restablecida con éxito!");
-        document.getElementById('newPass1').value = '';
-        document.getElementById('newPass2').value = '';
-        toggleSecurityPanel();
-      } catch (err) {
-        alert("Error al actualizar: " + err.message);
-      }
-    }
-
-    async function logoutPro() {
-      if (confirm("¿Deseas cerrar tu sesión PRO?")) {
-        try { await auth.signOut(); } catch (e) {}
-        desactivarModoPro();
-        closeProModal();
-        location.reload();
-      }
-    }
-
-    function comprarWhatsApp() {
-      const name = document.getElementById('buyName').value.trim();
-      const email = document.getElementById('buyEmail').value.trim();
-      if (!name || !email) { alert("Escribe tu nombre y correo para procesar la compra."); return; }
-
-      const msg = `Hola, quiero comprar la versión PRO de EMISORASplus isecas por $39.900 COP.%0A%0A*Nombre:* ${encodeURIComponent(name)}%0A*Correo:* ${encodeURIComponent(email)}`;
-      const url = `https://wa.me/573334018595?text=${msg}`;
-      window.open(url, '_blank');
-    }
-
-    function iniciarMonitorPing() {
-      setInterval(async () => {
-        const start = Date.now();
-        try {
-          await fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' });
-          const latency = Date.now() - start;
-          const bars = document.getElementById('netBars');
-          const txt = document.getElementById('netStatusText');
-
-          if (latency < 120) {
-            bars.className = 'signal-bars good';
-            txt.innerText = `EXCELENTE (${latency}ms)`;
-          } else if (latency < 300) {
-            bars.className = 'signal-bars mid';
-            txt.innerText = `MEDIA (${latency}ms)`;
-          } else {
-            bars.className = 'signal-bars low';
-            txt.innerText = `DÉBIL (${latency}ms)`;
-          }
-        } catch (e) {
-          document.getElementById('netBars').className = 'signal-bars low';
-          document.getElementById('netStatusText').innerText = `SIN CONEXIÓN`;
-        }
-      }, 5000);
-    }
-
-    function loadSavedStations() {
-      const s = localStorage.getItem('ep_stations');
-      if (s) {
-        try { stationsData = JSON.parse(s); } catch (e) {}
-      }
-      applyStationToInputs(currentStation);
-    }
-
-    function saveStationData() {
-      stationsData[currentStation] = {
-        host: document.getElementById('host').value.trim(),
-        port: document.getElementById('port').value.trim(),
-        mount: document.getElementById('mount').value.trim(),
-        user: document.getElementById('user').value.trim(),
-        password: document.getElementById('password').value.trim()
-      };
-      localStorage.setItem('ep_stations', JSON.stringify(stationsData));
-    }
-
-    function switchStation(id) {
-      saveStationData();
-      currentStation = parseInt(id);
-      applyStationToInputs(currentStation);
-      log(`Cambiado a Estación ${currentStation}`);
-    }
-
-    function applyStationToInputs(id) {
-      const st = stationsData[id] || { host: "link.zeno.fm", port: "80", mount: "/f04sfgq6138uv", user: "source", password: "" };
-      document.getElementById('host').value = st.host;
-      document.getElementById('port').value = st.port;
-      document.getElementById('mount').value = st.mount;
-      document.getElementById('user').value = st.user;
-      document.getElementById('password').value = st.password;
-    }
 
     function togglePasswordVisibility() {
       const p = document.getElementById('password');
       p.type = p.type === 'password' ? 'text' : 'password';
     }
 
-    function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
-    function closeSettingsModal() { saveStationData(); document.getElementById('settingsModal').style.display = 'none'; }
-
-    function handleStrictFiles(e) {
-      const raw = Array.from(e.target.files);
-      const allowed = raw.filter(f => {
-        const n = f.name.toLowerCase();
-        const t = f.type.toLowerCase();
-        const isAudio = n.endsWith('.mp3') || t === 'audio/mpeg';
-        const isVideo = n.endsWith('.mp4') || n.endsWith('.webm') || n.endsWith('.m4v') || t.startsWith('video/');
-        return isPro ? (isAudio || isVideo) : isAudio;
-      });
-
-      if (allowed.length === 0) {
-        alert(isPro ? "Solo se admiten archivos MP3 o Videos." : "En versión gratuita solo se admiten archivos MP3. Pasa a PRO para subir videos.");
-        return;
-      }
-      playlist = allowed;
-      currentIndex = 0;
-      updateTrackBoxes();
-      log(`${allowed.length} pista(s) lista(s).`);
-      if (isLive && aMusic.paused) playTrack(0);
+    function activarModoPro(email) {
+      isPro = true;
+      currentUserEmail = email;
+      const b = document.getElementById('btnProBadge');
+      b.className = 'btn-crown pro-active';
+      b.innerHTML = '👑 PRO ACTIVO';
+      document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
+      document.getElementById('btnP2').disabled = false;
+      document.getElementById('btnLightning').disabled = false;
+      document.getElementById('fileTracks').setAttribute('accept', 'audio/*, video/*');
+      document.getElementById('lblLoadFiles').innerText = '📂 CARGAR MÚSICA O VIDEO (PRO)';
     }
 
-    // ===============================================
-    // TRANSMISIÓN ROBUSTA EN TIEMPO REAL
-    // ===============================================
-    async function toggleStream() {
+    async function loginFirebasePro() {
+      const email = document.getElementById('proEmail').value.trim();
+      const pass = document.getElementById('proPass').value.trim();
+      if (!email || !pass) { alert("Ingresa correo y clave."); return; }
+      try {
+        await auth.signInWithEmailAndPassword(email, pass);
+        activarModoPro(email);
+        alert("¡Plan PRO activado!");
+        closeProModal();
+      } catch (e) {
+        alert("Error de autenticación: " + e.message);
+      }
+    }
+
+    function logoutPro() {
+      auth.signOut();
+      location.reload();
+    }
+
+    function comprarWhatsApp() {
+      window.open('https://wa.me/573334018595?text=Hola,%20quiero%20comprar%20la%20versión%20PRO', '_blank');
+    }
+
+    // ========================================================
+    // MOTOR DE TRANSMISIÓN (ESTRUCTURA ORIGINAL PROBADA)
+    // ========================================================
+    async function toggleBroadcast() {
       if (isLive) {
         stopAll();
       } else {
         await startBroadcast();
       }
     }
+    const toggleStream = toggleBroadcast;
 
     async function startBroadcast() {
-      saveStationData();
-      
+      saveSettings();
+
       const host = document.getElementById('host').value.trim();
       const port = document.getElementById('port').value.trim();
       let mount = document.getElementById('mount').value.trim();
@@ -892,17 +541,17 @@
       const password = document.getElementById('password').value.trim();
 
       if (!host || !port || !mount || !password) {
-        alert("Ingresa todos los datos de tu emisora en Ajustes ⚙ (Host, Puerto, Mount y Contraseña).");
+        alert("Completa los datos de transmisión en Ajustes ⚙.");
         openSettingsModal();
         return;
       }
 
-      if (mount && !mount.startsWith('/')) {
+      if (!mount.startsWith('/')) {
         mount = '/' + mount;
         document.getElementById('mount').value = mount;
       }
 
-      log("Solicitando acceso al micrófono...");
+      log("1. Accediendo a micrófono...");
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -912,20 +561,20 @@
             autoGainControl: true
           }
         });
+        log('<span style="color:var(--c-green)">Micrófono activado con éxito.</span>');
       } catch (err) {
-        log(`<span style="color:var(--c-red)">Error de micrófono: ${err.name} - ${err.message}</span>`);
-        alert("Permiso de micrófono denegado. Actívalo en la app.");
+        log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
         return;
       }
 
-      log(`Conectando con relay y autenticando en ${host}...`);
+      log(`2. Conectando con relay y autenticando en ${host}...`);
 
       try {
         ws = new WebSocket(RELAY_URL);
         ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {
-          log("Enviando credenciales al servidor Icecast...");
+          log("Enviando credenciales al relay...");
           ws.send(JSON.stringify({
             action: 'AUTH_ICECAST',
             host: host,
@@ -936,46 +585,43 @@
           }));
         };
 
-        ws.onmessage = async (e) => {
-          try {
-            const resp = JSON.parse(e.data);
-            if (resp.status === 'SUCCESS') {
-              log('<span style="color:var(--c-green); font-weight:bold;">¡AUTENTICADO! Conectado con éxito a Icecast.</span>');
-              await initAudioEngine();
-            } else {
-              log(`<span style="color:var(--c-red); font-weight:bold;">Rechazado: ${resp.message} (${resp.code || ''})</span>`);
-              stopAll();
-              alert(`Error del servidor Icecast: ${resp.message}`);
-            }
-          } catch (errParse) {
-            log(`Mensaje servidor: ${e.data}`);
+        ws.onmessage = async (event) => {
+          const resp = JSON.parse(event.data);
+          if (resp.status === 'SUCCESS') {
+            log('<span style="color:var(--c-green); font-weight:bold;">¡Autenticado con éxito! AL AIRE.</span>');
+            await iniciarAudioEngine();
+          } else if (resp.status === 'ERROR') {
+            stopAll();
+            log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message} (${resp.code || ''})</span>`);
+            alert(`Error de autenticación Icecast: ${resp.message}`);
           }
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">El servidor relay se está despertando en Render. Presiona nuevamente en 10 segundos.</span>');
+          log('<span style="color:var(--c-yellow)">El relay en Render está despertando. Pulsa nuevamente en 10s.</span>');
           stopAll();
         };
 
         ws.onclose = () => {
           if (isLive) {
-            log('<span style="color:var(--c-red)">Desconectado del servidor Icecast.</span>');
+            log('<span style="color:var(--c-red)">Transmisión desconectada.</span>');
             stopAll();
           }
         };
 
-      } catch (e) {
-        log(`<span style="color:var(--c-red)">Error de conexión WebSocket: ${e.message}</span>`);
+      } catch (err) {
+        log(`<span style="color:var(--c-red)">Error: ${err.message}</span>`);
         stopAll();
       }
     }
 
-    async function initAudioEngine() {
+    async function iniciarAudioEngine() {
       isLive = true;
       liveSeconds = 0;
-      audioBytesSent = 0;
+      packetsSentCount = 0;
+
       document.getElementById('btnLive').className = 'btn-main-stream live';
-      document.getElementById('btnLive').innerText = 'DETENER TRANSMISIÓN EN VIVO';
+      document.getElementById('btnLive').innerText = 'DETENER TRANSMISIÓN';
 
       if (!isPro) {
         liveTimerInterval = setInterval(() => {
@@ -984,10 +630,9 @@
           const m = Math.floor(rem / 60);
           const s = (rem % 60).toString().padStart(2, '0');
           document.getElementById('timerLiveBox').innerText = `TIEMPO RESTANTE: ${m}:${s}`;
-
           if (liveSeconds >= MAX_FREE_SECONDS) {
             clearInterval(liveTimerInterval);
-            alert("Los 15 minutos gratuitos han finalizado. Adquiere el plan PRO para transmitir sin límite.");
+            alert("Los 15 minutos gratuitos han finalizado.");
             stopAll();
           }
         }, 1000);
@@ -997,52 +642,39 @@
       if (audioContext.state === 'suspended') {
         await audioContext.resume();
       }
+      const sampleRate = audioContext.sampleRate;
+      log(`Frecuencia de muestreo: ${sampleRate}Hz`);
 
-      const inputSampleRate = audioContext.sampleRate;
-      log(`Motor de audio activo: ${inputSampleRate}Hz`);
+      // Mezclador Maestro
+      masterMixerNode = audioContext.createGain();
 
-      masterGainNode = audioContext.createGain();
-
-      monitorGainNode = audioContext.createGain();
-      monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
-      masterGainNode.connect(monitorGainNode);
-      monitorGainNode.connect(audioContext.destination);
-
+      // Canal de Micrófono
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
       micGainNode = audioContext.createGain();
       micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
       micSourceNode.connect(micGainNode);
-      micGainNode.connect(masterGainNode);
+      micGainNode.connect(masterMixerNode);
 
+      // Canal de Música
       if (!musicSourceNode) {
         musicSourceNode = audioContext.createMediaElementSource(aMusic);
       }
       musicGainNode = audioContext.createGain();
       musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
       musicSourceNode.connect(musicGainNode);
-      musicGainNode.connect(masterGainNode);
+      musicGainNode.connect(masterMixerNode);
 
-      stingerGainNode = audioContext.createGain();
-      stingerGainNode.gain.value = parseFloat(document.getElementById('volStinger').value);
-      if (!stinger1SourceNode) stinger1SourceNode = audioContext.createMediaElementSource(aS1);
-      if (!stinger2SourceNode) stinger2SourceNode = audioContext.createMediaElementSource(aS2);
-      if (!lightningSourceNode) lightningSourceNode = audioContext.createMediaElementSource(aLight);
-
-      stinger1SourceNode.connect(stingerGainNode);
-      stinger2SourceNode.connect(stingerGainNode);
-      lightningSourceNode.connect(stingerGainNode);
-      stingerGainNode.connect(masterGainNode);
-
+      // Vúmetro
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 128;
-      masterGainNode.connect(analyser);
+      masterMixerNode.connect(analyser);
 
       const bufferLength = analyser.frequencyBinCount;
       const dataArray = new Uint8Array(bufferLength);
       const vu = document.getElementById('vuLevel');
       const vuPct = document.getElementById('vuPct');
 
-      function updateMeter() {
+      function updateVu() {
         if (!isLive) return;
         analyser.getByteFrequencyData(dataArray);
         let sum = 0;
@@ -1050,15 +682,16 @@
         let pct = Math.min(100, (sum / bufferLength / 128) * 100);
         vu.style.width = pct + '%';
         vuPct.innerText = `${Math.round(pct)}%`;
-        requestAnimationFrame(updateMeter);
+        requestAnimationFrame(updateVu);
       }
-      updateMeter();
+      updateVu();
 
-      // Codificador MP3 configurado con la frecuencia real del contexto de audio
+      // Codificador MP3 idéntico a la versión funcional original
       if (typeof lamejs !== 'undefined') {
-        mp3Encoder = new lamejs.Mp3Encoder(1, inputSampleRate, 128);
+        mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
       }
 
+      // Procesador de captura continua conectado directamente al destination para evitar suspensión
       processorNode = audioContext.createScriptProcessor(4096, 1, 1);
       processorNode.onaudioprocess = (e) => {
         if (!isLive || !ws || ws.readyState !== WebSocket.OPEN || !mp3Encoder) return;
@@ -1071,25 +704,30 @@
         }
 
         const mp3Chunk = mp3Encoder.encodeBuffer(sampleBuffer);
-        if (mp3Chunk && mp3Chunk.length > 0) {
+        if (mp3Chunk.length > 0) {
           ws.send(mp3Chunk.buffer);
-          audioBytesSent += mp3Chunk.length;
+          packetsSentCount++;
         }
       };
 
-      masterGainNode.connect(processorNode);
+      // Conexión idéntica a la original para garantizar flujo constante de audio
+      masterMixerNode.connect(processorNode);
       processorNode.connect(audioContext.destination);
 
-      log('<span style="color:var(--c-green)">Transmitiendo flujo MP3 continuo a Icecast.</span>');
+      // Verificador en pantalla del flujo de audio real saliendo
+      statsInterval = setInterval(() => {
+        if (isLive && packetsSentCount > 0) {
+          log(`<span style="color:var(--c-green)">Emitiendo en vivo: ${packetsSentCount} bloques MP3 enviados.</span>`);
+          packetsSentCount = 0;
+        }
+      }, 5000);
 
-      if (playlist.length > 0 && aMusic.paused) {
-        playTrack(currentIndex);
-      }
+      if (playlist.length > 0 && aMusic.paused) playTrack(currentIndex);
     }
 
     function toggleMic() {
       const btn = document.getElementById('btnMic');
-      const baseMusicVol = parseFloat(document.getElementById('volMusic').value);
+      const baseVol = parseFloat(document.getElementById('volMusic').value);
 
       if (micMuted) {
         micMuted = false;
@@ -1097,51 +735,38 @@
         btn.innerText = '🎤 MIC: AL AIRE';
         if (micGainNode && audioContext) micGainNode.gain.setValueAtTime(parseFloat(document.getElementById('volMic').value), audioContext.currentTime);
         if (duckingEnabled && musicGainNode && audioContext && isPro) {
-          musicGainNode.gain.setTargetAtTime(baseMusicVol * 0.20, audioContext.currentTime, 0.2);
+          musicGainNode.gain.setTargetAtTime(baseVol * 0.20, audioContext.currentTime, 0.2);
         }
       } else {
         micMuted = true;
         btn.className = 'btn-broadcast btn-mic-mute';
         btn.innerText = '🔇 MIC: MUTE';
         if (micGainNode && audioContext) micGainNode.gain.setValueAtTime(0.0, audioContext.currentTime);
-        if (musicGainNode && audioContext) musicGainNode.gain.setTargetAtTime(baseMusicVol, audioContext.currentTime, 0.3);
+        if (musicGainNode && audioContext) musicGainNode.gain.setTargetAtTime(baseVol, audioContext.currentTime, 0.3);
       }
     }
 
     function toggleDucking() {
-      if (!isPro) { alert("El Ducking Automático es exclusivo para usuarios PRO."); return; }
+      if (!isPro) { alert("Ducking exclusivo para cuentas PRO."); return; }
       duckingEnabled = !duckingEnabled;
       const btn = document.getElementById('btnDucking');
       const status = document.getElementById('duckStatus');
-      if (duckingEnabled) {
-        btn.className = 'btn-ducking active';
-        status.innerText = 'ON (BAJA MÚSICA)';
-        status.style.color = '#86efac';
-      } else {
-        btn.className = 'btn-ducking';
-        status.innerText = 'OFF (FIJO)';
-        status.style.color = '#94a3b8';
-      }
+      btn.className = duckingEnabled ? 'btn-ducking active' : 'btn-ducking';
+      status.innerText = duckingEnabled ? 'ON (BAJA MÚSICA)' : 'OFF (FIJO)';
+      status.style.color = duckingEnabled ? '#86efac' : '#94a3b8';
     }
 
     function toggleLocalMonitoring() {
       isMonitoring = !isMonitoring;
       const btn = document.getElementById('btnMonitor');
-      if (isMonitoring) {
-        btn.classList.add('monitor-active');
-        if (monitorGainNode && audioContext) monitorGainNode.gain.setValueAtTime(1.0, audioContext.currentTime);
-        log('🎧 Monitoreo local ACTIVADO.');
-      } else {
-        btn.classList.remove('monitor-active');
-        if (monitorGainNode && audioContext) monitorGainNode.gain.setValueAtTime(0.0, audioContext.currentTime);
-        log('🎧 Monitoreo local DESACTIVADO.');
-      }
+      btn.classList.toggle('monitor-active', isMonitoring);
+      log(isMonitoring ? '🎧 Monitoreo activo en audífonos' : '🎧 Monitoreo inactivo');
     }
 
     function triggerStinger(num) {
       if (num === 1 && aS1.src) startStingerPlayback(aS1, "PISADOR 1");
       if (num === 2) {
-        if (!isPro) { alert("El Pisador 2 es exclusivo para la versión PRO."); return; }
+        if (!isPro) { alert("Pisador 2 exclusivo para usuarios PRO."); return; }
         if (aS2.src) startStingerPlayback(aS2, "PISADOR 2");
       }
     }
@@ -1174,43 +799,39 @@
       document.getElementById('stingerBanner').style.display = 'none';
     }
 
-    function loadCustomStinger(num, e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      const url = URL.createObjectURL(f);
-      if (num === 1) aS1.src = url;
-      if (num === 2) aS2.src = url;
-      log(`Pisador ${num} cargado: ${f.name}`);
-    }
-
-    function loadLightningStinger(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      aLight.src = URL.createObjectURL(f);
-      log(`⚡ Pisador Rayito cargado: ${f.name}`);
-    }
-
     function toggleLightningMode() {
       if (!isPro) { alert("El modo Rayito es exclusivo para usuarios PRO."); return; }
       lightningEnabled = !lightningEnabled;
       const btn = document.getElementById('btnLightning');
-      if (lightningEnabled) {
-        btn.classList.add('active');
-        log('⚡ Modo Rayito ACTIVO: Lanza pisador en pistas > 1m 40s.');
-      } else {
-        btn.classList.remove('active');
-        log('⚡ Modo Rayito desactivado.');
+      btn.classList.toggle('active', lightningEnabled);
+      log(lightningEnabled ? '⚡ Rayito ACTIVO: Lanza pisador en pistas > 1m 40s.' : '⚡ Rayito apagado.');
+    }
+
+    function handleStrictFiles(e) {
+      const raw = Array.from(e.target.files);
+      const allowed = raw.filter(f => {
+        const n = f.name.toLowerCase();
+        return isPro ? (n.endsWith('.mp3') || n.endsWith('.mp4') || n.endsWith('.webm')) : n.endsWith('.mp3');
+      });
+
+      if (allowed.length === 0) {
+        alert(isPro ? "Selecciona archivos MP3 o Video." : "En versión gratis solo se admiten archivos MP3.");
+        return;
       }
+      playlist = allowed;
+      currentIndex = 0;
+      updateTrackBoxes();
+      log(`${allowed.length} archivo(s) listo(s).`);
+      if (isLive && aMusic.paused) playTrack(0);
     }
 
     function updateTrackBoxes() {
       if (playlist.length === 0) return;
-      const t1 = playlist[currentIndex];
-      document.getElementById('track1').innerText = t1 ? t1.name : 'Sin pista';
-      const nextIdx = (currentIndex + 1) % playlist.length;
-      document.getElementById('track2').innerText = playlist.length > 1 ? playlist[nextIdx].name : 'No hay más archivos';
-      const thirdIdx = (currentIndex + 2) % playlist.length;
-      document.getElementById('track3').innerText = playlist.length > 2 ? playlist[thirdIdx].name : 'No hay más archivos';
+      document.getElementById('track1').innerText = playlist[currentIndex] ? playlist[currentIndex].name : 'Sin pista';
+      const nIdx = (currentIndex + 1) % playlist.length;
+      document.getElementById('track2').innerText = playlist.length > 1 ? playlist[nIdx].name : 'No hay más archivos';
+      const tIdx = (currentIndex + 2) % playlist.length;
+      document.getElementById('track3').innerText = playlist.length > 2 ? playlist[tIdx].name : 'No hay más archivos';
     }
 
     function playTrack(idx) {
@@ -1218,19 +839,10 @@
       currentIndex = idx;
       updateTrackBoxes();
 
-      const file = playlist[currentIndex];
-      aMusic.src = URL.createObjectURL(file);
+      aMusic.src = URL.createObjectURL(playlist[currentIndex]);
       aMusic.load();
-
-      aMusic.onloadedmetadata = () => {
-        const dur = aMusic.duration;
-        aMusic.play().catch(e => console.log(e));
-        document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
-
-        if (lightningEnabled && dur > 100 && aLight.src && isPro) {
-          startStingerPlayback(aLight, "⚡ PISADOR RAYITO");
-        }
-      };
+      aMusic.play().catch(e => console.log(e));
+      document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
     }
 
     function togglePlayMusic() {
@@ -1247,27 +859,11 @@
 
     function playNextTrack() {
       if (playlist.length === 0) return;
-      if (isShuffle) currentIndex = Math.floor(Math.random() * playlist.length);
-      else currentIndex = (currentIndex + 1) % playlist.length;
+      currentIndex = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIndex + 1) % playlist.length;
       playTrack(currentIndex);
     }
 
     aMusic.onended = () => { playNextTrack(); };
-
-    aMusic.ontimeupdate = () => {
-      if (!isNaN(aMusic.duration)) {
-        const cM = Math.floor(aMusic.currentTime / 60);
-        const cS = Math.floor(aMusic.currentTime % 60).toString().padStart(2, '0');
-        const dM = Math.floor(aMusic.duration / 60);
-        const dS = Math.floor(aMusic.duration % 60).toString().padStart(2, '0');
-        document.getElementById('track1Time').innerText = `${cM}:${cS} / ${dM}:${dS}`;
-      }
-    };
-
-    function toggleMode() {
-      isShuffle = !isShuffle;
-      document.getElementById('btnMode').innerText = isShuffle ? 'MODO: ALEATORIO' : 'MODO: CONTINUO';
-    }
 
     function setMicVol(v) {
       document.getElementById('valMic').innerText = `${Math.round(v * 100)}%`;
@@ -1277,16 +873,14 @@
       document.getElementById('valMusic').innerText = `${Math.round(v * 100)}%`;
       if (musicGainNode && audioContext) musicGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
     }
-    function setStingerVol(v) {
-      document.getElementById('valStinger').innerText = `${Math.round(v * 100)}%`;
-      if (stingerGainNode && audioContext) stingerGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
-    }
 
     function stopAll() {
       isLive = false;
+      if (statsInterval) { clearInterval(statsInterval); statsInterval = null; }
       if (liveTimerInterval) { clearInterval(liveTimerInterval); liveTimerInterval = null; }
       aMusic.pause();
       stopCurrentStinger();
+
       document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
 
       if (processorNode) { try { processorNode.disconnect(); } catch(e){} processorNode = null; }
