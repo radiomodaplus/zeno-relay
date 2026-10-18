@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>EMISORASplus isecas</title>
   
-  <!-- LameJS para codificación MP3 en tiempo real -->
+  <!-- LameJS para codificación MP3 -->
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   
   <!-- Firebase SDK Global UMD -->
@@ -48,14 +48,7 @@
       padding: 6px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; cursor: pointer;
       display: flex; align-items: center; gap: 4px; box-shadow: 0 0 10px rgba(245,158,11,0.5);
     }
-    .btn-crown.loading-state {
-      background: linear-gradient(135deg, #6366f1, #4f46e5); border-color: #818cf8;
-      box-shadow: 0 0 10px rgba(99,102,241,0.6); animation: pulse 1s infinite;
-    }
-    .btn-crown.pro-active {
-      background: linear-gradient(135deg, #10b981, #059669); border-color: #6ee7b7; box-shadow: 0 0 10px rgba(16,185,129,0.5);
-    }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(0.97); } }
+    .btn-crown.pro-active { background: linear-gradient(135deg, #10b981, #059669); border-color: #6ee7b7; box-shadow: 0 0 10px rgba(16,185,129,0.5); }
 
     .btn-icon {
       background: #1e293b; border: 1px solid #475569; color: #fff; width: 34px; height: 34px;
@@ -73,7 +66,7 @@
     .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
     .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
 
-    /* VÚMETRO */
+    /* VÚMETRO MASTER */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
@@ -86,11 +79,18 @@
       margin-bottom: 6px; align-items: center; justify-content: space-between;
     }
 
+    /* BANNER PUBLICIDAD PROGRAMADA */
+    .ads-banner {
+      display: none; background: linear-gradient(135deg, #0c4a6e, #075985);
+      border: 2px solid var(--c-blue); border-radius: 8px; padding: 6px 10px;
+      margin-bottom: 6px; align-items: center; justify-content: space-between;
+    }
+
     /* COLA DE 3 PISTAS */
     .queue-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
     .track-box {
       border-radius: 8px; padding: 6px 10px; background: #070c1b; border-width: 2px; border-style: solid;
-      display: flex; flex-direction: column; justify-content: center;
+      display: flex; flex-direction: column; justify-content: center; position: relative;
     }
     .track-box.current { border-color: var(--c-green); box-shadow: 0 0 10px rgba(16,185,129,0.2); }
     .track-box.next { border-color: var(--c-blue); }
@@ -100,8 +100,19 @@
     .track-box.current .track-tag { color: var(--c-green); }
     .track-box.next .track-tag { color: var(--c-blue); }
     .track-box.third .track-tag { color: var(--c-yellow); }
-    .track-name { font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+    
+    .track-row-air { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 2px; }
+    .track-name { font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; flex: 1; }
     .track-time { font-size: 0.65rem; color: var(--text-muted); }
+
+    /* FLECHAS INTERNAS DE LA PISTA AL AIRE */
+    .air-nav-btn {
+      background: #162444; border: 1px solid var(--border); color: #fff;
+      width: 32px; height: 32px; border-radius: 6px; font-size: 0.85rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .air-nav-btn:active { background: var(--c-green); color: #000; transform: scale(0.92); }
 
     /* MIC Y DUCKING */
     .mic-duck-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 6px; margin-bottom: 6px; }
@@ -131,7 +142,6 @@
     .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 900; }
     .btn-stinger:disabled { opacity: 0.35; filter: grayscale(1); }
 
-    /* CONTROLES Y CARGA */
     .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
     .btn-ctrl { padding: 9px 4px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-sub); color: #fff; font-size: 0.7rem; font-weight: 800; cursor: pointer; }
     
@@ -142,7 +152,6 @@
       color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 0.72rem; text-align: center;
     }
 
-    /* BOTÓN AL AIRE */
     .btn-main-stream {
       width: 100%; padding: 13px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: #fff; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 900; cursor: pointer;
@@ -161,7 +170,7 @@
     }
     .modal-box {
       background: #0c1427; border: 1px solid #3b82f6; border-radius: 14px;
-      width: 100%; max-width: 390px; max-height: 90vh; overflow-y: auto; padding: 14px;
+      width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; padding: 14px;
     }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
     
@@ -174,11 +183,10 @@
     .vol-row input[type=range] { flex: 1; accent-color: var(--c-blue); }
     .vol-val { font-size: 0.68rem; font-weight: 800; width: 35px; text-align: right; color: #fff; }
 
-    .pro-user-header {
-      background: linear-gradient(135deg, #064e3b, #065f46); border: 1px solid #34d399;
-      border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+    .file-select-box {
+      background: #111a33; border: 1px dashed var(--border); border-radius: 8px;
+      padding: 6px 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
     }
-    .pro-badge-pill { background: #fbbf24; color: #000; font-size: 0.62rem; font-weight: 900; padding: 2px 8px; border-radius: 20px; }
   </style>
 </head>
 <body>
@@ -190,6 +198,7 @@
     </div>
     <div class="top-actions">
       <button id="btnProBadge" class="btn-crown" onclick="openProModal()">👑 PRO</button>
+      <button id="btnCalendar" class="btn-icon" onclick="openCalendarModal()" title="Publicidad y Horarios">📅</button>
       <button id="btnMonitor" class="btn-icon" onclick="toggleLocalMonitoring()" title="Monitoreo">🎧</button>
       <button class="btn-icon" onclick="openSettingsModal()" title="Ajustes">⚙</button>
     </div>
@@ -217,6 +226,15 @@
     </div>
   </div>
 
+  <!-- BANNER PUBLICIDAD EN CURSO -->
+  <div class="ads-banner" id="adsBanner">
+    <div style="display:flex; flex-direction:column;">
+      <span style="font-size:0.75rem; font-weight:900; color:#38bdf8;">📢 PUBLICIDAD / COMERCIAL AL AIRE</span>
+      <span style="font-size:0.65rem; color:#bae6fd;" id="adsBannerTitle">Emitiendo tanda programada...</span>
+    </div>
+    <button onclick="stopCurrentAd()" style="background:var(--c-red); border:none; color:#fff; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.68rem; cursor:pointer;">⏹ CORTAR</button>
+  </div>
+
   <!-- BANNER PISADOR -->
   <div class="stinger-banner" id="stingerBanner">
     <div style="display:flex; flex-direction:column;">
@@ -228,15 +246,26 @@
 
   <!-- COLA DE 3 PISTAS -->
   <div class="queue-grid">
+    <!-- PISTA 1: AL AIRE CON FLECHAS DE ATRÁS (REPETIR) Y ADELANTE (SIGUIENTE) -->
     <div class="track-box current">
       <div class="track-tag">● 1. EN EL AIRE (ACTUAL)</div>
-      <div class="track-name" id="track1">Sin reproducción</div>
-      <div class="track-time" id="track1Time">0:00 / 0:00</div>
+      <div class="track-row-air">
+        <button class="air-nav-btn" onclick="repeatCurrentTrack()" title="Repetir pista desde el inicio">⏮</button>
+        <div style="flex:1; overflow:hidden;">
+          <div class="track-name" id="track1">Sin reproducción</div>
+          <div class="track-time" id="track1Time">0:00 / 0:00</div>
+        </div>
+        <button class="air-nav-btn" onclick="skipToNextTrack()" title="Pasar a la siguiente pista">⏭</button>
+      </div>
     </div>
+
+    <!-- PISTA 2: SIGUIENTE EN COLA -->
     <div class="track-box next">
       <div class="track-tag">▶ 2. SIGUIENTE EN COLA</div>
       <div class="track-name" id="track2">En espera...</div>
     </div>
+
+    <!-- PISTA 3: TERCERA EN ESPERA -->
     <div class="track-box third">
       <div class="track-tag">⏭ 3. EN ESPERA (TERCERA)</div>
       <div class="track-name" id="track3">En espera...</div>
@@ -273,7 +302,7 @@
   <!-- CONTROLES DE REPRODUCCIÓN -->
   <div class="player-controls">
     <button id="btnPlayMusic" class="btn-ctrl" onclick="togglePlayMusic()">▶ PLAY</button>
-    <button class="btn-ctrl" onclick="playNextTrack()">⏭ SIGUIENTE</button>
+    <button class="btn-ctrl" onclick="skipToNextTrack()">⏭ SIGUIENTE</button>
     <button id="btnMode" class="btn-ctrl" onclick="toggleMode()">MODO: CONTINUO</button>
   </div>
 
@@ -295,8 +324,71 @@
   <audio id="audioStinger1" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioStinger2" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioLightning" style="display:none;" crossorigin="anonymous"></audio>
+  <audio id="audioAds" style="display:none;" crossorigin="anonymous"></audio>
 
-  <!-- MODAL DE PLAN PRO -->
+  <!-- ==================== MODAL DE PUBLICIDAD / CALENDARIO (📅) ==================== -->
+  <div class="modal-overlay" id="calendarModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div style="font-size:0.85rem; font-weight:900; color:var(--c-blue);">📅 PROGRAMADOR DE PUBLICIDAD / CUÑAS</div>
+        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeCalendarModal()">✕</button>
+      </div>
+
+      <div style="font-size:0.68rem; color:var(--text-muted); margin-bottom:8px;">
+        Los comerciales esperarán a que <b>termine la canción actual</b> para entrar al aire sin cortar la música de golpe.
+      </div>
+
+      <!-- Carga de archivo para publicidad -->
+      <div class="form-group">
+        <label>Archivo de Publicidad (Audio o Video)</label>
+        <div class="file-select-box">
+          <span id="lblAdFileName" style="font-size:0.7rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">Sin archivo</span>
+          <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
+            SUBIR
+            <input type="file" accept="audio/*, video/*" style="display:none;" onchange="handleAdFileSelect(event)">
+          </label>
+        </div>
+      </div>
+
+      <!-- Tipo de Programación -->
+      <div class="form-group">
+        <label>Tipo de Emisión</label>
+        <select id="adScheduleType" onchange="toggleScheduleInputs(this.value)">
+          <option value="hourly">Todas las horas al minuto específico</option>
+          <option value="datetime">Fecha y hora exacta única</option>
+        </select>
+      </div>
+
+      <!-- Modo: Todas las horas -->
+      <div id="rowHourly">
+        <div class="form-group">
+          <label>Minuto de cada hora (0 a 59)</label>
+          <input type="number" id="adMinuteInterval" min="0" max="59" value="30" placeholder="Ej: 30 (al minuto 30)">
+        </div>
+      </div>
+
+      <!-- Modo: Fecha y Hora exacta -->
+      <div id="rowDateTime" style="display:none;">
+        <div class="form-group">
+          <label>Fecha y Hora de emisión</label>
+          <input type="datetime-local" id="adExactDateTime">
+        </div>
+      </div>
+
+      <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+        <input type="checkbox" id="chkAdActive" style="width:18px; height:18px;" checked>
+        <label for="chkAdActive" style="font-size:0.75rem; color:#fff; margin:0; cursor:pointer;">Activar programador de comerciales</label>
+      </div>
+
+      <div style="background:#030712; border:1px solid var(--border); border-radius:8px; padding:6px; margin:8px 0; font-size:0.65rem; color:var(--c-yellow);" id="lblNextAdStatus">
+        Estado: Esperando programación...
+      </div>
+
+      <button class="btn-main-stream" style="padding:10px;" onclick="saveAdSchedule()">GUARDAR Y ACTIVAR COMERCIALES</button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE PLAN PRO ==================== -->
   <div class="modal-overlay" id="proModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -336,11 +428,11 @@
     </div>
   </div>
 
-  <!-- MODAL DE AJUSTES GENERALES -->
+  <!-- ==================== MODAL DE AJUSTES GENERALES ==================== -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div style="font-size:0.85rem; font-weight:900; color:#38bdf8;">⚙ AJUSTES DE SERVIDOR</div>
+        <div style="font-size:0.85rem; font-weight:900; color:#38bdf8;">⚙ AJUSTES DE EMISORA</div>
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeSettingsModal()">✕</button>
       </div>
 
@@ -370,6 +462,34 @@
         <input type="password" id="password" placeholder="Tu Stream Key">
       </div>
 
+      <!-- CARGA DE PISADORES DENTRO DE AJUSTES -->
+      <div style="font-size:0.7rem; font-weight:900; color:var(--c-purple); margin:10px 0 4px 0;">🎙 CARGAR AUDIOS DE PISADORES</div>
+      
+      <div class="file-select-box">
+        <span id="lblStinger1Name" style="font-size:0.68rem; color:#fff;">Pisador 1: No asignado</span>
+        <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
+          SUBIR P1
+          <input type="file" accept="audio/*" style="display:none;" onchange="handleStingerUpload(1, event)">
+        </label>
+      </div>
+
+      <div class="file-select-box">
+        <span id="lblStinger2Name" style="font-size:0.68rem; color:#fff;">Pisador 2 (PRO): No asignado</span>
+        <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
+          SUBIR P2
+          <input type="file" accept="audio/*" style="display:none;" onchange="handleStingerUpload(2, event)">
+        </label>
+      </div>
+
+      <div class="file-select-box">
+        <span id="lblLightningName" style="font-size:0.68rem; color:#fff;">Pisador Rayito ⚡: No asignado</span>
+        <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
+          SUBIR RAYITO
+          <input type="file" accept="audio/*" style="display:none;" onchange="handleStingerUpload(3, event)">
+        </label>
+      </div>
+
+      <!-- VOLÚMENES -->
       <div style="font-size:0.7rem; font-weight:900; color:var(--c-yellow); margin-top:8px;">🎚 VOLÚMENES</div>
       <div class="vol-row">
         <span class="vol-label">🎤 Mic</span>
@@ -383,6 +503,11 @@
       </div>
 
       <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeSettingsModal()">GUARDAR Y APLICAR</button>
+      
+      <!-- BOTÓN RESTABLECER EMISORA ÚNICAMENTE AQUÍ -->
+      <button class="btn-ctrl" style="width:100%; background:transparent; border-color:var(--c-red); color:var(--c-red); margin-top:8px; font-weight:800;" onclick="resetStationData()">
+        ⚠️ RESTABLECER EMISORA (BORRAR DATOS)
+      </button>
     </div>
   </div>
 
@@ -418,12 +543,17 @@
     let liveSeconds = 0;
     const MAX_FREE_SECONDS = 15 * 60;
 
+    // Web Audio Nodes
     let audioContext = null;
     let mediaStream = null;
     let micSourceNode = null;
+    let micFilterNode = null;
+    let micCompressorNode = null;
     let micGainNode = null;
     let musicSourceNode = null;
     let musicGainNode = null;
+    let adsSourceNode = null;
+    let adsGainNode = null;
     let masterMixerNode = null;
     let processorNode = null;
     let mp3Encoder = null;
@@ -432,21 +562,74 @@
     let packetsSentCount = 0;
     let statsInterval = null;
 
+    // Publicidad programada
+    let adSchedule = {
+      active: true,
+      type: 'hourly',
+      minute: 30,
+      exactDateTime: ''
+    };
+    let adPendingTrigger = false;
+    let adIntervalChecker = null;
+
     const aMusic = document.getElementById('audioMusic');
     const aS1 = document.getElementById('audioStinger1');
     const aS2 = document.getElementById('audioStinger2');
     const aLight = document.getElementById('audioLightning');
+    const aAds = document.getElementById('audioAds');
 
+    // ==========================================
+    // PERSISTENCIA PERMANENTE DE CREDENCIALES
+    // ==========================================
     window.addEventListener('DOMContentLoaded', () => {
       ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
-        const val = localStorage.getItem(`ep_${id}`);
-        if (val) document.getElementById(id).value = val;
+        const val = localStorage.getItem(`ep_saved_${id}`);
+        if (val !== null && val !== '') {
+          document.getElementById(id).value = val;
+        }
       });
+
+      // Cargar configuración de publicidad guardada
+      const savedAd = localStorage.getItem('ep_ad_schedule');
+      if (savedAd) {
+        try {
+          adSchedule = JSON.parse(savedAd);
+          document.getElementById('adScheduleType').value = adSchedule.type;
+          document.getElementById('adMinuteInterval').value = adSchedule.minute || 30;
+          document.getElementById('adExactDateTime').value = adSchedule.exactDateTime || '';
+          document.getElementById('chkAdActive').checked = adSchedule.active;
+          toggleScheduleInputs(adSchedule.type);
+        } catch(e){}
+      }
 
       auth.onAuthStateChanged(user => {
         if (user) activarModoPro(user.email);
       });
+
+      iniciarProgramadorPublicidad();
     });
+
+    function saveSettings() {
+      ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
+        const val = document.getElementById(id).value.trim();
+        localStorage.setItem(`ep_saved_${id}`, val);
+      });
+      log("Configuración guardada de forma permanente.");
+    }
+
+    function resetStationData() {
+      if (confirm("¿Estás seguro de que deseas restablecer y borrar todos los datos de tu emisora?")) {
+        ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
+          localStorage.removeItem(`ep_saved_${id}`);
+        });
+        document.getElementById('host').value = 'link.zeno.fm';
+        document.getElementById('port').value = '80';
+        document.getElementById('mount').value = '/f04sfgq6138uv/source';
+        document.getElementById('user').value = 'source';
+        document.getElementById('password').value = '';
+        alert("Datos de emisora restablecidos.");
+      }
+    }
 
     function log(msg) {
       const t = document.getElementById('terminal');
@@ -467,61 +650,144 @@
       }
     }
 
-    function saveSettings() {
-      ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
-        localStorage.setItem(`ep_${id}`, document.getElementById(id).value.trim());
-      });
-    }
-
     function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
     function closeSettingsModal() { saveSettings(); document.getElementById('settingsModal').style.display = 'none'; }
     function openProModal() { document.getElementById('proModal').style.display = 'flex'; }
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
+    function openCalendarModal() { document.getElementById('calendarModal').style.display = 'flex'; }
+    function closeCalendarModal() { document.getElementById('calendarModal').style.display = 'none'; }
 
     function togglePasswordVisibility() {
       const p = document.getElementById('password');
       p.type = p.type === 'password' ? 'text' : 'password';
     }
 
-    function activarModoPro(email) {
-      isPro = true;
-      currentUserEmail = email;
-      const b = document.getElementById('btnProBadge');
-      b.className = 'btn-crown pro-active';
-      b.innerHTML = '👑 PRO ACTIVO';
-      document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
-      document.getElementById('btnP2').disabled = false;
-      document.getElementById('btnLightning').disabled = false;
-      document.getElementById('fileTracks').setAttribute('accept', 'audio/*, video/*');
-      document.getElementById('lblLoadFiles').innerText = '📂 CARGAR MÚSICA O VIDEO (PRO)';
+    // ==========================================
+    // CARGA DE PISADORES DESDE AJUSTES
+    // ==========================================
+    function handleStingerUpload(num, e) {
+      const f = e.target.files[0];
+      if (!f) return;
+      const url = URL.createObjectURL(f);
+      if (num === 1) {
+        aS1.src = url;
+        document.getElementById('lblStinger1Name').innerText = `P1: ${f.name}`;
+      } else if (num === 2) {
+        aS2.src = url;
+        document.getElementById('lblStinger2Name').innerText = `P2: ${f.name}`;
+      } else if (num === 3) {
+        aLight.src = url;
+        document.getElementById('lblLightningName').innerText = `Rayito: ${f.name}`;
+      }
+      log(`Pisador cargado correctamente: ${f.name}`);
     }
 
-    async function loginFirebasePro() {
-      const email = document.getElementById('proEmail').value.trim();
-      const pass = document.getElementById('proPass').value.trim();
-      if (!email || !pass) { alert("Ingresa correo y clave."); return; }
-      try {
-        await auth.signInWithEmailAndPassword(email, pass);
-        activarModoPro(email);
-        alert("¡Plan PRO activado!");
-        closeProModal();
-      } catch (e) {
-        alert("Error de autenticación: " + e.message);
+    // ==========================================
+    // CONTROL DE PISTAS AL AIRE (FLECHAS ⏮ / ⏭)
+    // ==========================================
+    function repeatCurrentTrack() {
+      if (playlist.length === 0) return;
+      aMusic.currentTime = 0;
+      aMusic.play();
+      log("Pista actual reiniciada desde el inicio (⏮).");
+    }
+
+    function skipToNextTrack() {
+      if (playlist.length === 0) return;
+      playNextTrack();
+      log("Saltando a la siguiente pista (⏭).");
+    }
+
+    // ==========================================
+    // MÓDULO PUBLICIDAD Y CALENDARIO
+    // ==========================================
+    function toggleScheduleInputs(val) {
+      if (val === 'hourly') {
+        document.getElementById('rowHourly').style.display = 'block';
+        document.getElementById('rowDateTime').style.display = 'none';
+      } else {
+        document.getElementById('rowHourly').style.display = 'none';
+        document.getElementById('rowDateTime').style.display = 'block';
       }
     }
 
-    function logoutPro() {
-      auth.signOut();
-      location.reload();
+    function handleAdFileSelect(e) {
+      const f = e.target.files[0];
+      if (!f) return;
+      aAds.src = URL.createObjectURL(f);
+      document.getElementById('lblAdFileName').innerText = f.name;
+      log(`Comercial cargado: ${f.name}`);
     }
 
-    function comprarWhatsApp() {
-      window.open('https://wa.me/573334018595?text=Hola,%20quiero%20comprar%20la%20versión%20PRO', '_blank');
+    function saveAdSchedule() {
+      adSchedule.active = document.getElementById('chkAdActive').checked;
+      adSchedule.type = document.getElementById('adScheduleType').value;
+      adSchedule.minute = parseInt(document.getElementById('adMinuteInterval').value) || 0;
+      adSchedule.exactDateTime = document.getElementById('adExactDateTime').value;
+
+      localStorage.setItem('ep_ad_schedule', JSON.stringify(adSchedule));
+      document.getElementById('lblNextAdStatus').innerText = adSchedule.active ? 
+        `Programador activo (${adSchedule.type === 'hourly' ? 'Al minuto ' + adSchedule.minute + ' de cada hora' : 'Fecha programada'})` : 
+        'Programador inactivo';
+      
+      closeCalendarModal();
+      log("Programación de comerciales guardada y activa.");
     }
 
-    // ========================================================
-    // MOTOR DE TRANSMISIÓN (ESTRUCTURA ORIGINAL PROBADA)
-    // ========================================================
+    function iniciarProgramadorPublicidad() {
+      if (adIntervalChecker) clearInterval(adIntervalChecker);
+      adIntervalChecker = setInterval(() => {
+        if (!adSchedule.active || !aAds.src) return;
+
+        const now = new Date();
+        if (adSchedule.type === 'hourly') {
+          if (now.getMinutes() === adSchedule.minute && !adPendingTrigger) {
+            adPendingTrigger = true;
+            log(`📢 Horario de comerciales alcanzado (Minuto ${adSchedule.minute}). Esperando fin de canción...`);
+          }
+        } else if (adSchedule.type === 'datetime' && adSchedule.exactDateTime) {
+          const target = new Date(adSchedule.exactDateTime);
+          if (now >= target && !adPendingTrigger) {
+            adPendingTrigger = true;
+            log(`📢 Fecha programada de comerciales alcanzada. Esperando fin de canción...`);
+          }
+        }
+      }, 15000);
+    }
+
+    function checkAndPlayScheduledAd() {
+      if (adPendingTrigger && aAds.src) {
+        adPendingTrigger = false;
+        playCommercialBreak();
+        return true;
+      }
+      return false;
+    }
+
+    function playCommercialBreak() {
+      log("📢 Iniciando tanda comercial programada...");
+      aMusic.pause();
+      document.getElementById('adsBanner').style.display = 'flex';
+      aAds.currentTime = 0;
+      aAds.play();
+    }
+
+    aAds.onended = () => {
+      document.getElementById('adsBanner').style.display = 'none';
+      log("📢 Tanda comercial finalizada. Reanudando música...");
+      playNextTrack();
+    };
+
+    function stopCurrentAd() {
+      aAds.pause();
+      document.getElementById('adsBanner').style.display = 'none';
+      log("Comercial detenido manualmente. Continuando playlist...");
+      playNextTrack();
+    }
+
+    // ==========================================
+    // TRANSMISIÓN EN VIVO Y MICRÓFONO PRO
+    // ==========================================
     async function toggleBroadcast() {
       if (isLive) {
         stopAll();
@@ -541,7 +807,7 @@
       const password = document.getElementById('password').value.trim();
 
       if (!host || !port || !mount || !password) {
-        alert("Completa los datos de transmisión en Ajustes ⚙.");
+        alert("Completa todos los datos de tu emisora en Ajustes ⚙.");
         openSettingsModal();
         return;
       }
@@ -551,17 +817,17 @@
         document.getElementById('mount').value = mount;
       }
 
-      log("1. Accediendo a micrófono...");
+      log("1. Accediendo a micrófono con filtros de alta fidelidad...");
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           audio: {
             channelCount: 1,
             echoCancellation: true,
             noiseSuppression: true,
-            autoGainControl: true
+            autoGainControl: false // Desactivamos AGC del móvil para usar nuestro compresor Pro
           }
         });
-        log('<span style="color:var(--c-green)">Micrófono activado con éxito.</span>');
+        log('<span style="color:var(--c-green)">Micrófono Pro activado con éxito.</span>');
       } catch (err) {
         log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
         return;
@@ -592,19 +858,19 @@
             await iniciarAudioEngine();
           } else if (resp.status === 'ERROR') {
             stopAll();
-            log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message} (${resp.code || ''})</span>`);
+            log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message}</span>`);
             alert(`Error de autenticación Icecast: ${resp.message}`);
           }
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">El relay en Render está despertando. Pulsa nuevamente en 10s.</span>');
+          log('<span style="color:var(--c-yellow)">Relay despertando en la nube. Pulsa conectar en unos segundos.</span>');
           stopAll();
         };
 
         ws.onclose = () => {
           if (isLive) {
-            log('<span style="color:var(--c-red)">Transmisión desconectada.</span>');
+            log('<span style="color:var(--c-red)">Transmisión finalizada en servidor.</span>');
             stopAll();
           }
         };
@@ -643,28 +909,48 @@
         await audioContext.resume();
       }
       const sampleRate = audioContext.sampleRate;
-      log(`Frecuencia de muestreo: ${sampleRate}Hz`);
+      log(`Frecuencia de audio activa: ${sampleRate}Hz`);
 
-      // Mezclador Maestro
       masterMixerNode = audioContext.createGain();
 
-      // Canal de Micrófono
+      // FILTRO Y COMPRESOR PARA MICRÓFONO (Voz nítida y con presencia)
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
+      
+      micFilterNode = audioContext.createBiquadFilter();
+      micFilterNode.type = 'highpass';
+      micFilterNode.frequency.value = 85; // Elimina ruidos de baja frecuencia y golpes de aire
+
+      micCompressorNode = audioContext.createDynamicsCompressor();
+      micCompressorNode.threshold.setValueAtTime(-18, audioContext.currentTime);
+      micCompressorNode.knee.setValueAtTime(10, audioContext.currentTime);
+      micCompressorNode.ratio.setValueAtTime(4, audioContext.currentTime);
+      micCompressorNode.attack.setValueAtTime(0.005, audioContext.currentTime);
+      micCompressorNode.release.setValueAtTime(0.1, audioContext.currentTime);
+
       micGainNode = audioContext.createGain();
       micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
-      micSourceNode.connect(micGainNode);
+
+      // Cadena de Micrófono: Entrada -> Filtro Paso Alto -> Compresor -> Ganancia -> Master
+      micSourceNode.connect(micFilterNode);
+      micFilterNode.connect(micCompressorNode);
+      micCompressorNode.connect(micGainNode);
       micGainNode.connect(masterMixerNode);
 
-      // Canal de Música
-      if (!musicSourceNode) {
-        musicSourceNode = audioContext.createMediaElementSource(aMusic);
-      }
+      // Canal Música
+      if (!musicSourceNode) musicSourceNode = audioContext.createMediaElementSource(aMusic);
       musicGainNode = audioContext.createGain();
       musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
       musicSourceNode.connect(musicGainNode);
       musicGainNode.connect(masterMixerNode);
 
-      // Vúmetro
+      // Canal Publicidad
+      if (!adsSourceNode) adsSourceNode = audioContext.createMediaElementSource(aAds);
+      adsGainNode = audioContext.createGain();
+      adsGainNode.gain.value = 0.95;
+      adsSourceNode.connect(adsGainNode);
+      adsGainNode.connect(masterMixerNode);
+
+      // Vúmetro Master
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 128;
       masterMixerNode.connect(analyser);
@@ -686,12 +972,11 @@
       }
       updateVu();
 
-      // Codificador MP3 idéntico a la versión funcional original
+      // Codificador MP3 LameJS
       if (typeof lamejs !== 'undefined') {
         mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
       }
 
-      // Procesador de captura continua conectado directamente al destination para evitar suspensión
       processorNode = audioContext.createScriptProcessor(4096, 1, 1);
       processorNode.onaudioprocess = (e) => {
         if (!isLive || !ws || ws.readyState !== WebSocket.OPEN || !mp3Encoder) return;
@@ -710,14 +995,11 @@
         }
       };
 
-      // Conexión idéntica a la original para garantizar flujo constante de audio
       masterMixerNode.connect(processorNode);
       processorNode.connect(audioContext.destination);
 
-      // Verificador en pantalla del flujo de audio real saliendo
       statsInterval = setInterval(() => {
         if (isLive && packetsSentCount > 0) {
-          log(`<span style="color:var(--c-green)">Emitiendo en vivo: ${packetsSentCount} bloques MP3 enviados.</span>`);
           packetsSentCount = 0;
         }
       }, 5000);
@@ -859,11 +1141,29 @@
 
     function playNextTrack() {
       if (playlist.length === 0) return;
+      // Antes de pasar a la siguiente pista, verifica si hay publicidad esperando turno
+      if (checkAndPlayScheduledAd()) return;
+
       currentIndex = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIndex + 1) % playlist.length;
       playTrack(currentIndex);
     }
 
-    aMusic.onended = () => { playNextTrack(); };
+    aMusic.onended = () => {
+      // Al terminar la canción, revisa si hay comerciales agendados
+      if (!checkAndPlayScheduledAd()) {
+        playNextTrack();
+      }
+    };
+
+    aMusic.ontimeupdate = () => {
+      if (!isNaN(aMusic.duration)) {
+        const cM = Math.floor(aMusic.currentTime / 60);
+        const cS = Math.floor(aMusic.currentTime % 60).toString().padStart(2, '0');
+        const dM = Math.floor(aMusic.duration / 60);
+        const dS = Math.floor(aMusic.duration % 60).toString().padStart(2, '0');
+        document.getElementById('track1Time').innerText = `${cM}:${cS} / ${dM}:${dS}`;
+      }
+    };
 
     function setMicVol(v) {
       document.getElementById('valMic').innerText = `${Math.round(v * 100)}%`;
@@ -879,9 +1179,11 @@
       if (statsInterval) { clearInterval(statsInterval); statsInterval = null; }
       if (liveTimerInterval) { clearInterval(liveTimerInterval); liveTimerInterval = null; }
       aMusic.pause();
+      aAds.pause();
       stopCurrentStinger();
 
       document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
+      document.getElementById('adsBanner').style.display = 'none';
 
       if (processorNode) { try { processorNode.disconnect(); } catch(e){} processorNode = null; }
       if (audioContext) { try { audioContext.close(); } catch(e){} audioContext = null; }
@@ -892,6 +1194,42 @@
       document.getElementById('btnLive').innerText = 'INICIAR TRANSMISIÓN EN VIVO';
       document.getElementById('vuLevel').style.width = '0%';
       document.getElementById('vuPct').innerText = '0%';
+    }
+
+    function activarModoPro(email) {
+      isPro = true;
+      currentUserEmail = email;
+      const b = document.getElementById('btnProBadge');
+      b.className = 'btn-crown pro-active';
+      b.innerHTML = '👑 PRO ACTIVO';
+      document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
+      document.getElementById('btnP2').disabled = false;
+      document.getElementById('btnLightning').disabled = false;
+      document.getElementById('fileTracks').setAttribute('accept', 'audio/*, video/*');
+      document.getElementById('lblLoadFiles').innerText = '📂 CARGAR MÚSICA O VIDEO (PRO)';
+    }
+
+    async function loginFirebasePro() {
+      const email = document.getElementById('proEmail').value.trim();
+      const pass = document.getElementById('proPass').value.trim();
+      if (!email || !pass) { alert("Ingresa correo y clave."); return; }
+      try {
+        await auth.signInWithEmailAndPassword(email, pass);
+        activarModoPro(email);
+        alert("¡Plan PRO activado!");
+        closeProModal();
+      } catch (e) {
+        alert("Error de autenticación: " + e.message);
+      }
+    }
+
+    function logoutPro() {
+      auth.signOut();
+      location.reload();
+    }
+
+    function comprarWhatsApp() {
+      window.open('https://wa.me/573334018595?text=Hola,%20quiero%20comprar%20la%20versión%20PRO', '_blank');
     }
   </script>
 </body>
