@@ -110,6 +110,17 @@
     }
     .air-nav-btn:active { background: var(--c-green); color: #000; transform: scale(0.92); }
 
+    /* ESPECTRÓMETRO DJ RÍTMICO EN EL AIRE */
+    .dj-visualizer-bar {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      height: 14px; gap: 2px; margin-top: 5px; background: #030712; padding: 2px 4px; border-radius: 4px; border: 1px solid #14213d;
+    }
+    .dj-col { flex: 1; background: #22c55e; border-radius: 1px; height: 10%; transition: height 0.05s ease; }
+    .dj-col:nth-child(4n+1) { background: #38bdf8; }
+    .dj-col:nth-child(4n+2) { background: #4ade80; }
+    .dj-col:nth-child(4n+3) { background: #facc15; }
+    .dj-col:nth-child(4n) { background: #f43f5e; }
+
     /* MIC Y DUCKING */
     .mic-duck-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 6px; margin-bottom: 6px; }
     .btn-broadcast {
@@ -138,9 +149,10 @@
     .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 900; }
     .btn-stinger:disabled { opacity: 0.35; filter: grayscale(1); }
 
-    /* CONTROLES PRINCIPALES */
-    .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
-    .btn-ctrl { padding: 9px 4px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-sub); color: #fff; font-size: 0.7rem; font-weight: 800; cursor: pointer; }
+    /* CONTROLES PRINCIPALES (PLAY, STOP, SIGUIENTE, MODO) */
+    .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 6px; margin-bottom: 6px; }
+    .btn-ctrl { padding: 9px 2px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-sub); color: #fff; font-size: 0.7rem; font-weight: 800; cursor: pointer; text-align: center; }
+    .btn-ctrl.btn-stop-music { background: #450a0a; border-color: var(--c-red); color: #fca5a5; }
     
     .btn-panel-main {
       width: 100%; padding: 10px; background: linear-gradient(90deg, #6366f1, #8b5cf6);
@@ -192,9 +204,7 @@
     }
 
     /* ESTILOS DEL PANEL PRINCIPAL DE PISTAS */
-    .playlist-scroll {
-      display: flex; flex-direction: column; gap: 6px; max-height: 60vh; overflow-y: auto; padding-right: 4px;
-    }
+    .playlist-scroll { display: flex; flex-direction: column; gap: 6px; max-height: 60vh; overflow-y: auto; padding-right: 4px; }
     .track-item-card {
       background: #101935; border: 1px solid #233560; border-radius: 8px;
       padding: 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px;
@@ -205,8 +215,12 @@
     
     .track-item-info { flex: 1; overflow: hidden; }
     .track-item-title { font-size: 0.75rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .track-item-meta { display: flex; gap: 6px; align-items: center; font-size: 0.62rem; margin-top: 2px; }
-    .tag-played { background: #334155; color: #cbd5e1; padding: 1px 6px; border-radius: 4px; font-weight: 800; }
+    .track-item-meta { display: flex; gap: 5px; align-items: center; font-size: 0.62rem; margin-top: 3px; flex-wrap: wrap; }
+    
+    /* BADGE ROJO PARA PISTAS QUE YA SONARON */
+    .tag-played-red { background: var(--c-red); color: #fff; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
+    /* BADGE DE RAYITO EN PANEL PRINCIPAL */
+    .tag-lightning-ready { background: #854d0e; color: #fef08a; border: 1px solid #eab308; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
     .tag-live { background: var(--c-green); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
     .tag-next { background: var(--c-blue); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
     .tag-third { background: var(--c-yellow); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
@@ -220,7 +234,6 @@
     .btn-action-small:active { background: var(--c-blue); }
     .btn-action-small.btn-del { border-color: var(--c-red); color: var(--c-red); }
 
-    /* ESTILOS MULTICOLOR PARA CALENDARIO DE COMERCIALES */
     .cal-card-box {
       background: linear-gradient(135deg, #1e1b4b, #111827); border: 2px solid #a855f7;
       border-radius: 12px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 14px rgba(168,85,247,0.25);
@@ -299,6 +312,14 @@
         </div>
         <button class="air-nav-btn" onclick="skipToNextTrack()" title="Siguiente pista (⏭)">⏭</button>
       </div>
+
+      <!-- ESPECTRÓMETRO / BARRA DE NIVELES DJ RÍTMICO -->
+      <div class="dj-visualizer-bar" id="djVisualizer">
+        <div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div>
+        <div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div>
+        <div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div>
+        <div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div>
+      </div>
     </div>
 
     <div class="track-box next">
@@ -314,7 +335,7 @@
 
   <!-- BOTÓN PANEL PRINCIPAL DE PISTAS -->
   <button class="btn-panel-main" onclick="openPlaylistModal()">
-    🎛️ PANEL PRINCIPAL (TODAS LAS PISTAS: ORDENAR Y ELIMINAR)
+    🎛️ PANEL PRINCIPAL (VER PISTAS, ORDENAR Y ELIMINAR)
   </button>
 
   <!-- MIC Y DUCKING -->
@@ -340,15 +361,16 @@
     </button>
     <button id="btnLightning" class="btn-stinger lightning" onclick="toggleLightningMode()" disabled>
       <span>🔒 ⚡ RAYITO</span>
-      <small style="font-size:0.55rem;">SOLO PRO (>1:40)</small>
+      <small style="font-size:0.55rem;">AUTO (>1:40)</small>
     </button>
   </div>
 
-  <!-- CONTROLES DE REPRODUCCIÓN -->
+  <!-- CONTROLES DE REPRODUCCIÓN (PLAY, STOP, SIGUIENTE, MODO) -->
   <div class="player-controls">
     <button id="btnPlayMusic" class="btn-ctrl" onclick="togglePlayMusic()">▶ PLAY</button>
-    <button class="btn-ctrl" onclick="skipToNextTrack()">⏭ SIGUIENTE</button>
-    <button id="btnMode" class="btn-ctrl" onclick="toggleMode()">MODO: CONTINUO</button>
+    <button class="btn-ctrl btn-stop-music" onclick="stopMusicTrack()">⏹ STOP</button>
+    <button class="btn-ctrl" onclick="skipToNextTrack()">⏭ SIG</button>
+    <button id="btnMode" class="btn-ctrl" onclick="toggleMode()">CONTINUO</button>
   </div>
 
   <!-- CARGA DE ARCHIVOS -->
@@ -380,7 +402,7 @@
       </div>
 
       <div style="font-size:0.68rem; color:var(--text-muted); margin-bottom:8px;">
-        Organiza las pistas de arriba hacia abajo con <b>▲</b> y <b>▼</b>, o elimínalas con <b>🗑</b>.
+        Pistas que ya sonaron en <b style="color:var(--c-red);">ROJO</b>. Pistas aptas para rayito (>1:40 min) llevan el icono <b style="color:var(--c-gold);">⚡</b>.
       </div>
 
       <div class="playlist-scroll" id="playlistContainer">
@@ -416,7 +438,7 @@
 
         <div class="form-group">
           <label style="color:var(--c-blue);">Nombre de la Tanda</label>
-          <input type="text" id="newAdName" placeholder="Ej: Comercial Bebidas">
+          <input type="text" id="newAdName" placeholder="Ej: Comercial Patrocinador">
         </div>
 
         <div class="form-group">
@@ -457,12 +479,12 @@
         </button>
       </div>
 
-      <!-- LISTA DE TANDAS GUARDADAS (MÁXIMO 5) -->
+      <!-- LISTA DE TANDAS GUARDADAS -->
       <div style="font-size:0.72rem; font-weight:900; color:var(--c-blue); margin-bottom:6px;">
         📋 TANDAS GUARDADAS Y ACTIVAS:
       </div>
       <div id="adSlotsListContainer">
-        <!-- Render dinámico de las tandas -->
+        <!-- Render dinámico -->
       </div>
 
       <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeCalendarModal()">CERRAR CALENDARIO</button>
@@ -543,7 +565,7 @@
         <input type="password" id="password" placeholder="Tu Stream Key">
       </div>
 
-      <!-- BOTÓN RESTABLECER EMISORA (JUSTO DEBAJO DE CONTRASEÑA) -->
+      <!-- BOTÓN RESTABLECER EMISORA (CONFIRMACIÓN PREVIA) -->
       <button class="btn-ctrl" style="width:100%; background:rgba(239, 68, 68, 0.15); border-color:var(--c-red); color:var(--c-red); margin:6px 0 12px 0; font-weight:800; padding:8px;" onclick="promptResetStation()">
         ⚠️ RESTABLECER EMISORA
       </button>
@@ -614,10 +636,14 @@
     let duckingEnabled = true;
     let lightningEnabled = false;
     let isShuffle = false;
-    let isMonitoring = false;
+    let isMonitoring = false; // Control de escucha local estricto
+
+    // Control de Rayito dinámico
+    let rayitoIntroFired = false;
+    let rayitoMidFired = false;
 
     // Lista estructurada de canciones
-    let playlist = [];
+    let playlist = []; // { file, name, played: false, durationStr: '--:--' }
     let currentIndex = 0;
     let activeStingerAudio = null;
 
@@ -634,9 +660,11 @@
     let micGainNode = null;
     let musicSourceNode = null;
     let musicGainNode = null;
+    let musicAnalyser = null; // Analizador para visualizador DJ
     let adsSourceNode = null;
     let adsGainNode = null;
     let masterMixerNode = null;
+    let monitorGainNode = null; // Nodo que controla el silencio o audio local
     let processorNode = null;
     let mp3Encoder = null;
     let ws = null;
@@ -644,8 +672,8 @@
     let packetsSentCount = 0;
     let statsInterval = null;
 
-    // HASTA 5 TANDAS COMERCIALES (EXCLUSIVO PRO)
-    let adSlots = []; // Máximo 5 slots: { id, name, file, type, minute, datetime, triggered: false }
+    // HASTA 5 TANDAS COMERCIALES (PRO)
+    let adSlots = [];
     let temporaryAdFile = null;
     let adIntervalChecker = null;
     let currentAdPlayingIndex = -1;
@@ -724,7 +752,7 @@
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
     function openCalendarModal() {
       if (!isPro) {
-        alert("El programador de comerciales y calendario es una función exclusiva del Plan PRO.");
+        alert("El programador de comerciales y calendario es exclusivo del Plan PRO.");
         openProModal();
         return;
       }
@@ -761,12 +789,14 @@
     }
 
     // ==========================================
-    // CONTROL DE PISTAS (FLECHAS ⏮ / ⏭)
+    // CONTROLES DE PISTAS (⏮ / ⏭ / STOP)
     // ==========================================
     function repeatCurrentTrack() {
       if (playlist.length === 0) return;
       aMusic.currentTime = 0;
       aMusic.play();
+      rayitoIntroFired = false;
+      rayitoMidFired = false;
       log("Pista actual reiniciada (⏮).");
     }
 
@@ -776,8 +806,17 @@
       log("Saltando a siguiente pista (⏭).");
     }
 
+    function stopMusicTrack() {
+      aMusic.pause();
+      aMusic.currentTime = 0;
+      document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
+      // Reiniciar espectrómetro DJ a nivel 0
+      document.querySelectorAll('.dj-col').forEach(col => col.style.height = '10%');
+      log("⏹ Pista musical detenida por el operador.");
+    }
+
     // ==========================================
-    // GESTIÓN DE PISTAS SIN PAUSAR & REORDENAR / ELIMINAR
+    // GESTIÓN DE PISTAS, ORDENAR, ELIMINAR Y RAYITO
     // ==========================================
     function handleStrictFiles(e) {
       const raw = Array.from(e.target.files);
@@ -798,15 +837,22 @@
           file: file,
           name: file.name,
           played: false,
-          durationStr: '--:--'
+          durationSec: 0,
+          durationStr: '--:--',
+          appliesLightning: false
         };
 
         const tempAudio = document.createElement('audio');
         tempAudio.src = URL.createObjectURL(file);
         tempAudio.onloadedmetadata = () => {
-          const m = Math.floor(tempAudio.duration / 60);
-          const s = Math.floor(tempAudio.duration % 60).toString().padStart(2, '0');
+          const sec = Math.floor(tempAudio.duration);
+          item.durationSec = sec;
+          const m = Math.floor(sec / 60);
+          const s = (sec % 60).toString().padStart(2, '0');
           item.durationStr = `${m}:${s}`;
+          // Regla: Durar más de 1 minuto y 40 segundos (100 segundos exactos)
+          item.appliesLightning = sec > 100;
+
           if (document.getElementById('playlistModal').style.display === 'flex') {
             renderPlaylistModal();
           }
@@ -848,8 +894,14 @@
           badgeHtml = '<span class="tag-third">TERCERA (#3)</span>';
         }
 
+        // Si ya sonó, se marca en ROJO
         if (item.played && idx !== currentIndex) {
-          badgeHtml += '<span class="tag-played">YA SONÓ</span>';
+          badgeHtml += '<span class="tag-played-red">YA SONÓ</span>';
+        }
+
+        // Si aplica para rayito (> 1:40 min), muestra icono de rayito
+        if (item.appliesLightning) {
+          badgeHtml += '<span class="tag-lightning-ready">⚡ RAYITO</span>';
         }
 
         card.className = cardClass;
@@ -899,7 +951,7 @@
 
     function deleteTrack(idx) {
       if (idx === currentIndex && playlist.length > 1) {
-        if (!confirm("Esta pista está al aire ahora mismo. ¿Deseas pasar a la siguiente y eliminarla?")) return;
+        if (!confirm("Esta pista está sonando ahora mismo. ¿Deseas saltar a la siguiente y eliminarla?")) return;
         skipToNextTrack();
       }
       playlist.splice(idx, 1);
@@ -923,6 +975,9 @@
     function playTrack(idx) {
       if (playlist.length === 0 || !playlist[idx]) return;
       currentIndex = idx;
+      rayitoIntroFired = false;
+      rayitoMidFired = false;
+
       updateTrackBoxes();
 
       const item = playlist[currentIndex];
@@ -930,12 +985,6 @@
       aMusic.load();
       aMusic.play().catch(e => console.log(e));
       document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
-
-      aMusic.onloadedmetadata = () => {
-        if (lightningEnabled && aMusic.duration > 100 && aLight.src && isPro) {
-          startStingerPlayback(aLight, "⚡ PISADOR RAYITO");
-        }
-      };
     }
 
     function togglePlayMusic() {
@@ -974,13 +1023,36 @@
       }
     };
 
+    // TIEMPO REAL: CRONÓMETRO + LÓGICA DE DISPARO DEL MODO RAYITO ⚡
     aMusic.ontimeupdate = () => {
       if (!isNaN(aMusic.duration)) {
-        const cM = Math.floor(aMusic.currentTime / 60);
-        const cS = Math.floor(aMusic.currentTime % 60).toString().padStart(2, '0');
-        const dM = Math.floor(aMusic.duration / 60);
-        const dS = Math.floor(aMusic.duration % 60).toString().padStart(2, '0');
+        const cur = aMusic.currentTime;
+        const dur = aMusic.duration;
+
+        const cM = Math.floor(cur / 60);
+        const cS = Math.floor(cur % 60).toString().padStart(2, '0');
+        const dM = Math.floor(dur / 60);
+        const dS = Math.floor(dur % 60).toString().padStart(2, '0');
         document.getElementById('track1Time').innerText = `${cM}:${cS} / ${dM}:${dS}`;
+
+        // EVALUACIÓN DEL MODO RAYITO:
+        // Solo aplica si el modo rayito está activo, es cuenta PRO, hay pisador cargado y la canción dura > 1m 40s (100 segundos)
+        if (lightningEnabled && isPro && aLight.src && dur > 100) {
+          // 1. Al tercer segundo exacto de haber iniciado
+          if (cur >= 3 && cur < 4 && !rayitoIntroFired) {
+            rayitoIntroFired = true;
+            log('⚡ Rayito disparado: Segundo 0:03 de intro en pista mayor a 1:40 min.');
+            startStingerPlayback(aLight, "⚡ PISADOR RAYITO (INTRO)");
+          }
+
+          // 2. En el intermedio exacto de la canción
+          const midPoint = dur / 2;
+          if (cur >= midPoint && cur < midPoint + 1.5 && !rayitoMidFired) {
+            rayitoMidFired = true;
+            log('⚡ Rayito disparado: Intermedio de canción en pista mayor a 1:40 min.');
+            startStingerPlayback(aLight, "⚡ PISADOR RAYITO (INTERMEDIO)");
+          }
+        }
       }
     };
 
@@ -1034,7 +1106,6 @@
         triggered: false
       });
 
-      // Limpiar formulario
       temporaryAdFile = null;
       document.getElementById('newAdName').value = '';
       document.getElementById('lblNewAdFileName').innerText = 'Sin archivo';
@@ -1090,16 +1161,16 @@
             if (now.getMinutes() === slot.minute && !slot.triggered) {
               slot.triggered = true;
               currentAdPlayingIndex = idx;
-              log(`📢 Tanda "${slot.name}" programada lista para salir tras la canción.`);
+              log(`📢 Tanda "${slot.name}" lista para sonar al finalizar la canción actual.`);
             } else if (now.getMinutes() !== slot.minute) {
-              slot.triggered = false; // Reset para la siguiente hora
+              slot.triggered = false;
             }
           } else if (slot.type === 'datetime' && slot.datetime) {
             const target = new Date(slot.datetime);
             if (now >= target && !slot.triggered) {
               slot.triggered = true;
               currentAdPlayingIndex = idx;
-              log(`📢 Tanda por fecha "${slot.name}" lista para salir tras la canción.`);
+              log(`📢 Tanda por fecha "${slot.name}" lista para sonar al finalizar la canción.`);
             }
           }
         });
@@ -1140,7 +1211,7 @@
     }
 
     // ==========================================
-    // TRANSMISIÓN EN VIVO Y MICRÓFONO PRO
+    // TRANSMISIÓN EN VIVO, MOTOR DE AUDIO Y MONITOREO
     // ==========================================
     async function toggleBroadcast() {
       if (isLive) {
@@ -1171,7 +1242,7 @@
         document.getElementById('mount').value = mount;
       }
 
-      log("1. Accediendo a micrófono con filtros de alta fidelidad...");
+      log("1. Accediendo a micrófono con procesador de audio...");
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -1265,9 +1336,16 @@
       const sampleRate = audioContext.sampleRate;
       log(`Frecuencia de audio activa: ${sampleRate}Hz`);
 
+      // MEZCLADOR MAESTRO (TODO EL AUDIO SUMADO)
       masterMixerNode = audioContext.createGain();
 
-      // FILTRO Y COMPRESOR PARA MICRÓFONO
+      // MONITOREO LOCAL (🎧): Si está apagado = ganancia 0 (mudo en el parlante local). Si está encendido = 1 (se escucha en audífonos)
+      monitorGainNode = audioContext.createGain();
+      monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
+      masterMixerNode.connect(monitorGainNode);
+      monitorGainNode.connect(audioContext.destination);
+
+      // FILTRO Y COMPRESOR PARA MICRÓFONO PRO
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
       
       micFilterNode = audioContext.createBiquadFilter();
@@ -1289,21 +1367,37 @@
       micCompressorNode.connect(micGainNode);
       micGainNode.connect(masterMixerNode);
 
-      // Música
+      // CANAL DE MÚSICA + ANALIZADOR RÍTMICO DJ
       if (!musicSourceNode) musicSourceNode = audioContext.createMediaElementSource(aMusic);
       musicGainNode = audioContext.createGain();
       musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
+
+      musicAnalyser = audioContext.createAnalyser();
+      musicAnalyser.fftSize = 64;
+
       musicSourceNode.connect(musicGainNode);
+      musicGainNode.connect(musicAnalyser);
       musicGainNode.connect(masterMixerNode);
 
-      // Publicidad
+      // CANAL PUBLICIDAD
       if (!adsSourceNode) adsSourceNode = audioContext.createMediaElementSource(aAds);
       adsGainNode = audioContext.createGain();
       adsGainNode.gain.value = 0.95;
       adsSourceNode.connect(adsGainNode);
       adsGainNode.connect(masterMixerNode);
 
-      // Vúmetro Master
+      // CANALES DE PISADORES
+      const stingerGainNode = audioContext.createGain();
+      stingerGainNode.gain.value = 0.95;
+      const s1Node = audioContext.createMediaElementSource(aS1);
+      const s2Node = audioContext.createMediaElementSource(aS2);
+      const sLightNode = audioContext.createMediaElementSource(aLight);
+      s1Node.connect(stingerGainNode);
+      s2Node.connect(stingerGainNode);
+      sLightNode.connect(stingerGainNode);
+      stingerGainNode.connect(masterMixerNode);
+
+      // VÚMETRO MASTER
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 128;
       masterMixerNode.connect(analyser);
@@ -1313,18 +1407,38 @@
       const vu = document.getElementById('vuLevel');
       const vuPct = document.getElementById('vuPct');
 
-      function updateVu() {
+      // LOOP DEL ESPECTRÓMETRO DJ Y VÚMETRO
+      const djCols = document.querySelectorAll('.dj-col');
+      const djFreqData = new Uint8Array(musicAnalyser.frequencyBinCount);
+
+      function updateVisualMeters() {
         if (!isLive) return;
+
+        // Vúmetro Master
         analyser.getByteFrequencyData(dataArray);
         let sum = 0;
         for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
         let pct = Math.min(100, (sum / bufferLength / 128) * 100);
         vu.style.width = pct + '%';
         vuPct.innerText = `${Math.round(pct)}%`;
-        requestAnimationFrame(updateVu);
-      }
-      updateVu();
 
+        // Espectrómetro Rítmico DJ de la Música
+        if (!aMusic.paused) {
+          musicAnalyser.getByteFrequencyData(djFreqData);
+          for (let i = 0; i < djCols.length; i++) {
+            const val = djFreqData[i] || 0;
+            const h = Math.max(10, Math.min(100, (val / 255) * 100));
+            djCols[i].style.height = `${h}%`;
+          }
+        } else {
+          djCols.forEach(col => col.style.height = '10%');
+        }
+
+        requestAnimationFrame(updateVisualMeters);
+      }
+      updateVisualMeters();
+
+      // CODIFICADOR MP3 LAMEJS
       if (typeof lamejs !== 'undefined') {
         mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
       }
@@ -1347,6 +1461,7 @@
         }
       };
 
+      // Se conecta a la cadena para transmisión continua sin cortes
       masterMixerNode.connect(processorNode);
       processorNode.connect(audioContext.destination);
 
@@ -1390,11 +1505,17 @@
       status.style.color = duckingEnabled ? '#86efac' : '#94a3b8';
     }
 
+    // MONITOREO LOCAL ESTRICTO (🎧)
     function toggleLocalMonitoring() {
       isMonitoring = !isMonitoring;
       const btn = document.getElementById('btnMonitor');
       btn.classList.toggle('monitor-active', isMonitoring);
-      log(isMonitoring ? '🎧 Monitoreo activo en audífonos' : '🎧 Monitoreo inactivo');
+
+      // Si monitorGainNode está activo en el motor de audio, mutea o desmutea localmente
+      if (monitorGainNode && audioContext) {
+        monitorGainNode.gain.setValueAtTime(isMonitoring ? 1.0 : 0.0, audioContext.currentTime);
+      }
+      log(isMonitoring ? '🎧 Monitoreo local ENCENDIDO (Escuchando en audífonos)' : '🎧 Monitoreo local APAGADO (Silencio en el dispositivo)');
     }
 
     function triggerStinger(num) {
@@ -1438,12 +1559,12 @@
       lightningEnabled = !lightningEnabled;
       const btn = document.getElementById('btnLightning');
       btn.classList.toggle('active', lightningEnabled);
-      log(lightningEnabled ? '⚡ Rayito ACTIVO: Lanza pisador en pistas > 1m 40s.' : '⚡ Rayito apagado.');
+      log(lightningEnabled ? '⚡ Rayito ACTIVO: Disparará al seg 0:03 y en intermedio si pista > 1:40 min.' : '⚡ Rayito apagado.');
     }
 
     function toggleMode() {
       isShuffle = !isShuffle;
-      document.getElementById('btnMode').innerText = isShuffle ? 'MODO: ALEATORIO' : 'MODO: CONTINUO';
+      document.getElementById('btnMode').innerText = isShuffle ? 'ALEATORIO' : 'CONTINUO';
     }
 
     function setMicVol(v) {
@@ -1465,6 +1586,7 @@
 
       document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
       document.getElementById('adsBanner').style.display = 'none';
+      document.querySelectorAll('.dj-col').forEach(col => col.style.height = '10%');
 
       if (processorNode) { try { processorNode.disconnect(); } catch(e){} processorNode = null; }
       if (audioContext) { try { audioContext.close(); } catch(e){} audioContext = null; }
