@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>EMISORASplus isecas</title>
   
-  <!-- Codificador MP3 compatible -->
+  <!-- Codificador MP3 en tiempo real -->
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   
-  <!-- Firebase SDK modular via CDN -->
+  <!-- Firebase SDK modular -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, updatePassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCDzqYbaYZuwlW_qfV25Cy-muz-srF85L8",
@@ -28,24 +28,18 @@
     window.fbDb = getFirestore(app);
     window.fbSignIn = signInWithEmailAndPassword;
     window.fbSignOut = signOut;
+    window.fbUpdatePass = updatePassword;
     window.fbDoc = doc;
     window.fbGetDoc = getDoc;
+    window.fbUpdateDoc = updateDoc;
 
-    // Escuchar estado de sesión
+    // Escucha cambios de sesión en Firebase
     onAuthStateChanged(window.fbAuth, async (user) => {
       if (user) {
-        try {
-          const userDoc = await window.fbGetDoc(window.fbDoc(window.fbDb, "users", user.uid));
-          if (userDoc.exists() && userDoc.data().isPro) {
-            activarModoPro(user.email);
-          } else {
-            // Si está creado en auth por ventas se considera PRO
-            activarModoPro(user.email);
-          }
-        } catch (e) {
-          activarModoPro(user.email);
-        }
+        window.currentUserEmail = user.email;
+        activarModoPro(user.email);
       } else {
+        window.currentUserEmail = null;
         desactivarModoPro();
       }
     });
@@ -72,7 +66,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 8px; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-    /* CABECERA CON CORONA PRO Y AJUSTES */
+    /* BARRA SUPERIOR */
     .top-bar {
       display: flex; justify-content: space-between; align-items: center;
       background: linear-gradient(90deg, #1e1b4b, #0f172a, #1e293b);
@@ -84,7 +78,7 @@
     .top-actions { display: flex; align-items: center; gap: 5px; }
     .btn-crown {
       background: linear-gradient(135deg, #f59e0b, #d97706); border: 1px solid #fde047; color: #fff;
-      padding: 6px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 900; cursor: pointer;
+      padding: 6px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; cursor: pointer;
       display: flex; align-items: center; gap: 4px; box-shadow: 0 0 10px rgba(245,158,11,0.5);
     }
     .btn-crown.pro-active {
@@ -97,7 +91,7 @@
     }
     .btn-icon.monitor-active { background: #0284c7; border-color: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
 
-    /* MEDIDOR DE CONEXIÓN A INTERNET EN TIEMPO REAL */
+    /* MEDIDOR DE RED */
     .net-box {
       background: #090e1a; border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px;
       margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.65rem; font-weight: 800;
@@ -122,7 +116,7 @@
       margin-bottom: 6px; align-items: center; justify-content: space-between;
     }
 
-    /* COLA DE 3 PISTAS (VERDE, AZUL, AMARILLO) */
+    /* 3 CUADROS DE COLA DE PISTAS */
     .queue-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
     .track-box {
       border-radius: 8px; padding: 6px 10px; background: #070c1b; border-width: 2px; border-style: solid;
@@ -190,7 +184,7 @@
       font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 38px; overflow-y: auto; margin-top: 6px;
     }
 
-    /* MODALES PRO Y AJUSTES */
+    /* MODALES */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(4px);
       display: none; align-items: center; justify-content: center; z-index: 999; padding: 12px;
@@ -210,10 +204,19 @@
     .vol-row input[type=range] { flex: 1; accent-color: var(--c-blue); }
     .vol-val { font-size: 0.68rem; font-weight: 800; width: 35px; text-align: right; color: #fff; }
 
-    .banner-pro-card {
-      background: linear-gradient(135deg, #1e1b4b, #312e81); border: 1px solid #facc15; border-radius: 10px;
-      padding: 10px; text-align: center; margin-bottom: 10px;
+    /* ESTILOS ESPECÍFICOS DEL MODAL PRO */
+    .pro-user-header {
+      background: linear-gradient(135deg, #064e3b, #065f46); border: 1px solid #34d399;
+      border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
     }
+    .pro-badge-pill {
+      background: #fbbf24; color: #000; font-size: 0.62rem; font-weight: 900; padding: 2px 8px; border-radius: 20px;
+    }
+    .pro-benefit-list {
+      list-style: none; margin: 8px 0; padding: 0; font-size: 0.7rem; color: #e2e8f0; line-height: 1.5;
+    }
+    .pro-benefit-list li { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .pro-benefit-list li span { color: var(--c-green); font-weight: 900; }
   </style>
 </head>
 <body>
@@ -230,13 +233,13 @@
     </div>
   </div>
 
-  <!-- MEDIDOR DE CONEXIÓN A INTERNET EN TIEMPO REAL -->
+  <!-- MEDIDOR DE RED -->
   <div class="net-box">
     <div style="display:flex; align-items:center; gap:6px;">
       <div id="netBars" class="signal-bars good">
         <div class="bar b1"></div><div class="bar b2"></div><div class="bar b3"></div><div class="bar b4"></div>
       </div>
-      <span id="netStatusText">ESTABLE (PING: 42ms)</span>
+      <span id="netStatusText">ESTABLE (PING: 40ms)</span>
     </div>
     <div style="color:var(--c-gold); font-size:0.6rem;" id="timerLiveBox">TIEMPO MÁX: 15:00</div>
   </div>
@@ -261,7 +264,7 @@
     <button onclick="stopCurrentStinger()" style="background:var(--c-red); border:none; color:#fff; padding:5px 10px; border-radius:6px; font-weight:800; font-size:0.7rem; cursor:pointer;">⏹ DETENER</button>
   </div>
 
-  <!-- COLA DE 3 PISTAS (VERDE, AZUL, AMARILLO) -->
+  <!-- COLA DE 3 PISTAS -->
   <div class="queue-grid">
     <div class="track-box current">
       <div class="track-tag">● 1. EN EL AIRE (ACTUAL)</div>
@@ -278,7 +281,7 @@
     </div>
   </div>
 
-  <!-- MICRÓFONO Y DUCKING INTELIGENTE -->
+  <!-- MIC Y DUCKING -->
   <div class="mic-duck-row">
     <button id="btnMic" class="btn-broadcast btn-mic-on" onclick="toggleMic()">
       🎤 MIC: AL AIRE
@@ -289,17 +292,17 @@
     </button>
   </div>
 
-  <!-- PISADORES Y MODO RAYITO -->
+  <!-- PISADORES Y RAYITO -->
   <div class="stinger-grid">
     <button class="btn-stinger p1" onclick="triggerStinger(1)">
       <span>🔊 PISADOR 1</span>
       <small style="font-size:0.55rem; opacity:0.8;">DISPARAR</small>
     </button>
-    <button id="btnP2" class="btn-stinger p2" onclick="triggerStinger(2)" disabled title="Solo PRO">
+    <button id="btnP2" class="btn-stinger p2" onclick="triggerStinger(2)" disabled>
       <span>🔒 PISADOR 2</span>
       <small style="font-size:0.55rem;">SOLO PRO</small>
     </button>
-    <button id="btnLightning" class="btn-stinger lightning" onclick="toggleLightningMode()" disabled title="Solo PRO">
+    <button id="btnLightning" class="btn-stinger lightning" onclick="toggleLightningMode()" disabled>
       <span>🔒 ⚡ RAYITO</span>
       <small style="font-size:0.55rem;">SOLO PRO (>1:40)</small>
     </button>
@@ -312,7 +315,7 @@
     <button id="btnMode" class="btn-ctrl" onclick="toggleMode()">MODO: CONTINUO</button>
   </div>
 
-  <!-- CARGA DE PISTAS (MP3 / VIDEO EN PRO) -->
+  <!-- CARGA DE ARCHIVOS -->
   <div class="file-loader">
     <div class="btn-load-files" id="lblLoadFiles">📂 CARGAR MÚSICA (SOLO MP3 EN GRATIS)</div>
     <input type="file" id="fileTracks" multiple accept="audio/mpeg, audio/mp3" onchange="handleStrictFiles(event)">
@@ -331,59 +334,120 @@
   <audio id="audioStinger2" style="display:none;"></audio>
   <audio id="audioLightning" style="display:none;"></audio>
 
-  <!-- ==================== MODAL DE PLAN PRO ==================== -->
+  <!-- ==================== MODAL DE PLAN PRO / GESTIÓN ==================== -->
   <div class="modal-overlay" id="proModal">
     <div class="modal-box">
+      
+      <!-- CABECERA MODAL -->
       <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:var(--c-gold);">👑 ADQUIRIR O ACTIVAR PLAN PRO</div>
+        <div id="modalProHeaderTitle" style="font-size:0.9rem; font-weight:900; color:var(--c-gold);">👑 PLAN PRO</div>
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeProModal()">✕</button>
       </div>
 
-      <div class="banner-pro-card">
-        <h3 style="color:#fde047; font-size:0.95rem;">EMISORASplus PRO</h3>
-        <p style="font-size:0.7rem; color:#cbd5e1; margin:4px 0;">
-          Transmisión ilimitada sin cortes de 15 min • Sube videos y MP3 • Rayito Automático • Ducking Inteligente • 2 Pisadores • Hasta 4 Estaciones • <b>AutoDJ en la Nube con 10 GB</b>
-        </p>
-        <div style="font-size:1.1rem; font-weight:900; color:#4ade80; margin-top:4px;">$39.900 COP</div>
+      <!-- VISTA 1: CUANDO ES USUARIO GRATIS -->
+      <div id="viewFreeUser">
+        <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); border:1px solid #facc15; border-radius:10px; padding:10px; text-align:center; margin-bottom:10px;">
+          <h3 style="color:#fde047; font-size:0.95rem;">EMISORASplus PRO</h3>
+          <p style="font-size:0.7rem; color:#cbd5e1; margin:4px 0;">
+            Transmisión ilimitada sin cortes • Sube videos y MP3 • Rayito Automático • Ducking Inteligente • 2 Pisadores • 4 Estaciones • <b>AutoDJ 10 GB en la Nube</b>
+          </p>
+          <div style="font-size:1.1rem; font-weight:900; color:#4ade80; margin-top:4px;">$39.900 COP</div>
+        </div>
+
+        <div style="font-size:0.7rem; font-weight:800; color:var(--c-blue); margin-bottom:6px;">
+          🔑 INGRESAR CON MI CUENTA ASIGNADA (DE VENTAS)
+        </div>
+        <div class="form-group">
+          <label>Correo Electrónico</label>
+          <input type="email" id="proEmail" placeholder="usuario@gmail.com">
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="proPass" placeholder="Tu clave asignada">
+        </div>
+        <button class="btn-ctrl" style="width:100%; background:var(--c-blue); margin-bottom:12px; font-weight:900;" onclick="loginFirebasePro()">
+          ACTIVAR PLAN PRO AHORA
+        </button>
+
+        <hr style="border-color:var(--border); margin-bottom:12px;">
+
+        <div style="font-size:0.7rem; font-weight:800; color:#4ade80; margin-bottom:6px;">
+          📲 ¿NO TIENES CUENTA? COMPRAR VÍA WHATSAPP
+        </div>
+        <div class="form-group">
+          <label>Tu Nombre Completo</label>
+          <input type="text" id="buyName" placeholder="Tu nombre">
+        </div>
+        <div class="form-group">
+          <label>Tu Correo para la Licencia</label>
+          <input type="email" id="buyEmail" placeholder="tu@correo.com">
+        </div>
+        <button class="btn-ctrl" style="width:100%; background:#25d366; color:#000; font-weight:900;" onclick="comprarWhatsApp()">
+          💬 COMPRAR POR WHATSAPP ($39.900)
+        </button>
       </div>
 
-      <!-- Iniciar Sesión con Firebase -->
-      <div style="font-size:0.7rem; font-weight:800; color:var(--c-blue); margin-bottom:6px;">
-        🔑 YA TENGO MI CUENTA (ENVIADA POR VENTAS)
-      </div>
-      <div class="form-group">
-        <label>Correo Electrónico</label>
-        <input type="email" id="proEmail" placeholder="usuario@gmail.com">
-      </div>
-      <div class="form-group">
-        <label>Contraseña</label>
-        <input type="password" id="proPass" placeholder="Tu clave asignada">
-      </div>
-      <button class="btn-ctrl" style="width:100%; background:var(--c-blue); margin-bottom:12px; font-weight:900;" onclick="loginFirebasePro()">
-        ACTIVAR PLAN PRO AHORA
-      </button>
+      <!-- VISTA 2: CUANDO YA ES USUARIO PRO ACTIVO -->
+      <div id="viewProActiveUser" style="display:none;">
+        <div class="pro-user-header">
+          <div>
+            <div style="font-size:0.68rem; color:#a7f3d0; font-weight:700;">HOLA, BIENVENIDO</div>
+            <div style="font-size:0.82rem; color:#fff; font-weight:900;" id="userProEmailDisplay">usuario@correo.com</div>
+          </div>
+          <div class="pro-badge-pill">👑 PRO ACTIVO</div>
+        </div>
 
-      <hr style="border-color:var(--border); margin-bottom:12px;">
+        <div style="font-size:0.72rem; font-weight:900; color:var(--c-gold); margin-bottom:4px;">
+          ✨ BENEFICIOS ACTIVOS EN TU PLAN:
+        </div>
+        <ul class="pro-benefit-list">
+          <li><span>✓</span> Transmisión continua sin límites de 15 min</li>
+          <li><span>✓</span> AutoDJ en la nube con 10 GB de almacenamiento</li>
+          <li><span>✓</span> Soporte para subida de audio MP3 y videos</li>
+          <li><span>✓</span> Atenuación inteligente (Ducking Automático)</li>
+          <li><span>✓</span> Pisador automático con Modo Rayito ⚡ (>1:40)</li>
+          <li><span>✓</span> 2 Pisadores instantáneos en pantalla</li>
+          <li><span>✓</span> Soporte para hasta 4 servidores / estaciones</li>
+        </ul>
 
-      <!-- Comprar por WhatsApp -->
-      <div style="font-size:0.7rem; font-weight:800; color:#4ade80; margin-bottom:6px;">
-        📲 ¿NO TIENES CUENTA? COMPRAR VÍA WHATSAPP
+        <!-- BOTÓN DE AJUSTES DE SEGURIDAD / CONTRASEÑA -->
+        <button class="btn-ctrl" style="width:100%; background:#1e293b; border-color:var(--c-blue); color:#38bdf8; font-weight:900; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="toggleSecurityPanel()">
+          ⚙ AJUSTES DE SEGURIDAD / CAMBIAR MI CLAVE
+        </button>
+
+        <!-- PANEL DESPLEGABLE PARA CAMBIO DE CONTRASEÑA OBLIGATORIO -->
+        <div id="securityPanel" style="display:none; background:#070c1b; border:1px solid var(--border); border-radius:10px; padding:10px; margin-top:8px;">
+          <div style="font-size:0.68rem; color:var(--c-yellow); font-weight:800; margin-bottom:6px;">
+            🔒 CAMBIO DE CLAVE OBLIGATORIO (SEGURIDAD)
+          </div>
+          <div class="form-group">
+            <label>Nueva Contraseña</label>
+            <div style="display:flex; gap:4px;">
+              <input type="password" id="newPass1" placeholder="Mínimo 6 caracteres">
+              <button class="btn-ctrl" style="width:40px;" onclick="togglePassVisibility('newPass1')">👁</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Confirmar Nueva Contraseña</label>
+            <div style="display:flex; gap:4px;">
+              <input type="password" id="newPass2" placeholder="Repite la nueva contraseña">
+              <button class="btn-ctrl" style="width:40px;" onclick="togglePassVisibility('newPass2')">👁</button>
+            </div>
+          </div>
+          <button class="btn-ctrl" style="width:100%; background:var(--c-green); font-weight:900; margin-top:4px;" onclick="changeUserPassword()">
+            GUARDAR Y ACTUALIZAR CONTRASEÑA
+          </button>
+        </div>
+
+        <button class="btn-ctrl" style="width:100%; background:#334155; margin-top:10px; font-weight:800;" onclick="logoutPro()">
+          CERRAR SESIÓN PRO
+        </button>
       </div>
-      <div class="form-group">
-        <label>Tu Nombre Completo</label>
-        <input type="text" id="buyName" placeholder="Tu nombre">
-      </div>
-      <div class="form-group">
-        <label>Tu Correo para la Licencia</label>
-        <input type="email" id="buyEmail" placeholder="tu@correo.com">
-      </div>
-      <button class="btn-ctrl" style="width:100%; background:#25d366; color:#000; font-weight:900;" onclick="comprarWhatsApp()">
-        💬 COMPRAR POR WHATSAPP ($39.900)
-      </button>
+
     </div>
   </div>
 
-  <!-- ==================== MODAL DE AJUSTES ==================== -->
+  <!-- ==================== MODAL DE AJUSTES GENERALES ==================== -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -391,7 +455,6 @@
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeSettingsModal()">✕</button>
       </div>
 
-      <!-- SELECCIÓN DE ESTACIÓN (1 Gratis / hasta 4 PRO) -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
         <span style="font-size:0.7rem; font-weight:800; color:var(--c-yellow);">📻 ESTACIÓN ACTIVA</span>
         <span id="lblStationLimit" style="font-size:0.6rem; color:var(--text-muted);">Límite: 1 estación (Gratis)</span>
@@ -405,12 +468,11 @@
         </select>
       </div>
 
-      <!-- SERVIDOR UNIVERSAL ICECAST -->
       <div style="font-size:0.7rem; font-weight:900; color:var(--c-blue); margin:8px 0 4px 0;">
-        📡 SERVIDOR ICECAST / SHOUTCAST (Cualquier Proveedor)
+        📡 SERVIDOR ICECAST / CUALQUIER PROVEEDOR
       </div>
       <div class="form-group">
-        <label>Servidor / Host (ej. link.zeno.fm o tu servidor)</label>
+        <label>Servidor / Host</label>
         <input type="text" id="host" value="link.zeno.fm">
       </div>
       <div style="display:flex; gap:6px;">
@@ -426,7 +488,7 @@
         <input type="password" id="password" placeholder="Tu Stream Key">
       </div>
 
-      <!-- AUTODJ EN LA NUBE CON 10 GB -->
+      <!-- AUTODJ EN NUBE -->
       <div style="background:#131d36; border:1px solid #3b82f6; border-radius:8px; padding:8px; margin:8px 0;">
         <div style="display:flex; justify-content:space-between; font-size:0.7rem; font-weight:900; color:var(--c-gold);">
           <span>☁ AUTODJ EN NUBE</span>
@@ -456,7 +518,7 @@
         <span class="vol-val" id="valStinger">90%</span>
       </div>
 
-      <!-- AUDIOS PISADORES -->
+      <!-- PISADORES -->
       <div style="font-size:0.7rem; font-weight:900; color:var(--c-purple); margin:8px 0 4px 0;">🎙 CARGAR PISADORES</div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
         <label class="btn-ctrl" style="text-align:center; display:block;">PISADOR 1 📂<input type="file" accept="audio/mpeg, audio/mp3" style="display:none;" onchange="loadCustomStinger(1, event)"></label>
@@ -531,33 +593,48 @@
       t.scrollTop = t.scrollHeight;
     }
 
-    // GESTIÓN PRO & FIREBASE
-    function openProModal() { document.getElementById('proModal').style.display = 'flex'; }
+    // GESTIÓN DEL MODAL PRO Y VISTAS
+    function openProModal() {
+      if (isPro) {
+        document.getElementById('viewFreeUser').style.display = 'none';
+        document.getElementById('viewProActiveUser').style.display = 'block';
+        document.getElementById('userProEmailDisplay').innerText = window.currentUserEmail || "Cuenta PRO Activa";
+        document.getElementById('modalProHeaderTitle').innerText = '👑 MI PLAN PRO ACTIVO';
+      } else {
+        document.getElementById('viewFreeUser').style.display = 'block';
+        document.getElementById('viewProActiveUser').style.display = 'none';
+        document.getElementById('modalProHeaderTitle').innerText = '👑 ADQUIRIR PLAN PRO';
+      }
+      document.getElementById('proModal').style.display = 'flex';
+    }
+
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
 
+    // LOGIN FIREBASE
     async function loginFirebasePro() {
       const email = document.getElementById('proEmail').value.trim();
       const pass = document.getElementById('proPass').value.trim();
       if (!email || !pass) { alert("Ingresa tu correo y clave asignados."); return; }
       
       try {
-        log("Validando licencia con Firebase...");
+        log("Validando credenciales en Firebase...");
         await window.fbSignIn(window.fbAuth, email, pass);
-        alert("¡Licencia PRO activada con éxito!");
-        closeProModal();
+        alert("¡Licencia PRO verificada con éxito!");
+        openProModal();
       } catch (err) {
         alert("Error de autenticación: " + err.message);
       }
     }
 
+    // ACTIVACIÓN DE FUNCIONES PRO
     function activarModoPro(email) {
       isPro = true;
       const b = document.getElementById('btnProBadge');
       b.className = 'btn-crown pro-active';
       b.innerHTML = '👑 PRO ACTIVO';
       document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
-      
-      // Habilitar Pisador 2 y Rayito
+
+      // Pisadores PRO
       document.getElementById('btnP2').disabled = false;
       document.getElementById('btnP2').innerHTML = '<span>🔊 PISADOR 2</span><small style="font-size:0.55rem;">DISPARAR</small>';
       document.getElementById('btnLightning').disabled = false;
@@ -571,11 +648,11 @@
       document.getElementById('lblRayitoFile').style.opacity = '1';
       document.getElementById('lblRayitoFile').innerText = '⚡ PISADOR RAYITO (>1:40) 📂';
 
-      // Habilitar carga de video
+      // Carga de videos permitida
       document.getElementById('fileTracks').setAttribute('accept', 'audio/mpeg, audio/mp3, video/mp4, video/webm, video/*');
       document.getElementById('lblLoadFiles').innerText = '📂 CARGAR MÚSICA O VIDEO (PRO)';
 
-      // Habilitar 4 estaciones
+      // 4 estaciones desbloqueadas
       const sSel = document.getElementById('stationSelector');
       for (let i = 1; i < sSel.options.length; i++) sSel.options[i].disabled = false;
       document.getElementById('lblStationLimit').innerText = 'Límite: 4 estaciones (PRO)';
@@ -586,13 +663,64 @@
       document.getElementById('barAutoDj').style.background = 'var(--c-green)';
       document.getElementById('lblAutoDjCap').innerText = 'AutoDJ activado en la nube con 10 GB de capacidad.';
 
-      log(`Plan PRO activado para: ${email}`);
+      log(`Plan PRO activo: ${email}`);
     }
 
     function desactivarModoPro() {
       isPro = false;
       document.getElementById('btnProBadge').className = 'btn-crown';
       document.getElementById('btnProBadge').innerHTML = '👑 PRO';
+      document.getElementById('timerLiveBox').innerText = 'TIEMPO MÁX: 15:00';
+    }
+
+    // GESTIÓN DE SEGURIDAD / CAMBIO DE CLAVE OBLIGATORIO
+    function toggleSecurityPanel() {
+      const p = document.getElementById('securityPanel');
+      p.style.display = p.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function togglePassVisibility(id) {
+      const inp = document.getElementById(id);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+
+    async function changeUserPassword() {
+      const p1 = document.getElementById('newPass1').value.trim();
+      const p2 = document.getElementById('newPass2').value.trim();
+
+      if (!p1 || p1.length < 6) {
+        alert("La nueva contraseña debe tener mínimo 6 caracteres.");
+        return;
+      }
+      if (p1 !== p2) {
+        alert("Las contraseñas no coinciden. Verifícalas e intenta nuevamente.");
+        return;
+      }
+
+      const user = window.fbAuth.currentUser;
+      if (!user) {
+        alert("No hay una sesión activa para cambiar la contraseña.");
+        return;
+      }
+
+      try {
+        log("Actualizando contraseña en Firebase...");
+        await window.fbUpdatePass(user, p1);
+        alert("¡Contraseña actualizada correctamente! Guárdala bien.");
+        document.getElementById('newPass1').value = '';
+        document.getElementById('newPass2').value = '';
+        toggleSecurityPanel();
+      } catch (err) {
+        alert("Error al actualizar la contraseña: " + err.message);
+      }
+    }
+
+    async function logoutPro() {
+      if (confirm("¿Deseas cerrar tu sesión PRO en este dispositivo?")) {
+        await window.fbSignOut(window.fbAuth);
+        closeProModal();
+        location.reload();
+      }
     }
 
     function comprarWhatsApp() {
@@ -605,7 +733,7 @@
       window.open(url, '_blank');
     }
 
-    // MONITOR DE CONEXIÓN A INTERNET EN TIEMPO REAL
+    // MONITOR DE CONEXIÓN PING
     function iniciarMonitorPing() {
       setInterval(async () => {
         const start = Date.now();
@@ -632,7 +760,7 @@
       }, 5000);
     }
 
-    // GESTIÓN DE HASTA 4 ESTACIONES
+    // GESTIÓN DE ESTACIONES
     function loadSavedStations() {
       const s = localStorage.getItem('ep_stations');
       if (s) {
@@ -676,7 +804,7 @@
     function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
     function closeSettingsModal() { saveStationData(); document.getElementById('settingsModal').style.display = 'none'; }
 
-    // FILTRO ESTRICTO DE ARCHIVOS
+    // FILTRO DE ARCHIVOS
     function handleStrictFiles(e) {
       const raw = Array.from(e.target.files);
       const allowed = raw.filter(f => {
@@ -688,7 +816,7 @@
       });
 
       if (allowed.length === 0) {
-        alert(isPro ? "Solo se admiten MP3 o Videos." : "En versión gratuita solo se admiten archivos MP3. Pasa a PRO para subir videos.");
+        alert(isPro ? "Solo se admiten archivos MP3 o Videos." : "En versión gratuita solo se admiten archivos MP3. Pasa a PRO para subir videos.");
         return;
       }
       playlist = allowed;
@@ -710,7 +838,7 @@
       let mount = st.mount;
       if (mount && !mount.startsWith('/')) mount = '/' + mount;
 
-      log("Accediendo a micrófono...");
+      log("Accediendo al micrófono...");
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
@@ -739,7 +867,7 @@
         ws.onmessage = (e) => {
           const resp = JSON.parse(e.data);
           if (resp.status === 'SUCCESS') {
-            log('<span style="color:var(--c-green)">¡AL AIRE! Conexión exitosa.</span>');
+            log('<span style="color:var(--c-green)">¡AL AIRE! Conectado con éxito.</span>');
             initAudioEngine();
           } else {
             log(`<span style="color:var(--c-red)">Error ${resp.code || ''}: ${resp.message}</span>`);
@@ -748,13 +876,13 @@
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">El servidor está respondiendo, pulsa transmitir nuevamente.</span>');
+          log('<span style="color:var(--c-yellow)">Relay iniciando... Vuelve a pulsar si tarda.</span>');
           stopAll();
         };
 
         ws.onclose = () => {
           if (isLive) {
-            log('<span style="color:var(--c-red)">Transmisión terminada.</span>');
+            log('<span style="color:var(--c-red)">Transmisión finalizada.</span>');
             stopAll();
           }
         };
@@ -770,7 +898,6 @@
       document.getElementById('btnLive').className = 'btn-main-stream live';
       document.getElementById('btnLive').innerText = 'DETENER TRANSMISIÓN';
 
-      // Temporizador de 15 minutos en Gratis
       if (!isPro) {
         liveTimerInterval = setInterval(() => {
           liveSeconds++;
@@ -791,27 +918,23 @@
       const sampleRate = audioContext.sampleRate;
       masterGainNode = audioContext.createGain();
 
-      // Monitoreo
       monitorGainNode = audioContext.createGain();
       monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
       masterGainNode.connect(monitorGainNode);
       monitorGainNode.connect(audioContext.destination);
 
-      // Micrófono
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
       micGainNode = audioContext.createGain();
       micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
       micSourceNode.connect(micGainNode);
       micGainNode.connect(masterGainNode);
 
-      // Música
       if (!musicSourceNode) musicSourceNode = audioContext.createMediaElementSource(aMusic);
       musicGainNode = audioContext.createGain();
       musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
       musicSourceNode.connect(musicGainNode);
       musicGainNode.connect(masterGainNode);
 
-      // Pisadores
       stingerGainNode = audioContext.createGain();
       stingerGainNode.gain.value = parseFloat(document.getElementById('volStinger').value);
       if (!stinger1SourceNode) stinger1SourceNode = audioContext.createMediaElementSource(aS1);
@@ -823,7 +946,6 @@
       lightningSourceNode.connect(stingerGainNode);
       stingerGainNode.connect(masterGainNode);
 
-      // Vúmetro
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 128;
       masterGainNode.connect(analyser);
@@ -865,7 +987,6 @@
       if (playlist.length > 0 && aMusic.paused) playTrack(currentIndex);
     }
 
-    // CONTROLES DE LOCUTOR
     function toggleMic() {
       const btn = document.getElementById('btnMic');
       const baseMusicVol = parseFloat(document.getElementById('volMusic').value);
@@ -909,15 +1030,14 @@
       if (isMonitoring) {
         btn.classList.add('monitor-active');
         if (monitorGainNode && audioContext) monitorGainNode.gain.setValueAtTime(1.0, audioContext.currentTime);
-        log('🎧 Monitoreo de audífonos ACTIVADO.');
+        log('🎧 Monitoreo local ACTIVADO.');
       } else {
         btn.classList.remove('monitor-active');
         if (monitorGainNode && audioContext) monitorGainNode.gain.setValueAtTime(0.0, audioContext.currentTime);
-        log('🎧 Monitoreo de audífonos DESACTIVADO.');
+        log('🎧 Monitoreo local DESACTIVADO.');
       }
     }
 
-    // PISADORES
     function triggerStinger(num) {
       if (num === 1 && aS1.src) startStingerPlayback(aS1, "PISADOR 1");
       if (num === 2) {
@@ -971,7 +1091,7 @@
     }
 
     function toggleLightningMode() {
-      if (!isPro) { alert("El modo Rayito automático es exclusivo para usuarios PRO."); return; }
+      if (!isPro) { alert("El modo Rayito es exclusivo para usuarios PRO."); return; }
       lightningEnabled = !lightningEnabled;
       const btn = document.getElementById('btnLightning');
       if (lightningEnabled) {
@@ -983,7 +1103,6 @@
       }
     }
 
-    // COLA DE PISTAS (VERDE, AZUL, AMARILLO)
     function updateTrackBoxes() {
       if (playlist.length === 0) return;
       const t1 = playlist[currentIndex];
@@ -1008,7 +1127,6 @@
         aMusic.play();
         document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
 
-        // MODO RAYITO: Pistas > 100s (1m 40s)
         if (lightningEnabled && dur > 100 && aLight.src && isPro) {
           startStingerPlayback(aLight, "⚡ PISADOR RAYITO");
         }
@@ -1051,7 +1169,6 @@
       document.getElementById('btnMode').innerText = isShuffle ? 'MODO: ALEATORIO' : 'MODO: CONTINUO';
     }
 
-    // SLIDERS DE VOLUMEN
     function setMicVol(v) {
       document.getElementById('valMic').innerText = `${Math.round(v * 100)}%`;
       if (micGainNode && audioContext && !micMuted) micGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
