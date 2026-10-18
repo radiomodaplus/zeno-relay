@@ -72,14 +72,12 @@
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
     .vu-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--c-green) 50%, var(--c-yellow) 80%, var(--c-red) 100%); transition: width 0.05s linear; }
 
-    /* BANNER PISADOR */
+    /* BANNERS */
     .stinger-banner {
       display: none; background: linear-gradient(135deg, #3b0764, #1e1b4b);
       border: 2px solid var(--c-purple); border-radius: 8px; padding: 6px 10px;
       margin-bottom: 6px; align-items: center; justify-content: space-between;
     }
-
-    /* BANNER PUBLICIDAD PROGRAMADA */
     .ads-banner {
       display: none; background: linear-gradient(135deg, #0c4a6e, #075985);
       border: 2px solid var(--c-blue); border-radius: 8px; padding: 6px 10px;
@@ -105,7 +103,6 @@
     .track-name { font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; flex: 1; }
     .track-time { font-size: 0.65rem; color: var(--text-muted); }
 
-    /* FLECHAS INTERNAS DE LA PISTA AL AIRE */
     .air-nav-btn {
       background: #162444; border: 1px solid var(--border); color: #fff;
       width: 32px; height: 32px; border-radius: 6px; font-size: 0.85rem;
@@ -142,9 +139,16 @@
     .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 900; }
     .btn-stinger:disabled { opacity: 0.35; filter: grayscale(1); }
 
+    /* CONTROLES PRINCIPALES */
     .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
     .btn-ctrl { padding: 9px 4px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-sub); color: #fff; font-size: 0.7rem; font-weight: 800; cursor: pointer; }
     
+    .btn-panel-main {
+      width: 100%; padding: 10px; background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      color: #fff; border: none; border-radius: 8px; font-weight: 900; font-size: 0.78rem; text-align: center;
+      margin-bottom: 6px; cursor: pointer; box-shadow: 0 0 10px rgba(99,102,241,0.3);
+    }
+
     .file-loader { position: relative; overflow: hidden; margin-bottom: 6px; }
     .file-loader input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
     .btn-load-files {
@@ -170,7 +174,7 @@
     }
     .modal-box {
       background: #0c1427; border: 1px solid #3b82f6; border-radius: 14px;
-      width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; padding: 14px;
+      width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; padding: 14px;
     }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
     
@@ -187,6 +191,40 @@
       background: #111a33; border: 1px dashed var(--border); border-radius: 8px;
       padding: 6px 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
     }
+
+    /* ESTILOS DEL PANEL PRINCIPAL DE PISTAS */
+    .playlist-scroll {
+      display: flex; flex-direction: column; gap: 6px; max-height: 60vh; overflow-y: auto; padding-right: 4px;
+    }
+    .track-item-card {
+      background: #101935; border: 1px solid #233560; border-radius: 8px;
+      padding: 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px;
+    }
+    .track-item-card.is-live { border-color: var(--c-green); background: #064e3b33; }
+    .track-item-card.is-next { border-color: var(--c-blue); background: #082f4933; }
+    .track-item-card.is-third { border-color: var(--c-yellow); background: #42200633; }
+    
+    .track-item-info { flex: 1; overflow: hidden; }
+    .track-item-title { font-size: 0.75rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .track-item-meta { display: flex; gap: 6px; align-items: center; font-size: 0.62rem; margin-top: 2px; }
+    .tag-played { background: #334155; color: #cbd5e1; padding: 1px 6px; border-radius: 4px; font-weight: 800; }
+    .tag-live { background: var(--c-green); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
+    .tag-next { background: var(--c-blue); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
+    .tag-third { background: var(--c-yellow); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
+
+    .track-item-actions { display: flex; gap: 4px; }
+    .btn-reorder {
+      background: #1e293b; border: 1px solid #475569; color: #fff;
+      width: 28px; height: 28px; border-radius: 6px; font-size: 0.75rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .btn-reorder:active { background: var(--c-blue); }
+
+    /* ESTILOS MULTICOLOR PARA CALENDARIO */
+    .cal-card-box {
+      background: linear-gradient(135deg, #1e1b4b, #111827); border: 2px solid #a855f7;
+      border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: 0 0 14px rgba(168,85,247,0.25);
+    }
   </style>
 </head>
 <body>
@@ -198,7 +236,7 @@
     </div>
     <div class="top-actions">
       <button id="btnProBadge" class="btn-crown" onclick="openProModal()">👑 PRO</button>
-      <button id="btnCalendar" class="btn-icon" onclick="openCalendarModal()" title="Publicidad y Horarios">📅</button>
+      <button id="btnCalendar" class="btn-icon" onclick="openCalendarModal()" title="Publicidad y Calendario">📅</button>
       <button id="btnMonitor" class="btn-icon" onclick="toggleLocalMonitoring()" title="Monitoreo">🎧</button>
       <button class="btn-icon" onclick="openSettingsModal()" title="Ajustes">⚙</button>
     </div>
@@ -246,31 +284,33 @@
 
   <!-- COLA DE 3 PISTAS -->
   <div class="queue-grid">
-    <!-- PISTA 1: AL AIRE CON FLECHAS DE ATRÁS (REPETIR) Y ADELANTE (SIGUIENTE) -->
     <div class="track-box current">
       <div class="track-tag">● 1. EN EL AIRE (ACTUAL)</div>
       <div class="track-row-air">
-        <button class="air-nav-btn" onclick="repeatCurrentTrack()" title="Repetir pista desde el inicio">⏮</button>
+        <button class="air-nav-btn" onclick="repeatCurrentTrack()" title="Repetir pista (⏮)">⏮</button>
         <div style="flex:1; overflow:hidden;">
           <div class="track-name" id="track1">Sin reproducción</div>
           <div class="track-time" id="track1Time">0:00 / 0:00</div>
         </div>
-        <button class="air-nav-btn" onclick="skipToNextTrack()" title="Pasar a la siguiente pista">⏭</button>
+        <button class="air-nav-btn" onclick="skipToNextTrack()" title="Siguiente pista (⏭)">⏭</button>
       </div>
     </div>
 
-    <!-- PISTA 2: SIGUIENTE EN COLA -->
     <div class="track-box next">
       <div class="track-tag">▶ 2. SIGUIENTE EN COLA</div>
       <div class="track-name" id="track2">En espera...</div>
     </div>
 
-    <!-- PISTA 3: TERCERA EN ESPERA -->
     <div class="track-box third">
       <div class="track-tag">⏭ 3. EN ESPERA (TERCERA)</div>
       <div class="track-name" id="track3">En espera...</div>
     </div>
   </div>
+
+  <!-- BOTÓN PANEL PRINCIPAL DE PISTAS -->
+  <button class="btn-panel-main" onclick="openPlaylistModal()">
+    📑 PANEL PRINCIPAL (VER TODAS LAS PISTAS Y ORGANIZAR)
+  </button>
 
   <!-- MIC Y DUCKING -->
   <div class="mic-duck-row">
@@ -308,7 +348,7 @@
 
   <!-- CARGA DE ARCHIVOS -->
   <div class="file-loader">
-    <div class="btn-load-files" id="lblLoadFiles">📂 CARGAR MÚSICA (SOLO MP3 EN GRATIS)</div>
+    <div class="btn-load-files" id="lblLoadFiles">📂 CARGAR MÚSICA (AGREGAR A LA LISTA)</div>
     <input type="file" id="fileTracks" multiple accept="audio/mpeg, audio/mp3" onchange="handleStrictFiles(event)">
   </div>
 
@@ -326,24 +366,49 @@
   <audio id="audioLightning" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioAds" style="display:none;" crossorigin="anonymous"></audio>
 
-  <!-- ==================== MODAL DE PUBLICIDAD / CALENDARIO (📅) ==================== -->
-  <div class="modal-overlay" id="calendarModal">
+  <!-- ==================== MODAL DEL PANEL PRINCIPAL (TODAS LAS PISTAS) ==================== -->
+  <div class="modal-overlay" id="playlistModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div style="font-size:0.85rem; font-weight:900; color:var(--c-blue);">📅 PROGRAMADOR DE PUBLICIDAD / CUÑAS</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeCalendarModal()">✕</button>
+        <div style="font-size:0.85rem; font-weight:900; color:var(--c-blue);">📑 PANEL PRINCIPAL DE PISTAS</div>
+        <button class="btn-icon" style="width:26px; height:26px;" onclick="closePlaylistModal()">✕</button>
       </div>
 
       <div style="font-size:0.68rem; color:var(--text-muted); margin-bottom:8px;">
-        Los comerciales esperarán a que <b>termine la canción actual</b> para entrar al aire sin cortar la música de golpe.
+        Organiza las pistas de arriba hacia abajo con <b>▲</b> y <b>▼</b>. La #1 está al aire, la #2 es la siguiente y la #3 es la tercera en cola.
+      </div>
+
+      <div class="playlist-scroll" id="playlistContainer">
+        <!-- Render dinámico de canciones -->
+      </div>
+
+      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closePlaylistModal()">CERRAR PANEL</button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE PUBLICIDAD / CALENDARIO MULTICOLOR (📅) ==================== -->
+  <div class="modal-overlay" id="calendarModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div style="font-size:0.9rem; font-weight:900; color:var(--c-purple);">📅 CALENDARIO & PUBLICIDAD INTELIGENTE</div>
+        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeCalendarModal()">✕</button>
+      </div>
+
+      <div class="cal-card-box">
+        <div style="font-size:0.75rem; font-weight:900; color:#e9d5ff; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+          <span style="font-size:1.1rem;">⚡</span> PROGRAMACIÓN SIN CORTES BRUSCOS
+        </div>
+        <p style="font-size:0.68rem; color:#d8b4fe; line-height:1.4;">
+          La tanda comercial aguardará automáticamente a que <b>termine la canción actual</b> antes de salir al aire. Al terminar, la siguiente pista continuará de inmediato.
+        </p>
       </div>
 
       <!-- Carga de archivo para publicidad -->
       <div class="form-group">
-        <label>Archivo de Publicidad (Audio o Video)</label>
-        <div class="file-select-box">
-          <span id="lblAdFileName" style="font-size:0.7rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">Sin archivo</span>
-          <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
+        <label style="color:var(--c-blue);">📂 Archivo de Publicidad (Audio o Video)</label>
+        <div class="file-select-box" style="border-color:#0284c7;">
+          <span id="lblAdFileName" style="font-size:0.7rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">Sin archivo asignado</span>
+          <label class="btn-ctrl" style="padding:5px 10px; background:#0284c7; cursor:pointer; font-weight:900;">
             SUBIR
             <input type="file" accept="audio/*, video/*" style="display:none;" onchange="handleAdFileSelect(event)">
           </label>
@@ -352,39 +417,41 @@
 
       <!-- Tipo de Programación -->
       <div class="form-group">
-        <label>Tipo de Emisión</label>
+        <label style="color:var(--c-yellow);">⏰ Modalidad de Salida</label>
         <select id="adScheduleType" onchange="toggleScheduleInputs(this.value)">
-          <option value="hourly">Todas las horas al minuto específico</option>
-          <option value="datetime">Fecha y hora exacta única</option>
+          <option value="hourly">Repetir todas las horas al minuto específico</option>
+          <option value="datetime">Fecha y hora exacta única (Calendario)</option>
         </select>
       </div>
 
       <!-- Modo: Todas las horas -->
       <div id="rowHourly">
         <div class="form-group">
-          <label>Minuto de cada hora (0 a 59)</label>
-          <input type="number" id="adMinuteInterval" min="0" max="59" value="30" placeholder="Ej: 30 (al minuto 30)">
+          <label style="color:var(--c-green);">Minuto de cada hora (0 a 59)</label>
+          <input type="number" id="adMinuteInterval" min="0" max="59" value="30" placeholder="Ej: 30 (Al minuto 30 de cada hora)">
         </div>
       </div>
 
       <!-- Modo: Fecha y Hora exacta -->
       <div id="rowDateTime" style="display:none;">
         <div class="form-group">
-          <label>Fecha y Hora de emisión</label>
+          <label style="color:var(--c-gold);">Seleccionar Fecha y Hora exacta</label>
           <input type="datetime-local" id="adExactDateTime">
         </div>
       </div>
 
       <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:8px;">
-        <input type="checkbox" id="chkAdActive" style="width:18px; height:18px;" checked>
-        <label for="chkAdActive" style="font-size:0.75rem; color:#fff; margin:0; cursor:pointer;">Activar programador de comerciales</label>
+        <input type="checkbox" id="chkAdActive" style="width:18px; height:18px; accent-color:var(--c-green);" checked>
+        <label for="chkAdActive" style="font-size:0.75rem; color:#fff; margin:0; cursor:pointer; font-weight:800;">Habilitar programador de cuñas</label>
       </div>
 
-      <div style="background:#030712; border:1px solid var(--border); border-radius:8px; padding:6px; margin:8px 0; font-size:0.65rem; color:var(--c-yellow);" id="lblNextAdStatus">
-        Estado: Esperando programación...
+      <div style="background:#030712; border:1px solid #3b82f6; border-radius:8px; padding:8px; margin:8px 0; font-size:0.68rem; color:#38bdf8; font-weight:700;" id="lblNextAdStatus">
+        Estado: Esperando configuración...
       </div>
 
-      <button class="btn-main-stream" style="padding:10px;" onclick="saveAdSchedule()">GUARDAR Y ACTIVAR COMERCIALES</button>
+      <button class="btn-main-stream" style="padding:10px; background:linear-gradient(135deg, #9333ea, #7e22ce);" onclick="saveAdSchedule()">
+        GUARDAR Y ACTIVAR PUBLICIDAD
+      </button>
     </div>
   </div>
 
@@ -416,12 +483,12 @@
       </div>
 
       <div id="viewProActiveUser" style="display:none;">
-        <div class="pro-user-header">
+        <div class="pro-user-header" style="background:linear-gradient(135deg, #064e3b, #065f46); border:1px solid #34d399; border-radius:10px; padding:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
           <div>
             <div style="font-size:0.68rem; color:#a7f3d0; font-weight:700;">HOLA, BIENVENIDO</div>
             <div style="font-size:0.82rem; color:#fff; font-weight:900;" id="userProEmailDisplay">usuario@correo.com</div>
           </div>
-          <div class="pro-badge-pill">👑 PRO ACTIVO</div>
+          <div style="background:#fbbf24; color:#000; font-size:0.62rem; font-weight:900; padding:2px 8px; border-radius:20px;">👑 PRO ACTIVO</div>
         </div>
         <button class="btn-ctrl" style="width:100%; background:#334155; margin-top:10px; font-weight:800;" onclick="logoutPro()">CERRAR SESIÓN</button>
       </div>
@@ -462,8 +529,13 @@
         <input type="password" id="password" placeholder="Tu Stream Key">
       </div>
 
-      <!-- CARGA DE PISADORES DENTRO DE AJUSTES -->
-      <div style="font-size:0.7rem; font-weight:900; color:var(--c-purple); margin:10px 0 4px 0;">🎙 CARGAR AUDIOS DE PISADORES</div>
+      <!-- BOTÓN RESTABLECER EMISORA (JUSTO DEBAJO DE LA CONTRASEÑA) -->
+      <button class="btn-ctrl" style="width:100%; background:rgba(239, 68, 68, 0.15); border-color:var(--c-red); color:var(--c-red); margin:6px 0 12px 0; font-weight:800; padding:8px;" onclick="promptResetStation()">
+        ⚠️ RESTABLECER EMISORA
+      </button>
+
+      <!-- CARGA DE PISADORES -->
+      <div style="font-size:0.7rem; font-weight:900; color:var(--c-purple); margin:6px 0 4px 0;">🎙 CARGAR AUDIOS DE PISADORES</div>
       
       <div class="file-select-box">
         <span id="lblStinger1Name" style="font-size:0.68rem; color:#fff;">Pisador 1: No asignado</span>
@@ -503,11 +575,6 @@
       </div>
 
       <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeSettingsModal()">GUARDAR Y APLICAR</button>
-      
-      <!-- BOTÓN RESTABLECER EMISORA ÚNICAMENTE AQUÍ -->
-      <button class="btn-ctrl" style="width:100%; background:transparent; border-color:var(--c-red); color:var(--c-red); margin-top:8px; font-weight:800;" onclick="resetStationData()">
-        ⚠️ RESTABLECER EMISORA (BORRAR DATOS)
-      </button>
     </div>
   </div>
 
@@ -535,7 +602,8 @@
     let isShuffle = false;
     let isMonitoring = false;
 
-    let playlist = [];
+    // Lista estructurada de canciones
+    let playlist = []; // Objetos: { file, name, played: false, durationStr: '--:--' }
     let currentIndex = 0;
     let activeStingerAudio = null;
 
@@ -579,7 +647,7 @@
     const aAds = document.getElementById('audioAds');
 
     // ==========================================
-    // PERSISTENCIA PERMANENTE DE CREDENCIALES
+    // PERSISTENCIA DE DATOS
     // ==========================================
     window.addEventListener('DOMContentLoaded', () => {
       ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
@@ -589,7 +657,6 @@
         }
       });
 
-      // Cargar configuración de publicidad guardada
       const savedAd = localStorage.getItem('ep_ad_schedule');
       if (savedAd) {
         try {
@@ -617,8 +684,10 @@
       log("Configuración guardada de forma permanente.");
     }
 
-    function resetStationData() {
-      if (confirm("¿Estás seguro de que deseas restablecer y borrar todos los datos de tu emisora?")) {
+    // CONFIRMACIÓN PREVIA PARA RESTABLECER
+    function promptResetStation() {
+      const confirmacion = confirm("¿Estás seguro de restablecer los datos de la emisora?\n\nPresiona ACEPTAR (Sí) para borrar usuario, anclaje y contraseña, o CANCELAR (No) para conservarlos.");
+      if (confirmacion) {
         ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
           localStorage.removeItem(`ep_saved_${id}`);
         });
@@ -627,7 +696,8 @@
         document.getElementById('mount').value = '/f04sfgq6138uv/source';
         document.getElementById('user').value = 'source';
         document.getElementById('password').value = '';
-        alert("Datos de emisora restablecidos.");
+        alert("Los datos de la emisora se han restablecido.");
+        log("Emisora restablecida por el usuario.");
       }
     }
 
@@ -656,6 +726,8 @@
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
     function openCalendarModal() { document.getElementById('calendarModal').style.display = 'flex'; }
     function closeCalendarModal() { document.getElementById('calendarModal').style.display = 'none'; }
+    function openPlaylistModal() { renderPlaylistModal(); document.getElementById('playlistModal').style.display = 'flex'; }
+    function closePlaylistModal() { document.getElementById('playlistModal').style.display = 'none'; }
 
     function togglePasswordVisibility() {
       const p = document.getElementById('password');
@@ -663,7 +735,7 @@
     }
 
     // ==========================================
-    // CARGA DE PISADORES DESDE AJUSTES
+    // CARGA DE PISADORES
     // ==========================================
     function handleStingerUpload(num, e) {
       const f = e.target.files[0];
@@ -679,24 +751,223 @@
         aLight.src = url;
         document.getElementById('lblLightningName').innerText = `Rayito: ${f.name}`;
       }
-      log(`Pisador cargado correctamente: ${f.name}`);
+      log(`Pisador cargado: ${f.name}`);
     }
 
     // ==========================================
-    // CONTROL DE PISTAS AL AIRE (FLECHAS ⏮ / ⏭)
+    // CONTROL DE PISTAS (FLECHAS ⏮ / ⏭)
     // ==========================================
     function repeatCurrentTrack() {
       if (playlist.length === 0) return;
       aMusic.currentTime = 0;
       aMusic.play();
-      log("Pista actual reiniciada desde el inicio (⏮).");
+      log("Pista actual reiniciada (⏮).");
     }
 
     function skipToNextTrack() {
       if (playlist.length === 0) return;
       playNextTrack();
-      log("Saltando a la siguiente pista (⏭).");
+      log("Saltando a siguiente pista (⏭).");
     }
+
+    // ==========================================
+    // GESTIÓN DE PISTAS SIN PAUSAR & REORDENAR
+    // ==========================================
+    function handleStrictFiles(e) {
+      const raw = Array.from(e.target.files);
+      const allowed = raw.filter(f => {
+        const n = f.name.toLowerCase();
+        return isPro ? (n.endsWith('.mp3') || n.endsWith('.mp4') || n.endsWith('.webm')) : n.endsWith('.mp3');
+      });
+
+      if (allowed.length === 0) {
+        alert(isPro ? "Selecciona archivos MP3 o Video." : "En versión gratis solo se admiten archivos MP3.");
+        return;
+      }
+
+      const wasEmpty = playlist.length === 0;
+
+      // Se agregan al final sin cortar la reproducción en vivo
+      allowed.forEach(file => {
+        const item = {
+          file: file,
+          name: file.name,
+          played: false,
+          durationStr: '--:--'
+        };
+
+        // Extraer duración
+        const tempAudio = document.createElement('audio');
+        tempAudio.src = URL.createObjectURL(file);
+        tempAudio.onloadedmetadata = () => {
+          const m = Math.floor(tempAudio.duration / 60);
+          const s = Math.floor(tempAudio.duration % 60).toString().padStart(2, '0');
+          item.durationStr = `${m}:${s}`;
+          if (document.getElementById('playlistModal').style.display === 'flex') {
+            renderPlaylistModal();
+          }
+        };
+
+        playlist.push(item);
+      });
+
+      updateTrackBoxes();
+      log(`${allowed.length} archivo(s) agregado(s) a la lista sin pausar la emisión.`);
+
+      // Si no había nada sonando, arranca la primera
+      if (wasEmpty && (isLive || !aMusic.src)) {
+        playTrack(0);
+      }
+    }
+
+    function renderPlaylistModal() {
+      const container = document.getElementById('playlistContainer');
+      container.innerHTML = '';
+
+      if (playlist.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted); font-size:0.75rem; text-align:center; padding:20px;">No hay canciones cargadas.</div>';
+        return;
+      }
+
+      playlist.forEach((item, idx) => {
+        const card = document.createElement('div');
+        let cardClass = 'track-item-card';
+        let badgeHtml = '';
+
+        if (idx === currentIndex) {
+          cardClass += ' is-live';
+          badgeHtml = '<span class="tag-live">AL AIRE (#1)</span>';
+        } else if (idx === (currentIndex + 1) % playlist.length && playlist.length > 1) {
+          cardClass += ' is-next';
+          badgeHtml = '<span class="tag-next">SIGUIENTE (#2)</span>';
+        } else if (idx === (currentIndex + 2) % playlist.length && playlist.length > 2) {
+          cardClass += ' is-third';
+          badgeHtml = '<span class="tag-third">TERCERA (#3)</span>';
+        }
+
+        if (item.played && idx !== currentIndex) {
+          badgeHtml += '<span class="tag-played">YA SONÓ</span>';
+        }
+
+        card.className = cardClass;
+        card.innerHTML = `
+          <div class="track-item-info">
+            <div class="track-item-title">${idx + 1}. ${item.name}</div>
+            <div class="track-item-meta">
+              <span>⏱ ${item.durationStr}</span>
+              ${badgeHtml}
+            </div>
+          </div>
+          <div class="track-item-actions">
+            <button class="btn-reorder" onclick="moveTrackUp(${idx})" title="Mover arriba">▲</button>
+            <button class="btn-reorder" onclick="moveTrackDown(${idx})" title="Mover abajo">▼</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function moveTrackUp(idx) {
+      if (idx <= 0) return;
+      const temp = playlist[idx];
+      playlist[idx] = playlist[idx - 1];
+      playlist[idx - 1] = temp;
+
+      // Mantener sincronizado el índice de la que está al aire
+      if (currentIndex === idx) currentIndex--;
+      else if (currentIndex === idx - 1) currentIndex++;
+
+      updateTrackBoxes();
+      renderPlaylistModal();
+    }
+
+    function moveTrackDown(idx) {
+      if (idx >= playlist.length - 1) return;
+      const temp = playlist[idx];
+      playlist[idx] = playlist[idx + 1];
+      playlist[idx + 1] = temp;
+
+      if (currentIndex === idx) currentIndex++;
+      else if (currentIndex === idx + 1) currentIndex--;
+
+      updateTrackBoxes();
+      renderPlaylistModal();
+    }
+
+    function updateTrackBoxes() {
+      if (playlist.length === 0) return;
+      document.getElementById('track1').innerText = playlist[currentIndex] ? playlist[currentIndex].name : 'Sin pista';
+      const nIdx = (currentIndex + 1) % playlist.length;
+      document.getElementById('track2').innerText = playlist.length > 1 ? playlist[nIdx].name : 'No hay más archivos';
+      const tIdx = (currentIndex + 2) % playlist.length;
+      document.getElementById('track3').innerText = playlist.length > 2 ? playlist[tIdx].name : 'No hay más archivos';
+    }
+
+    function playTrack(idx) {
+      if (playlist.length === 0 || !playlist[idx]) return;
+      currentIndex = idx;
+      updateTrackBoxes();
+
+      const item = playlist[currentIndex];
+      aMusic.src = URL.createObjectURL(item.file);
+      aMusic.load();
+      aMusic.play().catch(e => console.log(e));
+      document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
+
+      aMusic.onloadedmetadata = () => {
+        // Modo rayito
+        if (lightningEnabled && aMusic.duration > 100 && aLight.src && isPro) {
+          startStingerPlayback(aLight, "⚡ PISADOR RAYITO");
+        }
+      };
+    }
+
+    function togglePlayMusic() {
+      const btn = document.getElementById('btnPlayMusic');
+      if (aMusic.paused) {
+        if (!aMusic.src && playlist.length > 0) playTrack(currentIndex);
+        else aMusic.play();
+        btn.innerText = '⏸ PAUSA';
+      } else {
+        aMusic.pause();
+        btn.innerText = '▶ PLAY';
+      }
+    }
+
+    function playNextTrack() {
+      if (playlist.length === 0) return;
+      if (checkAndPlayScheduledAd()) return;
+
+      // Marcar como ya sonó
+      if (playlist[currentIndex]) {
+        playlist[currentIndex].played = true;
+      }
+
+      currentIndex = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIndex + 1) % playlist.length;
+      playTrack(currentIndex);
+      if (document.getElementById('playlistModal').style.display === 'flex') {
+        renderPlaylistModal();
+      }
+    }
+
+    aMusic.onended = () => {
+      if (playlist[currentIndex]) {
+        playlist[currentIndex].played = true;
+      }
+      if (!checkAndPlayScheduledAd()) {
+        playNextTrack();
+      }
+    };
+
+    aMusic.ontimeupdate = () => {
+      if (!isNaN(aMusic.duration)) {
+        const cM = Math.floor(aMusic.currentTime / 60);
+        const cS = Math.floor(aMusic.currentTime % 60).toString().padStart(2, '0');
+        const dM = Math.floor(aMusic.duration / 60);
+        const dS = Math.floor(aMusic.duration % 60).toString().padStart(2, '0');
+        document.getElementById('track1Time').innerText = `${cM}:${cS} / ${dM}:${dS}`;
+      }
+    };
 
     // ==========================================
     // MÓDULO PUBLICIDAD Y CALENDARIO
@@ -824,7 +1095,7 @@
             channelCount: 1,
             echoCancellation: true,
             noiseSuppression: true,
-            autoGainControl: false // Desactivamos AGC del móvil para usar nuestro compresor Pro
+            autoGainControl: false
           }
         });
         log('<span style="color:var(--c-green)">Micrófono Pro activado con éxito.</span>');
@@ -913,12 +1184,12 @@
 
       masterMixerNode = audioContext.createGain();
 
-      // FILTRO Y COMPRESOR PARA MICRÓFONO (Voz nítida y con presencia)
+      // FILTRO Y COMPRESOR PARA MICRÓFONO
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
       
       micFilterNode = audioContext.createBiquadFilter();
       micFilterNode.type = 'highpass';
-      micFilterNode.frequency.value = 85; // Elimina ruidos de baja frecuencia y golpes de aire
+      micFilterNode.frequency.value = 85;
 
       micCompressorNode = audioContext.createDynamicsCompressor();
       micCompressorNode.threshold.setValueAtTime(-18, audioContext.currentTime);
@@ -930,20 +1201,19 @@
       micGainNode = audioContext.createGain();
       micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
 
-      // Cadena de Micrófono: Entrada -> Filtro Paso Alto -> Compresor -> Ganancia -> Master
       micSourceNode.connect(micFilterNode);
       micFilterNode.connect(micCompressorNode);
       micCompressorNode.connect(micGainNode);
       micGainNode.connect(masterMixerNode);
 
-      // Canal Música
+      // Música
       if (!musicSourceNode) musicSourceNode = audioContext.createMediaElementSource(aMusic);
       musicGainNode = audioContext.createGain();
       musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
       musicSourceNode.connect(musicGainNode);
       musicGainNode.connect(masterMixerNode);
 
-      // Canal Publicidad
+      // Publicidad
       if (!adsSourceNode) adsSourceNode = audioContext.createMediaElementSource(aAds);
       adsGainNode = audioContext.createGain();
       adsGainNode.gain.value = 0.95;
@@ -972,7 +1242,6 @@
       }
       updateVu();
 
-      // Codificador MP3 LameJS
       if (typeof lamejs !== 'undefined') {
         mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
       }
@@ -1089,81 +1358,10 @@
       log(lightningEnabled ? '⚡ Rayito ACTIVO: Lanza pisador en pistas > 1m 40s.' : '⚡ Rayito apagado.');
     }
 
-    function handleStrictFiles(e) {
-      const raw = Array.from(e.target.files);
-      const allowed = raw.filter(f => {
-        const n = f.name.toLowerCase();
-        return isPro ? (n.endsWith('.mp3') || n.endsWith('.mp4') || n.endsWith('.webm')) : n.endsWith('.mp3');
-      });
-
-      if (allowed.length === 0) {
-        alert(isPro ? "Selecciona archivos MP3 o Video." : "En versión gratis solo se admiten archivos MP3.");
-        return;
-      }
-      playlist = allowed;
-      currentIndex = 0;
-      updateTrackBoxes();
-      log(`${allowed.length} archivo(s) listo(s).`);
-      if (isLive && aMusic.paused) playTrack(0);
+    function toggleMode() {
+      isShuffle = !isShuffle;
+      document.getElementById('btnMode').innerText = isShuffle ? 'MODO: ALEATORIO' : 'MODO: CONTINUO';
     }
-
-    function updateTrackBoxes() {
-      if (playlist.length === 0) return;
-      document.getElementById('track1').innerText = playlist[currentIndex] ? playlist[currentIndex].name : 'Sin pista';
-      const nIdx = (currentIndex + 1) % playlist.length;
-      document.getElementById('track2').innerText = playlist.length > 1 ? playlist[nIdx].name : 'No hay más archivos';
-      const tIdx = (currentIndex + 2) % playlist.length;
-      document.getElementById('track3').innerText = playlist.length > 2 ? playlist[tIdx].name : 'No hay más archivos';
-    }
-
-    function playTrack(idx) {
-      if (playlist.length === 0 || !playlist[idx]) return;
-      currentIndex = idx;
-      updateTrackBoxes();
-
-      aMusic.src = URL.createObjectURL(playlist[currentIndex]);
-      aMusic.load();
-      aMusic.play().catch(e => console.log(e));
-      document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
-    }
-
-    function togglePlayMusic() {
-      const btn = document.getElementById('btnPlayMusic');
-      if (aMusic.paused) {
-        if (!aMusic.src && playlist.length > 0) playTrack(currentIndex);
-        else aMusic.play();
-        btn.innerText = '⏸ PAUSA';
-      } else {
-        aMusic.pause();
-        btn.innerText = '▶ PLAY';
-      }
-    }
-
-    function playNextTrack() {
-      if (playlist.length === 0) return;
-      // Antes de pasar a la siguiente pista, verifica si hay publicidad esperando turno
-      if (checkAndPlayScheduledAd()) return;
-
-      currentIndex = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIndex + 1) % playlist.length;
-      playTrack(currentIndex);
-    }
-
-    aMusic.onended = () => {
-      // Al terminar la canción, revisa si hay comerciales agendados
-      if (!checkAndPlayScheduledAd()) {
-        playNextTrack();
-      }
-    };
-
-    aMusic.ontimeupdate = () => {
-      if (!isNaN(aMusic.duration)) {
-        const cM = Math.floor(aMusic.currentTime / 60);
-        const cS = Math.floor(aMusic.currentTime % 60).toString().padStart(2, '0');
-        const dM = Math.floor(aMusic.duration / 60);
-        const dS = Math.floor(aMusic.duration % 60).toString().padStart(2, '0');
-        document.getElementById('track1Time').innerText = `${cM}:${cS} / ${dM}:${dS}`;
-      }
-    };
 
     function setMicVol(v) {
       document.getElementById('valMic').innerText = `${Math.round(v * 100)}%`;
