@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>EMISORASplus isecas</title>
   
-  <!-- LameJS para codificación MP3 -->
+  <!-- LameJS para codificación MP3 en tiempo real -->
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   
   <!-- Firebase SDK Global UMD -->
@@ -48,15 +48,13 @@
       background: linear-gradient(135deg, #f59e0b, #d97706); border: 1px solid #fde047; color: #fff;
       padding: 6px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; cursor: pointer;
       display: flex; align-items: center; gap: 4px; box-shadow: 0 0 10px rgba(245,158,11,0.5);
-      transition: all 0.3s ease;
     }
     .btn-crown.loading-state {
       background: linear-gradient(135deg, #6366f1, #4f46e5); border-color: #818cf8;
       box-shadow: 0 0 10px rgba(99,102,241,0.6); animation: pulse 1s infinite;
     }
     .btn-crown.pro-active {
-      background: linear-gradient(135deg, #10b981, #059669); border-color: #6ee7b7;
-      box-shadow: 0 0 10px rgba(16,185,129,0.5);
+      background: linear-gradient(135deg, #10b981, #059669); border-color: #6ee7b7; box-shadow: 0 0 10px rgba(16,185,129,0.5);
     }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(0.97); } }
 
@@ -78,7 +76,7 @@
     .signal-bars.mid .b1, .signal-bars.mid .b2, .signal-bars.mid .b3 { background: var(--c-yellow); }
     .signal-bars.low .b1 { background: var(--c-red); }
 
-    /* VÚMETRO MASTER */
+    /* VÚMETRO */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
@@ -156,7 +154,7 @@
 
     .terminal-box {
       background: #030712; border: 1px solid var(--border); border-radius: 6px; padding: 6px;
-      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 38px; overflow-y: auto; margin-top: 6px;
+      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 44px; overflow-y: auto; margin-top: 6px;
     }
 
     /* MODALES */
@@ -193,7 +191,7 @@
     .pro-benefit-list li { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
     .pro-benefit-list li span { color: var(--c-green); font-weight: 900; }
 
-    /* CAJA DE CARGA / ACTIVACIÓN (HASTA 2 MINUTOS) */
+    /* CAJA DE CARGA (HASTA 2 MINUTOS) */
     .activation-loading-box {
       display: none; background: #111827; border: 1px solid #6366f1; border-radius: 10px;
       padding: 14px; text-align: center; margin: 10px 0;
@@ -315,10 +313,10 @@
   <div class="terminal-box" id="terminal">> Listo. Configura tu emisora y pulsa transmitir.</div>
 
   <!-- AUDIOS INTERNOS -->
-  <audio id="audioMusic" style="display:none;"></audio>
-  <audio id="audioStinger1" style="display:none;"></audio>
-  <audio id="audioStinger2" style="display:none;"></audio>
-  <audio id="audioLightning" style="display:none;"></audio>
+  <audio id="audioMusic" style="display:none;" crossorigin="anonymous"></audio>
+  <audio id="audioStinger1" style="display:none;" crossorigin="anonymous"></audio>
+  <audio id="audioStinger2" style="display:none;" crossorigin="anonymous"></audio>
+  <audio id="audioLightning" style="display:none;" crossorigin="anonymous"></audio>
 
   <!-- ==================== MODAL DE PLAN PRO ==================== -->
   <div class="modal-overlay" id="proModal">
@@ -356,7 +354,7 @@
           </button>
         </div>
 
-        <!-- INDICADOR DE ESPERA Y CARGA (HASTA 2 MINUTOS) -->
+        <!-- INDICADOR DE ESPERA (HASTA 2 MINUTOS) -->
         <div class="activation-loading-box" id="activationLoadingBox">
           <div class="spinner"></div>
           <div style="font-size:0.8rem; font-weight:900; color:#818cf8; margin-bottom:4px;">
@@ -388,7 +386,7 @@
         </div>
       </div>
 
-      <!-- VISTA 2: PRO ACTIVO (DESAPARECEN COMPRAS Y ACCESOS) -->
+      <!-- VISTA 2: PRO ACTIVO -->
       <div id="viewProActiveUser" style="display:none;">
         <div class="pro-user-header">
           <div>
@@ -411,7 +409,6 @@
           <li><span>✓</span> Soporte para hasta 4 servidores / estaciones</li>
         </ul>
 
-        <!-- BOTÓN DE AJUSTES / RESTABLECER CONTRASEÑA -->
         <button class="btn-ctrl" style="width:100%; background:#1e293b; border-color:var(--c-blue); color:#38bdf8; font-weight:900; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="toggleSecurityPanel()">
           ⚙ AJUSTES DE SEGURIDAD / RESTABLECER CONTRASEÑA
         </button>
@@ -534,7 +531,7 @@
   </div>
 
   <script>
-    // Inicialización Firebase
+    // Configuración Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCDzqYbaYZuwlW_qfV25Cy-muz-srF85L8",
       authDomain: "emisorasplus.firebaseapp.com",
@@ -597,7 +594,6 @@
     const aLight = document.getElementById('audioLightning');
 
     window.addEventListener('DOMContentLoaded', () => {
-      // Restaurar estado local
       const savedPro = localStorage.getItem('ep_is_pro');
       const savedEmail = localStorage.getItem('ep_pro_email');
       if (savedPro === 'true' && savedEmail) {
@@ -620,7 +616,6 @@
       t.scrollTop = t.scrollHeight;
     }
 
-    // GESTIÓN DEL MODAL PRO Y VISTAS
     function openProModal() {
       if (isPro) {
         document.getElementById('viewFreeUser').style.display = 'none';
@@ -647,7 +642,6 @@
 
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
 
-    // LOGIN FIREBASE CON RETARDO DE HASTA 2 MINUTOS Y ESTADO DE CARGA
     async function loginFirebasePro() {
       const email = document.getElementById('proEmail').value.trim();
       const pass = document.getElementById('proPass').value.trim();
@@ -666,26 +660,23 @@
         const userCredential = await auth.signInWithEmailAndPassword(email, pass);
         const user = userCredential.user;
 
-        // Iniciar proceso de activación con espera de hasta 2 minutos
         isActivating = true;
         document.getElementById('formLoginFields').style.display = 'none';
         document.getElementById('whatsAppBuySection').style.display = 'none';
         document.getElementById('activationLoadingBox').style.display = 'block';
 
-        // Actualizar botón superior con estado de carga
         const crownBtn = document.getElementById('btnProBadge');
         crownBtn.className = 'btn-crown loading-state';
         crownBtn.innerHTML = '⏳ ACTUALIZANDO...';
 
-        log('<span style="color:var(--c-yellow)">Aprovisionando tu cuenta PRO (puede tardar hasta 2 minutos)...</span>');
+        log('<span style="color:var(--c-yellow)">Aprovisionando tu cuenta PRO (puede tardar unos minutos)...</span>');
 
-        // Simula la sincronización y aprovisionamiento seguro del servidor (30-45 segundos representativos)
         setTimeout(() => {
           isActivating = false;
           activarModoPro(user.email);
           openProModal();
           alert("¡Tu cuenta PRO ha sido activada con éxito en la nube!");
-        }, 12000); // 12 segundos para demostración fluida e inmediata; puedes subirlo a 60000 o 120000
+        }, 8000);
 
       } catch (err) {
         let msg = err.message;
@@ -703,7 +694,6 @@
       }
     }
 
-    // ACTIVACIÓN DE FUNCIONES PRO
     function activarModoPro(email) {
       isPro = true;
       isActivating = false;
@@ -716,7 +706,6 @@
       b.innerHTML = '👑 PRO ACTIVO';
       document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
 
-      // Habilitar Pisadores PRO
       document.getElementById('btnP2').disabled = false;
       document.getElementById('btnP2').innerHTML = '<span>🔊 PISADOR 2</span><small style="font-size:0.55rem;">DISPARAR</small>';
       document.getElementById('btnLightning').disabled = false;
@@ -730,16 +719,13 @@
       document.getElementById('lblRayitoFile').style.opacity = '1';
       document.getElementById('lblRayitoFile').innerText = '⚡ PISADOR RAYITO (>1:40) 📂';
 
-      // Carga de videos permitida
       document.getElementById('fileTracks').setAttribute('accept', 'audio/mpeg, audio/mp3, video/mp4, video/webm, video/*');
       document.getElementById('lblLoadFiles').innerText = '📂 CARGAR MÚSICA O VIDEO (PRO)';
 
-      // 4 estaciones desbloqueadas
       const sSel = document.getElementById('stationSelector');
       for (let i = 1; i < sSel.options.length; i++) sSel.options[i].disabled = false;
       document.getElementById('lblStationLimit').innerText = 'Límite: 4 estaciones (PRO)';
 
-      // AutoDJ 10 GB
       document.getElementById('autoDjStatus').innerText = 'ACTIVO (10 GB NUBE)';
       document.getElementById('barAutoDj').style.width = '100%';
       document.getElementById('barAutoDj').style.background = 'var(--c-green)';
@@ -759,7 +745,6 @@
       document.getElementById('timerLiveBox').innerText = 'TIEMPO MÁX: 15:00';
     }
 
-    // CAMBIO DE CLAVE / RESTABLECER
     function toggleSecurityPanel() {
       const p = document.getElementById('securityPanel');
       p.style.display = p.style.display === 'none' ? 'block' : 'none';
@@ -824,7 +809,6 @@
       window.open(url, '_blank');
     }
 
-    // MONITOR PING
     function iniciarMonitorPing() {
       setInterval(async () => {
         const start = Date.now();
@@ -851,7 +835,6 @@
       }, 5000);
     }
 
-    // GESTIÓN ESTACIONES
     function loadSavedStations() {
       const s = localStorage.getItem('ep_stations');
       if (s) {
@@ -879,7 +862,7 @@
     }
 
     function applyStationToInputs(id) {
-      const st = stationsData[id] || { host: "", port: "80", mount: "", user: "source", password: "" };
+      const st = stationsData[id] || { host: "link.zeno.fm", port: "80", mount: "/f04sfgq6138uv/source", user: "source", password: "" };
       document.getElementById('host').value = st.host;
       document.getElementById('port').value = st.port;
       document.getElementById('mount').value = st.mount;
@@ -895,7 +878,6 @@
     function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
     function closeSettingsModal() { saveStationData(); document.getElementById('settingsModal').style.display = 'none'; }
 
-    // FILTRO DE ARCHIVOS
     function handleStrictFiles(e) {
       const raw = Array.from(e.target.files);
       const allowed = raw.filter(f => {
@@ -917,78 +899,106 @@
       if (isLive && aMusic.paused) playTrack(0);
     }
 
-    // TRANSMISIÓN Y RELAY
+    // ==========================================
+    // SISTEMA DE TRANSMISIÓN EN VIVO CORREGIDO
+    // ==========================================
     async function toggleStream() {
-      if (isLive) stopAll();
-      else await startBroadcast();
+      if (isLive) {
+        stopAll();
+      } else {
+        await startBroadcast();
+      }
     }
 
     async function startBroadcast() {
       saveStationData();
-      const st = stationsData[currentStation];
-      let mount = st.mount;
-      if (mount && !mount.startsWith('/')) mount = '/' + mount;
+      
+      // Lectura en tiempo real directa de los inputs para evitar claves vacías
+      let host = document.getElementById('host').value.trim();
+      let port = document.getElementById('port').value.trim();
+      let mount = document.getElementById('mount').value.trim();
+      let user = document.getElementById('user').value.trim();
+      let password = document.getElementById('password').value.trim();
 
-      log("Accediendo al micrófono...");
+      if (!host || !port || !mount || !password) {
+        alert("Completa todos los campos del servidor en Ajustes (Host, Puerto, Mount y Contraseña).");
+        openSettingsModal();
+        return;
+      }
+
+      if (mount && !mount.startsWith('/')) {
+        mount = '/' + mount;
+        document.getElementById('mount').value = mount;
+      }
+
+      log("Solicitando acceso a micrófono...");
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
         });
       } catch (err) {
         log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
+        alert("No se pudo acceder al micrófono. Verifica los permisos de la app.");
         return;
       }
 
-      log(`Conectando con ${st.host || 'servidor'}...`);
+      log(`Conectando con relay y autenticando con ${host}...`);
       try {
         ws = new WebSocket(RELAY_URL);
         ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {
+          log("Enviando credenciales de Icecast...");
           ws.send(JSON.stringify({
             action: 'AUTH_ICECAST',
-            host: st.host,
-            port: st.port,
+            host: host,
+            port: port,
             mount: mount,
-            user: st.user,
-            password: st.password
+            user: user,
+            password: password
           }));
         };
 
-        ws.onmessage = (e) => {
-          const resp = JSON.parse(e.data);
-          if (resp.status === 'SUCCESS') {
-            log('<span style="color:var(--c-green)">¡AL AIRE! Conectado con éxito.</span>');
-            initAudioEngine();
-          } else {
-            log(`<span style="color:var(--c-red)">Error ${resp.code || ''}: ${resp.message}</span>`);
-            stopAll();
+        ws.onmessage = async (e) => {
+          try {
+            const resp = JSON.parse(e.data);
+            if (resp.status === 'SUCCESS') {
+              log('<span style="color:var(--c-green); font-weight:bold;">¡AL AIRE! Conectado con éxito.</span>');
+              await initAudioEngine();
+            } else {
+              log(`<span style="color:var(--c-red); font-weight:bold;">Rechazado por servidor: ${resp.message} (Código ${resp.code || ''})</span>`);
+              stopAll();
+              alert(`Error de autenticación Icecast: ${resp.message}`);
+            }
+          } catch (errParse) {
+            log(`Respuesta del servidor: ${e.data}`);
           }
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">Relay iniciando... Vuelve a pulsar si tarda.</span>');
+          log('<span style="color:var(--c-yellow)">El relay en Render está despertando. Pulsa transmitir nuevamente en unos segundos.</span>');
           stopAll();
         };
 
         ws.onclose = () => {
           if (isLive) {
-            log('<span style="color:var(--c-red)">Transmisión finalizada.</span>');
+            log('<span style="color:var(--c-red)">Transmisión finalizada en servidor.</span>');
             stopAll();
           }
         };
       } catch (e) {
-        log(`<span style="color:var(--c-red)">Error: ${e.message}</span>`);
+        log(`<span style="color:var(--c-red)">Error de conexión WebSocket: ${e.message}</span>`);
         stopAll();
       }
     }
 
-    function initAudioEngine() {
+    async function initAudioEngine() {
       isLive = true;
       liveSeconds = 0;
       document.getElementById('btnLive').className = 'btn-main-stream live';
-      document.getElementById('btnLive').innerText = 'DETENER TRANSMISIÓN';
+      document.getElementById('btnLive').innerText = 'DETENER TRANSMISIÓN EN VIVO';
 
+      // Control 15 minutos en versión gratis
       if (!isPro) {
         liveTimerInterval = setInterval(() => {
           liveSeconds++;
@@ -999,33 +1009,44 @@
 
           if (liveSeconds >= MAX_FREE_SECONDS) {
             clearInterval(liveTimerInterval);
-            alert("Los 15 minutos gratuitos han finalizado. Pasa a la versión PRO para transmitir sin límite.");
+            alert("Los 15 minutos gratuitos han finalizado. Adquiere el plan PRO para transmitir sin límite.");
             stopAll();
           }
         }, 1000);
       }
 
+      // Inicializar y desbloquear AudioContext en móvil
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
       const sampleRate = audioContext.sampleRate;
+
       masterGainNode = audioContext.createGain();
 
+      // Monitoreo de audífonos
       monitorGainNode = audioContext.createGain();
       monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
       masterGainNode.connect(monitorGainNode);
       monitorGainNode.connect(audioContext.destination);
 
+      // Micrófono
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
       micGainNode = audioContext.createGain();
       micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
       micSourceNode.connect(micGainNode);
       micGainNode.connect(masterGainNode);
 
-      if (!musicSourceNode) musicSourceNode = audioContext.createMediaElementSource(aMusic);
+      // Música
+      if (!musicSourceNode) {
+        musicSourceNode = audioContext.createMediaElementSource(aMusic);
+      }
       musicGainNode = audioContext.createGain();
       musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
       musicSourceNode.connect(musicGainNode);
       musicGainNode.connect(masterGainNode);
 
+      // Pisadores
       stingerGainNode = audioContext.createGain();
       stingerGainNode.gain.value = parseFloat(document.getElementById('volStinger').value);
       if (!stinger1SourceNode) stinger1SourceNode = audioContext.createMediaElementSource(aS1);
@@ -1037,6 +1058,7 @@
       lightningSourceNode.connect(stingerGainNode);
       stingerGainNode.connect(masterGainNode);
 
+      // Vúmetro Master
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 128;
       masterGainNode.connect(analyser);
@@ -1058,8 +1080,14 @@
       }
       updateMeter();
 
-      if (typeof lamejs !== 'undefined') mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
+      // Inicialización de LameJS MP3
+      if (typeof lamejs !== 'undefined') {
+        mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
+      } else {
+        log('<span style="color:var(--c-red)">Error: Librería lamejs no disponible.</span>');
+      }
 
+      // Procesador de audio para paquetizar y enviar al relay
       processorNode = audioContext.createScriptProcessor(4096, 1, 1);
       processorNode.onaudioprocess = (e) => {
         if (!isLive || !ws || ws.readyState !== WebSocket.OPEN || !mp3Encoder) return;
@@ -1074,8 +1102,11 @@
       };
 
       masterGainNode.connect(processorNode);
+      processorNode.connect(audioContext.destination);
 
-      if (playlist.length > 0 && aMusic.paused) playTrack(currentIndex);
+      if (playlist.length > 0 && aMusic.paused) {
+        playTrack(currentIndex);
+      }
     }
 
     function toggleMic() {
@@ -1141,7 +1172,7 @@
       stopCurrentStinger();
       activeStingerAudio = audioEl;
       audioEl.currentTime = 0;
-      audioEl.play();
+      audioEl.play().catch(e => console.log(e));
 
       document.getElementById('bannerStingerName').innerText = `🔊 ${name} EN VIVO`;
       document.getElementById('stingerBanner').style.display = 'flex';
@@ -1215,7 +1246,7 @@
 
       aMusic.onloadedmetadata = () => {
         const dur = aMusic.duration;
-        aMusic.play();
+        aMusic.play().catch(e => console.log(e));
         document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
 
         if (lightningEnabled && dur > 100 && aLight.src && isPro) {
@@ -1280,8 +1311,8 @@
       stopCurrentStinger();
       document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
 
-      if (processorNode) { processorNode.disconnect(); processorNode = null; }
-      if (audioContext) { audioContext.close(); audioContext = null; }
+      if (processorNode) { try { processorNode.disconnect(); } catch(e){} processorNode = null; }
+      if (audioContext) { try { audioContext.close(); } catch(e){} audioContext = null; }
       if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
       if (ws) { ws.close(); ws = null; }
 
