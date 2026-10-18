@@ -44,10 +44,29 @@
       background: linear-gradient(90deg, #1e1b4b, #0f172a, #1e293b);
       padding: 8px 12px; border-radius: 12px; border: 1px solid #4338ca; margin-bottom: 6px;
     }
-    .app-title { font-size: 0.95rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 4px; }
+    .app-title { font-size: 0.92rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 4px; }
     .app-title span { color: var(--c-blue); text-shadow: 0 0 8px rgba(6,182,212,0.5); }
 
-    .top-actions { display: flex; align-items: center; gap: 5px; }
+    .top-actions { display: flex; align-items: center; gap: 6px; }
+
+    /* BOTÓN RÁPIDO PLAY ROJO EN LA BARRA */
+    .btn-quick-play-stream {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border: 2px solid #f87171; color: #fff; width: 34px; height: 34px;
+      border-radius: 50%; font-size: 0.95rem; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+      transition: all 0.2s ease;
+    }
+    .btn-quick-play-stream:active { transform: scale(0.92); }
+    .btn-quick-play-stream.is-live {
+      background: #b91c1c; border-color: #fca5a5;
+      animation: pulseLive 1.2s infinite alternate ease-in-out;
+    }
+    @keyframes pulseLive {
+      0% { box-shadow: 0 0 4px #ef4444; }
+      100% { box-shadow: 0 0 14px #ef4444; }
+    }
+
     .btn-crown {
       background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #6ee7b7; color: #fff;
       padding: 6px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; cursor: pointer;
@@ -60,11 +79,28 @@
     }
     .btn-icon.monitor-active { background: #0284c7; border-color: #38bdf8; }
 
+    /* MEDIDOR DE RED */
+    .net-box {
+      background: #090e1a; border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px;
+      margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.65rem; font-weight: 800;
+    }
+    .signal-bars { display: flex; align-items: flex-end; gap: 3px; height: 14px; }
+    .bar { width: 3px; background: #334155; border-radius: 1px; }
+    .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
+    .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
+
     /* VÚMETRO MASTER */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
     .vu-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--c-green) 50%, var(--c-yellow) 80%, var(--c-red) 100%); transition: width 0.05s linear; }
+
+    /* BANNER PISADOR */
+    .stinger-banner {
+      display: none; background: linear-gradient(135deg, #3b0764, #1e1b4b);
+      border: 2px solid var(--c-purple); border-radius: 8px; padding: 6px 10px;
+      margin-bottom: 6px; align-items: center; justify-content: space-between;
+    }
 
     /* COLA DE 3 PISTAS */
     .queue-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
@@ -75,6 +111,17 @@
     .track-box.current { border-color: var(--c-green); }
     .track-box.next { border-color: var(--c-blue); }
     .track-box.third { border-color: var(--c-yellow); }
+
+    .track-box.next.alert-imminent {
+      border-color: var(--c-red) !important;
+      background: #450a0a !important;
+      animation: alertPulse 0.7s infinite alternate ease-in-out !important;
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.6) !important;
+    }
+    @keyframes alertPulse {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0.75; transform: scale(0.99); }
+    }
 
     .track-tag-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
     .track-tag { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; }
@@ -131,7 +178,7 @@
     .led-block.active-yellow { background: #facc15; }
     .led-block.active-red { background: #ef4444; }
 
-    /* BOTONES MIC Y PISADORES */
+    /* MIC Y DUCKING */
     .mic-duck-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 6px; margin-bottom: 6px; }
     .btn-broadcast {
       padding: 10px; border: none; border-radius: 8px; font-weight: 900; font-size: 0.78rem;
@@ -164,14 +211,13 @@
       color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 0.72rem; text-align: center;
     }
 
-    /* BOTÓN PRINCIPAL CON PRIORIDAD TÁCTIL MÁXIMA */
+    /* BOTÓN INFERIOR */
     .btn-main-stream {
       width: 100%; padding: 15px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: #fff; border: 2px solid #60a5fa; border-radius: 10px; font-size: 1rem; font-weight: 900;
       cursor: pointer; position: relative; z-index: 50; display: block; margin-top: 4px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
     }
-    .btn-main-stream:active { transform: scale(0.98); background: #1e40af; }
+    .btn-main-stream:active { transform: scale(0.98); }
     .btn-main-stream.live { background: linear-gradient(135deg, #ef4444, #b91c1c); border-color: #f87171; }
 
     .terminal-box {
@@ -179,11 +225,10 @@
       font-family: ui-monospace, monospace; font-size: 0.7rem; color: #38bdf8; height: 60px; overflow-y: auto; margin-top: 6px;
     }
 
-    /* MODALES CON CONTROL DE VISIBILIDAD ESTRICTO */
+    /* MODALES */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
       display: none; align-items: center; justify-content: center; z-index: 1000; padding: 12px;
-      pointer-events: auto;
     }
     .modal-box {
       background: #0c1427; border: 1px solid #3b82f6; border-radius: 14px;
@@ -215,12 +260,17 @@
     </div>
   </div>
 
-  <!-- BARRA SUPERIOR -->
+  <!-- BARRA SUPERIOR CON BOTÓN RÁPIDO PLAY ROJO -->
   <div class="top-bar">
     <div class="app-title">
       📻 <span>EMISORASplus isecas</span>
     </div>
     <div class="top-actions">
+      <!-- ICONO RÁPIDO DE TRANSMISIÓN PLAY ROJO -->
+      <button id="btnQuickPlay" class="btn-quick-play-stream" type="button" onclick="handleStreamButtonClick()" title="Iniciar / Detener Emisión Inmediata">
+        ▶
+      </button>
+
       <button class="btn-crown">👑 PRO</button>
       <button class="btn-icon" onclick="openHelpModal()" title="Manual de Ayuda">❓</button>
       <button id="btnMonitor" class="btn-icon" onclick="toggleLocalMonitoring()" title="Monitoreo">🎧</button>
@@ -357,7 +407,7 @@
     <input type="file" id="fileTracks" multiple accept="audio/*, video/*" onchange="handleStrictFiles(event)">
   </div>
 
-  <!-- BOTÓN AL AIRE CON EVENTOS DIRECTOS -->
+  <!-- BOTÓN INFERIOR DE TRANSMISIÓN -->
   <button id="btnAction" class="btn-main-stream" type="button" onclick="handleStreamButtonClick()">
     INICIAR TRANSMISIÓN EN VIVO
   </button>
@@ -410,7 +460,7 @@
       </div>
       <p style="font-size:0.75rem; line-height:1.5; color:#cbd5e1; margin-bottom:10px;">
         1. <b>Ajustes ⚙:</b> Pega tu Stream Key y guarda.<br>
-        2. <b>Transmitir:</b> Pulsa el botón grande azul para salir al aire.<br>
+        2. <b>Transmitir:</b> Pulsa el botón grande azul o el nuevo botón rojo ▶ de la barra superior para salir al aire.<br>
         3. <b>Modo Rayito ⚡:</b> Dispara al segundo 0:03 si la canción dura 1 minuto o más.<br>
         4. <b>Reloj 🕒:</b> Suena una cuña entre canciones.<br>
         5. <b>Audífonos 🎧:</b> Activa la escucha en tu dispositivo.
@@ -455,15 +505,15 @@
         <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">SUBIR<input type="file" accept="audio/*" style="display:none;" onchange="handleStingerUpload(3, event)"></label>
       </div>
 
-      <div class="vol-row">
-        <span class="vol-label">🎤 Mic</span>
-        <input type="range" id="volMic" min="0" max="1.5" step="0.05" value="1.0" oninput="setMicVol(this.value)">
-        <span class="vol-val" id="valMic">100%</span>
+      <div class="vol-row" style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
+        <span style="font-size:0.68rem; font-weight:800; color:var(--text-muted); width:75px;">🎤 Mic</span>
+        <input type="range" id="volMic" min="0" max="1.5" step="0.05" value="1.0" oninput="setMicVol(this.value)" style="flex:1;">
+        <span id="valMic" style="font-size:0.68rem; font-weight:800; width:35px; text-align:right;">100%</span>
       </div>
-      <div class="vol-row">
-        <span class="vol-label">🎵 Música</span>
-        <input type="range" id="volMusic" min="0" max="1.0" step="0.05" value="0.75" oninput="setMusicVol(this.value)">
-        <span class="vol-val" id="valMusic">75%</span>
+      <div class="vol-row" style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
+        <span style="font-size:0.68rem; font-weight:800; color:var(--text-muted); width:75px;">🎵 Música</span>
+        <input type="range" id="volMusic" min="0" max="1.0" step="0.05" value="0.75" oninput="setMusicVol(this.value)" style="flex:1;">
+        <span id="valMusic" style="font-size:0.68rem; font-weight:800; width:35px; text-align:right;">75%</span>
       </div>
 
       <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeSettingsModal()">GUARDAR Y CERRAR</button>
@@ -521,42 +571,12 @@
     }
 
     // ==========================================
-    // DISPARADOR MANUAL DEL BOTÓN
+    // DISPARADOR RÁPIDO DE TRANSMISIÓN
     // ==========================================
     function handleStreamButtonClick() {
-      log("Botón presionado. Verificando estado...");
+      log("Comando recibido: alternando transmisión...");
       toggleBroadcast();
     }
-
-    // ==========================================
-    // RELOJ COLOMBIA
-    // ==========================================
-    function updateColombiaStudioClock() {
-      try {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('es-CO', {
-          timeZone: 'America/Bogota',
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        });
-        const dateStr = now.toLocaleDateString('es-CO', {
-          timeZone: 'America/Bogota',
-          weekday: 'short',
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
-        });
-
-        const tEl = document.getElementById('colombiaTimeDisplay');
-        const dEl = document.getElementById('colombiaDateDisplay');
-        if (tEl) tEl.innerText = timeStr;
-        if (dEl) dEl.innerText = dateStr;
-      } catch(e){}
-    }
-    setInterval(updateColombiaStudioClock, 1000);
-    updateColombiaStudioClock();
 
     // ==========================================
     // VÚMETRO PARALELO
@@ -643,9 +663,7 @@
           musicGainNode.connect(musicAnalyser);
           musicGainNode.connect(masterMixerNode);
         }
-      } catch(e) {
-        console.warn("AudioEngine Init:", e);
-      }
+      } catch(e) {}
     }
 
     function startDjVisualLoop() {
@@ -751,7 +769,7 @@
     function playClockSlotTransition() {
       const slot = clockSlots[nextClockSlotIndex % clockSlots.length];
       nextClockSlotIndex++;
-      log(`🕒 Sonando separador de Reloj: "${slot.name}".`);
+      log(`🕒 Separador de Reloj: "${slot.name}".`);
       aClock.src = slot.url;
       aClock.currentTime = 0;
       aClock.play().catch(e => console.log(e));
@@ -782,11 +800,11 @@
           nextBox.classList.remove('alert-imminent');
         }
 
-        // Rayito al segundo 3 en pistas >= 1 min (60s)
+        // Rayito al segundo 3 (si dura >= 60s)
         if (lightningEnabled && aLight.src && dur >= 60) {
           if (cur >= 3 && cur < 4 && !rayitoIntroFired) {
             rayitoIntroFired = true;
-            log('⚡ Rayito lanzado automáticamente al segundo 0:03.');
+            log('⚡ Rayito lanzado al segundo 0:03.');
             startStingerPlayback(aLight, "⚡ RAYITO");
           }
         }
@@ -829,7 +847,7 @@
     }
 
     // ==========================================
-    // TRANSMISIÓN ROBUSTA (ORIGINAL RESTAURADA)
+    // TRANSMISIÓN ROBUSTA ZENO MEDIA
     // ==========================================
     async function toggleBroadcast() {
       if (isLive) {
@@ -847,7 +865,7 @@
       const password = document.getElementById('password').value.trim();
 
       if (!host || !port || !mount || !password) {
-        alert("Abre Ajustes ⚙ y escribe o pega tu contraseña de Zeno Media.");
+        alert("Abre Ajustes ⚙ y pega tu Stream Key para poder transmitir.");
         openSettingsModal();
         return;
       }
@@ -863,28 +881,28 @@
       localStorage.setItem('zeno_user', user);
       localStorage.setItem('zeno_password', password);
 
-      log("Solicitando acceso al micrófono...");
+      log("Solicitando micrófono...");
       try {
         if (!mediaStream) {
           mediaStream = await navigator.mediaDevices.getUserMedia({
             audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
           });
         }
-        log('<span style="color:var(--c-green)">Micrófono activado con éxito.</span>');
+        log('<span style="color:var(--c-green)">Micrófono activado.</span>');
       } catch (err) {
-        log(`<span style="color:var(--c-red)">Error de micrófono: ${err.name} - ${err.message}</span>`);
-        alert("No se pudo acceder al micrófono. Concede el permiso para continuar.");
+        log(`<span style="color:var(--c-red)">Error micrófono: ${err.name}</span>`);
+        alert("Debes permitir el acceso al micrófono para transmitir.");
         return;
       }
 
-      log("Conectando con el relay y autenticando en Zeno Media...");
+      log("Conectando con Zeno Media...");
 
       try {
         ws = new WebSocket(RELAY_URL);
         ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {
-          log("Enviando credenciales al relay...");
+          log("Enviando credenciales...");
           ws.send(JSON.stringify({
             action: 'AUTH_ICECAST',
             host: host,
@@ -942,6 +960,13 @@
       if (btn) {
         btn.className = 'btn-main-stream live';
         btn.innerText = 'DETENER TRANSMISIÓN';
+      }
+
+      // Actualizar botón rápido superior a estado de parada
+      const quickBtn = document.getElementById('btnQuickPlay');
+      if (quickBtn) {
+        quickBtn.innerText = '⏹';
+        quickBtn.classList.add('is-live');
       }
 
       ensureAudioEngine();
@@ -1042,6 +1067,14 @@
         btn.className = 'btn-main-stream';
         btn.innerText = 'INICIAR TRANSMISIÓN EN VIVO';
       }
+
+      // Restaurar botón rápido superior
+      const quickBtn = document.getElementById('btnQuickPlay');
+      if (quickBtn) {
+        quickBtn.innerText = '▶';
+        quickBtn.classList.remove('is-live');
+      }
+
       document.getElementById('vuLevel').style.width = '0%';
       document.getElementById('vuPct').innerText = '0%';
       log("⏹ Transmisión detenida.");
@@ -1180,76 +1213,112 @@
           const s = (sec % 60).toString().padStart(2, '0');
           item.durationStr = `${m}:${s}`;
           item.appliesLightning = sec >= 60;
-
-          if (document.getElementById('playlistModal').style.display === 'flex') {
-            renderPlaylistModal();
-          }
         };
 
         playlist.push(item);
       });
 
       updateTrackBoxes();
-      log(`${raw.length} pista(s) cargadas.`);
+      log(`${raw.length} pista(s) listas.`);
       if (wasEmpty && (isLive || !aMusic.src)) playTrack(0);
     }
 
-    function renderPlaylistModal() {
-      const container = document.getElementById('playlistContainer');
+    // CARPETA RELOJ (🕒)
+    function openClockModal() { renderClockSlots(); document.getElementById('clockModal').style.display = 'flex'; }
+    function closeClockModal() { document.getElementById('clockModal').style.display = 'none'; }
+
+    function handleClockFileSelect(e) {
+      const f = e.target.files[0];
+      if (!f) return;
+      clockTempFile = f;
+      document.getElementById('lblClockTempName').innerText = f.name;
+    }
+
+    function addClockSlot() {
+      if (clockSlots.length >= 10) { alert("Máximo 10 archivos en Reloj."); return; }
+      if (!clockTempFile) { alert("Elige un archivo primero."); return; }
+
+      clockSlots.push({
+        id: Date.now(),
+        name: clockTempFile.name,
+        url: URL.createObjectURL(clockTempFile)
+      });
+
+      clockTempFile = null;
+      document.getElementById('lblClockTempName').innerText = "Sin archivo";
+      renderClockSlots();
+      log(`Archivo agregado a Reloj (${clockSlots.length}/10).`);
+    }
+
+    function renderClockSlots() {
+      const container = document.getElementById('clockSlotsContainer');
+      document.getElementById('clockCountDisplay').innerText = clockSlots.length;
       container.innerHTML = '';
 
-      if (playlist.length === 0) {
-        container.innerHTML = '<div style="color:var(--text-muted); font-size:0.75rem; text-align:center; padding:20px;">No hay canciones cargadas.</div>';
+      if (clockSlots.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted); font-size:0.7rem; text-align:center; padding:10px;">Carpeta vacía.</div>';
         return;
       }
 
-      playlist.forEach((item, idx) => {
-        const card = document.createElement('div');
-        let cardClass = 'track-item-card';
-        let badgeHtml = '';
-
-        if (idx === currentIndex) {
-          cardClass += ' is-live';
-          badgeHtml = '<span class="tag-live">AL AIRE (#1)</span>';
-        } else if (idx === (currentIndex + 1) % playlist.length && playlist.length > 1) {
-          cardClass += ' is-next';
-          badgeHtml = '<span class="tag-next">SIGUIENTE (#2)</span>';
-        } else if (idx === (currentIndex + 2) % playlist.length && playlist.length > 2) {
-          cardClass += ' is-third';
-          badgeHtml = '<span class="tag-third">TERCERA (#3)</span>';
-        }
-
-        if (item.played && idx !== currentIndex) {
-          badgeHtml += '<span class="tag-played-red">YA SONÓ</span>';
-        }
-
-        if (item.appliesLightning) {
-          badgeHtml += '<span class="lightning-icon-tag">⚡</span>';
-        }
-
-        card.className = cardClass;
-        card.innerHTML = `
-          <div class="track-item-info">
-            <div class="track-item-title">${idx + 1}. ${item.name}</div>
-            <div class="track-item-meta">
-              <span>⏱ ${item.durationStr}</span>
-              ${badgeHtml}
-            </div>
+      clockSlots.forEach((slot, idx) => {
+        const item = document.createElement('div');
+        item.className = 'clock-slot-item';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.background = '#09132b';
+        item.style.padding = '6px';
+        item.style.marginBottom = '4px';
+        item.style.borderRadius = '4px';
+        item.innerHTML = `
+          <div style="font-size:0.75rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:240px;">
+            ${idx + 1}. ${slot.name}
           </div>
+          <button style="background:var(--c-red); border:none; color:#fff; border-radius:4px; padding:2px 8px; cursor:pointer;" onclick="deleteClockSlot(${idx})">🗑</button>
         `;
-        container.appendChild(card);
+        container.appendChild(item);
       });
     }
 
+    function deleteClockSlot(idx) {
+      clockSlots.splice(idx, 1);
+      renderClockSlots();
+    }
+
+    function toggleClockActiveState() {
+      clockFunctionActive = !clockFunctionActive;
+      const btn = document.getElementById('btnToggleClockActive');
+      const airBtn = document.getElementById('airClockBtn');
+
+      if (clockFunctionActive) {
+        btn.innerText = "ACTIVADO";
+        btn.style.background = "var(--c-green)";
+        btn.style.color = "#000";
+        airBtn.classList.add('active');
+        log("🕒 Reloj ENTRE PISTAS activado.");
+      } else {
+        btn.innerText = "DESACTIVADO";
+        btn.style.background = "#334155";
+        btn.style.color = "#fff";
+        airBtn.classList.remove('active');
+        log("🕒 Reloj ENTRE PISTAS desactivado.");
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const p = document.getElementById('password');
+      p.type = p.type === 'password' ? 'text' : 'password';
+    }
+
     function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
-    function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
-    function openPlaylistModal() { renderPlaylistModal(); document.getElementById('playlistModal').style.display = 'flex'; }
-    function closePlaylistModal() { document.getElementById('playlistModal').style.display = 'none'; }
+    function closeSettingsModal() {
+      localStorage.setItem('zeno_password', document.getElementById('password').value.trim());
+      document.getElementById('settingsModal').style.display = 'none';
+    }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
     function closeHelpModal() { document.getElementById('helpModal').style.display = 'none'; }
 
     // ==========================================
-    // INICIALIZACIÓN AL ABRIR LA APP
+    // INICIALIZACIÓN
     // ==========================================
     window.addEventListener('DOMContentLoaded', () => {
       buildLedBlocks();
@@ -1262,16 +1331,6 @@
           if (el) el.value = val;
         }
       });
-
-      // Asegurar respuesta del botón físico
-      const btn = document.getElementById('btnAction');
-      if (btn) {
-        btn.addEventListener('click', handleStreamButtonClick);
-        btn.addEventListener('touchend', (e) => {
-          e.preventDefault();
-          handleStreamButtonClick();
-        });
-      }
     });
   </script>
 </body>
