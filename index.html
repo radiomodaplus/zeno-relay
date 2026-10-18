@@ -66,7 +66,7 @@
     .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
     .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
 
-    /* VÚMETRO MASTER */
+    /* VÚMETRO MASTER (CONTINUO) */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
@@ -135,27 +135,40 @@
     }
     .air-nav-btn:active { background: var(--c-green); color: #000; transform: scale(0.92); }
 
-    /* CONSOLA DIGITAL PARALELA (CANAL L / R) */
+    /* CONSOLA DIGITAL PROFESIONAL: ONDAS Y BARRAS LED PARALELAS */
     .dj-rack-meter {
-      background: #02040a; border: 1px solid #1a2c4e; border-radius: 8px;
-      padding: 6px 10px; margin-top: 6px; display: flex; flex-direction: column; gap: 4px;
+      background: #02050e; border: 1px solid #1a2c4e; border-radius: 8px;
+      padding: 6px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px;
     }
     .rack-header {
-      display: flex; justify-content: space-between; font-size: 0.58rem; font-weight: 900; color: #38bdf8; letter-spacing: 0.5px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.58rem; font-weight: 900; color: #38bdf8; letter-spacing: 0.5px;
     }
-    .rack-columns {
-      display: flex; gap: 14px; justify-content: center; align-items: center; height: 48px;
+    .rack-main-stage {
+      display: flex; gap: 8px; align-items: center; height: 52px;
+    }
+    /* Lienzo para dibujo de ondas en tiempo real */
+    .wave-canvas-box {
+      flex: 1.4; height: 100%; background: #010307; border: 1px solid #101c36; border-radius: 4px; overflow: hidden; position: relative;
+    }
+    #djWaveCanvas { width: 100%; height: 100%; display: block; }
+
+    /* Columnas paralelas LED */
+    .parallel-led-box {
+      flex: 1; display: flex; gap: 8px; height: 100%; align-items: center; justify-content: center;
+    }
+    .meter-column-wrap {
+      display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%;
     }
     .meter-column {
-      display: flex; flex-direction: column-reverse; gap: 2px; flex: 1; height: 100%; max-width: 140px;
+      display: flex; flex-direction: column-reverse; gap: 1.5px; width: 100%; height: 42px;
     }
     .meter-col-label {
-      font-size: 0.55rem; font-weight: 900; color: var(--text-muted); text-align: center; margin-top: 1px;
+      font-size: 0.5rem; font-weight: 900; color: var(--text-muted); text-align: center; margin-top: 1px;
     }
     .led-block {
-      height: 2px; border-radius: 1px; background: #111a2e; transition: background 0.04s ease;
+      height: 2px; width: 100%; border-radius: 1px; background: #0b1329; transition: background 0.03s ease;
     }
-    .led-block.active-green { background: #10b981; box-shadow: 0 0 4px #10b981; }
+    .led-block.active-green { background: #10b981; box-shadow: 0 0 3px #10b981; }
     .led-block.active-yellow { background: #facc15; box-shadow: 0 0 4px #facc15; }
     .led-block.active-red { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
 
@@ -213,7 +226,7 @@
 
     .terminal-box {
       background: #030712; border: 1px solid var(--border); border-radius: 6px; padding: 6px;
-      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 50px; overflow-y: auto; margin-top: 6px;
+      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 45px; overflow-y: auto; margin-top: 6px;
     }
 
     /* MODALES */
@@ -286,7 +299,7 @@
       📻 <span>EMISORASplus isecas</span>
     </div>
     <div class="top-actions">
-      <button id="btnProBadge" class="btn-crown" onclick="openProModal()">👑 PRO</button>
+      <button id="btnProBadge" class="btn-crown pro-active" onclick="openProModal()">👑 PRO</button>
       <button class="btn-icon" onclick="openPlaylistModal()" title="Panel Principal de Pistas">🎛️</button>
       <button id="btnCalendar" class="btn-icon" onclick="openCalendarModal()" title="Publicidad y Calendario">📅</button>
       <button class="btn-icon" onclick="openHelpModal()" title="Manual de Ayuda">❓</button>
@@ -351,26 +364,33 @@
         <button class="air-nav-btn" onclick="skipToNextTrack()" title="Siguiente pista (⏭)">⏭</button>
       </div>
 
-      <!-- CONSOLA DIGITAL PARALELA (CANAL L / R) -->
+      <!-- CONSOLA DIGITAL PROFESIONAL: ONDAS DINÁMICAS + BARRAS PARALELAS LED -->
       <div class="dj-rack-meter">
         <div class="rack-header">
-          <span>CONSOLE VU STEREO (EN EL AIRE)</span>
+          <span>CONSOLE DIGITAL STEREO & WAVE</span>
           <span id="rackDbDisplay">-∞ dB</span>
         </div>
-        <div class="rack-columns">
-          <div style="display:flex; flex-direction:column; align-items:center; flex:1;">
-            <div class="meter-column" id="colLeftMeter"></div>
-            <div class="meter-col-label">CANAL L</div>
+        <div class="rack-main-stage">
+          <!-- Lienzo de ondas de cabina -->
+          <div class="wave-canvas-box">
+            <canvas id="djWaveCanvas" width="220" height="52"></canvas>
           </div>
-          <div style="display:flex; flex-direction:column; align-items:center; flex:1;">
-            <div class="meter-column" id="colRightMeter"></div>
-            <div class="meter-col-label">CANAL R</div>
+          <!-- Bloques paralelos de vúmetros LED (L y R) -->
+          <div class="parallel-led-box">
+            <div class="meter-column-wrap">
+              <div class="meter-column" id="colLeftMeter"></div>
+              <div class="meter-col-label">L</div>
+            </div>
+            <div class="meter-column-wrap">
+              <div class="meter-column" id="colRightMeter"></div>
+              <div class="meter-col-label">R</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PISTA 2: SIGUIENTE EN COLA (CON SEGUNDERO Y ALERTA ROJA PARPADEANTE A <= 8s) -->
+    <!-- PISTA 2: SIGUIENTE EN COLA (SEGUNDERO Y ALERTA ROJA) -->
     <div class="track-box next" id="trackBoxNext">
       <div class="track-tag-row">
         <div class="track-tag">▶ 2. SIGUIENTE EN COLA</div>
@@ -596,7 +616,6 @@
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeProModal()">✕</button>
       </div>
 
-      <!-- VISTA PRO ACTIVA DIRECTA -->
       <div id="viewProActiveUser">
         <div class="pro-user-header" style="background:linear-gradient(135deg, #064e3b, #065f46); border:1px solid #34d399; border-radius:10px; padding:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
           <div>
@@ -608,7 +627,7 @@
 
         <div style="font-size:0.72rem; font-weight:900; color:var(--c-gold); margin-bottom:4px;">✨ BENEFICIOS ACTIVOS:</div>
         <ul style="list-style:none; padding:0; margin:0 0 10px 0; font-size:0.7rem; color:#cbd5e1; line-height:1.5;">
-          <li>✓ Transmisión ilimitada continua (Sin cortes de 15 min)</li>
+          <li>✓ Transmisión continua sin cortes (Ilimitada)</li>
           <li>✓ AutoDJ de 10 GB en la nube</li>
           <li>✓ 5 Tandas comerciales programables</li>
           <li>✓ Pisador 1, Pisador 2 y Rayito Automático (≥ 1 min)</li>
@@ -720,8 +739,7 @@
 
     const RELAY_URL = "wss://zeno-relay.onrender.com";
 
-    // ESTADO PRO PERMANENTE BLINDADO
-    let isPro = true; // Forzado por defecto a PRO para evitar suspensiones accidentales
+    let isPro = true;
     let currentUserEmail = "Cuenta PRO Activa";
     let isLive = false;
     let micMuted = false;
@@ -747,9 +765,13 @@
     let micEqAirNode = null;
     let micCompressorNode = null;
     let micGainNode = null;
+
     let musicSourceNode = null;
     let musicGainNode = null;
     let musicAnalyser = null;
+    let musicDataArray = null;
+    let musicWaveArray = null;
+
     let adsSourceNode = null;
     let adsGainNode = null;
     let masterMixerNode = null;
@@ -761,7 +783,6 @@
     let packetsSentCount = 0;
     let statsInterval = null;
 
-    // Comerciales
     let adSlots = [];
     let temporaryAdFile = null;
     let adIntervalChecker = null;
@@ -774,9 +795,9 @@
     const aAds = document.getElementById('audioAds');
 
     // ==========================================
-    // VÚMETRO DIGITAL PARALELO
+    // CONSTRUCCIÓN DEL VÚMETRO DIGITAL PARALELO
     // ==========================================
-    const TOTAL_LEDS = 14;
+    const TOTAL_LEDS = 16;
     function buildLedBlocks() {
       const colL = document.getElementById('colLeftMeter');
       const colR = document.getElementById('colRightMeter');
@@ -785,8 +806,8 @@
 
       for (let i = 0; i < TOTAL_LEDS; i++) {
         let type = 'green';
-        if (i >= 11) type = 'red';
-        else if (i >= 8) type = 'yellow';
+        if (i >= 13) type = 'red';
+        else if (i >= 9) type = 'yellow';
 
         const bL = document.createElement('div');
         bL.className = 'led-block';
@@ -885,7 +906,7 @@
           }));
           updateTrackBoxes();
           renderPlaylistModal();
-          log(`Se restauraron ${playlist.length} pistas guardadas automáticamente.`);
+          log(`Se restauraron ${playlist.length} pistas de cabina.`);
           if (playlist.length > 0 && !aMusic.src) {
             setupTrackSource(0);
           }
@@ -900,13 +921,121 @@
     }
 
     // ==========================================
+    // MOTOR DE AUDIO Y ANALIZADOR INDEPENDIENTE
+    // ==========================================
+    function ensureAudioContext() {
+      if (!audioContext || audioContext.state === 'closed') {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+
+      if (!masterMixerNode) {
+        masterMixerNode = audioContext.createGain();
+      }
+
+      if (!monitorGainNode) {
+        monitorGainNode = audioContext.createGain();
+        monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
+        masterMixerNode.connect(monitorGainNode);
+        monitorGainNode.connect(audioContext.destination);
+      }
+
+      if (!musicSourceNode) {
+        musicSourceNode = audioContext.createMediaElementSource(aMusic);
+        musicGainNode = audioContext.createGain();
+        musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
+
+        musicAnalyser = audioContext.createAnalyser();
+        musicAnalyser.fftSize = 256;
+        musicAnalyser.smoothingTimeConstant = 0.75;
+        musicDataArray = new Uint8Array(musicAnalyser.frequencyBinCount);
+        musicWaveArray = new Uint8Array(musicAnalyser.frequencyBinCount);
+
+        musicSourceNode.connect(musicGainNode);
+        musicGainNode.connect(musicAnalyser);
+        musicGainNode.connect(masterMixerNode);
+      }
+    }
+
+    // BUCLE DE RENDER PARA ONDAS Y LEDS DJ EN TIEMPO REAL
+    function startDjVisualLoop() {
+      const canvas = document.getElementById('djWaveCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      function draw() {
+        requestAnimationFrame(draw);
+
+        if (!musicAnalyser || aMusic.paused) {
+          updateParallelLedMeters(0, 0);
+          ctx.fillStyle = '#010307';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          // Línea neutra
+          ctx.beginPath();
+          ctx.strokeStyle = '#1e3a6d';
+          ctx.lineWidth = 1;
+          ctx.moveTo(0, canvas.height / 2);
+          ctx.lineTo(canvas.width, canvas.height / 2);
+          ctx.stroke();
+          return;
+        }
+
+        // Obtener frecuencias y ondas
+        musicAnalyser.getByteFrequencyData(musicDataArray);
+        musicAnalyser.getByteTimeDomainData(musicWaveArray);
+
+        // 1. Dibujar Ondas de Radio en Tiempo Real
+        ctx.fillStyle = 'rgba(1, 3, 7, 0.45)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#06b6d4';
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = '#06b6d4';
+        ctx.beginPath();
+
+        const sliceWidth = canvas.width / musicWaveArray.length;
+        let x = 0;
+
+        for (let i = 0; i < musicWaveArray.length; i++) {
+          const v = musicWaveArray[i] / 128.0;
+          const y = (v * canvas.height) / 2;
+
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+
+          x += sliceWidth;
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // 2. Calcular energía para las barras LED paralelas L y R
+        let bassSum = 0;
+        let trebleSum = 0;
+        const half = Math.floor(musicDataArray.length / 2);
+
+        for (let i = 0; i < half; i++) bassSum += musicDataArray[i];
+        for (let i = half; i < musicDataArray.length; i++) trebleSum += musicDataArray[i];
+
+        const avgL = (bassSum / half / 255) * 100;
+        const avgR = (trebleSum / (musicDataArray.length - half) / 255) * 100;
+
+        const boostL = Math.min(100, avgL * 1.35);
+        const boostR = Math.min(100, avgR * 1.35);
+
+        updateParallelLedMeters(boostL, boostR);
+      }
+      draw();
+    }
+
+    // ==========================================
     // INICIALIZACIÓN GENERAL
     // ==========================================
     window.addEventListener('DOMContentLoaded', async () => {
       buildLedBlocks();
-
-      // Asegurar estado PRO visual en interfaz
-      activarModoPro("Licencia PRO Activa");
+      startDjVisualLoop();
 
       ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
         const val = localStorage.getItem(`ep_saved_${id}`);
@@ -1018,6 +1147,7 @@
     // ==========================================
     function repeatCurrentTrack() {
       if (playlist.length === 0) return;
+      ensureAudioContext();
       aMusic.currentTime = 0;
       aMusic.play();
       rayitoIntroFired = false;
@@ -1207,6 +1337,7 @@
 
     function playTrack(idx) {
       if (playlist.length === 0 || !playlist[idx]) return;
+      ensureAudioContext();
       currentIndex = idx;
       rayitoIntroFired = false;
       updateTrackBoxes();
@@ -1219,6 +1350,7 @@
     }
 
     function togglePlayMusic() {
+      ensureAudioContext();
       const btn = document.getElementById('btnPlayMusic');
       if (aMusic.paused) {
         if (!aMusic.src && playlist.length > 0) playTrack(currentIndex);
@@ -1454,7 +1586,7 @@
     }
 
     // ========================================================
-    // TRANSMISIÓN ESTABLE CON RECONEXIÓN AUTOMÁTICA Y KEEP-ALIVE
+    // TRANSMISIÓN EN VIVO Y MICRÓFONO PROFESIONAL
     // ========================================================
     async function toggleBroadcast() {
       if (isLive) {
@@ -1520,7 +1652,6 @@
             password: password
           }));
 
-          // Heartbeat Keep-Alive cada 10 segundos para impedir desconexiones por inactividad
           if (keepAliveInterval) clearInterval(keepAliveInterval);
           keepAliveInterval = setInterval(() => {
             if (ws && ws.readyState === WebSocket.OPEN) {
@@ -1550,7 +1681,6 @@
 
         ws.onclose = () => {
           if (isLive) {
-            // Reconexión silenciosa inmediata en lugar de apagar la cabina
             if (reconnectAttempts < 5) {
               reconnectAttempts++;
               log(`<span style="color:var(--c-yellow)">Reconectando con el servidor (Intento ${reconnectAttempts}/5)...</span>`);
@@ -1579,75 +1709,55 @@
       document.getElementById('btnLive').innerText = 'DETENER TRANSMISIÓN';
       document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
 
-      if (!audioContext || audioContext.state === 'closed') {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioContext.state === 'suspended') {
-        await audioContext.resume();
-      }
+      ensureAudioContext();
       const sampleRate = audioContext.sampleRate;
       log(`Frecuencia de audio activa: ${sampleRate}Hz`);
 
-      masterMixerNode = audioContext.createGain();
+      // CADENA DE MICRÓFONO
+      if (!micSourceNode) {
+        micSourceNode = audioContext.createMediaStreamSource(mediaStream);
+        
+        micFilterNode = audioContext.createBiquadFilter();
+        micFilterNode.type = 'highpass';
+        micFilterNode.frequency.value = 80;
 
-      monitorGainNode = audioContext.createGain();
-      monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
-      masterMixerNode.connect(monitorGainNode);
-      monitorGainNode.connect(audioContext.destination);
+        micEqWarmthNode = audioContext.createBiquadFilter();
+        micEqWarmthNode.type = 'peaking';
+        micEqWarmthNode.frequency.value = 250;
+        micEqWarmthNode.Q.value = 1.2;
+        micEqWarmthNode.gain.value = 2.5;
 
-      // CADENA DE VOZ PROFESIONAL
-      micSourceNode = audioContext.createMediaStreamSource(mediaStream);
-      
-      micFilterNode = audioContext.createBiquadFilter();
-      micFilterNode.type = 'highpass';
-      micFilterNode.frequency.value = 80;
+        micEqAirNode = audioContext.createBiquadFilter();
+        micEqAirNode.type = 'highshelf';
+        micEqAirNode.frequency.value = 4500;
+        micEqAirNode.gain.value = 3.5;
 
-      micEqWarmthNode = audioContext.createBiquadFilter();
-      micEqWarmthNode.type = 'peaking';
-      micEqWarmthNode.frequency.value = 250;
-      micEqWarmthNode.Q.value = 1.2;
-      micEqWarmthNode.gain.value = 2.5;
+        micCompressorNode = audioContext.createDynamicsCompressor();
+        micCompressorNode.threshold.setValueAtTime(-18, audioContext.currentTime);
+        micCompressorNode.knee.setValueAtTime(8, audioContext.currentTime);
+        micCompressorNode.ratio.setValueAtTime(3.8, audioContext.currentTime);
+        micCompressorNode.attack.setValueAtTime(0.003, audioContext.currentTime);
+        micCompressorNode.release.setValueAtTime(0.12, audioContext.currentTime);
 
-      micEqAirNode = audioContext.createBiquadFilter();
-      micEqAirNode.type = 'highshelf';
-      micEqAirNode.frequency.value = 4500;
-      micEqAirNode.gain.value = 3.5;
+        micGainNode = audioContext.createGain();
+        micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
 
-      micCompressorNode = audioContext.createDynamicsCompressor();
-      micCompressorNode.threshold.setValueAtTime(-18, audioContext.currentTime);
-      micCompressorNode.knee.setValueAtTime(8, audioContext.currentTime);
-      micCompressorNode.ratio.setValueAtTime(3.8, audioContext.currentTime);
-      micCompressorNode.attack.setValueAtTime(0.003, audioContext.currentTime);
-      micCompressorNode.release.setValueAtTime(0.12, audioContext.currentTime);
+        micSourceNode.connect(micFilterNode);
+        micFilterNode.connect(micEqWarmthNode);
+        micEqWarmthNode.connect(micEqAirNode);
+        micEqAirNode.connect(micCompressorNode);
+        micCompressorNode.connect(micGainNode);
+        micGainNode.connect(masterMixerNode);
+      }
 
-      micGainNode = audioContext.createGain();
-      micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
-
-      micSourceNode.connect(micFilterNode);
-      micFilterNode.connect(micEqWarmthNode);
-      micEqWarmthNode.connect(micEqAirNode);
-      micEqAirNode.connect(micCompressorNode);
-      micCompressorNode.connect(micGainNode);
-      micGainNode.connect(masterMixerNode);
-
-      // CANAL MÚSICA CON ANALIZADOR ESTÉREO DJ
-      if (!musicSourceNode) musicSourceNode = audioContext.createMediaElementSource(aMusic);
-      musicGainNode = audioContext.createGain();
-      musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
-
-      musicAnalyser = audioContext.createAnalyser();
-      musicAnalyser.fftSize = 64;
-
-      musicSourceNode.connect(musicGainNode);
-      musicGainNode.connect(musicAnalyser);
-      musicGainNode.connect(masterMixerNode);
-
-      // CANAL PUBLICIDAD
-      if (!adsSourceNode) adsSourceNode = audioContext.createMediaElementSource(aAds);
-      adsGainNode = audioContext.createGain();
-      adsGainNode.gain.value = 0.95;
-      adsSourceNode.connect(adsGainNode);
-      adsGainNode.connect(masterMixerNode);
+      // PUBLICIDAD
+      if (!adsSourceNode) {
+        adsSourceNode = audioContext.createMediaElementSource(aAds);
+        adsGainNode = audioContext.createGain();
+        adsGainNode.gain.value = 0.95;
+        adsSourceNode.connect(adsGainNode);
+        adsGainNode.connect(masterMixerNode);
+      }
 
       // PISADORES
       const stingerGainNode = audioContext.createGain();
@@ -1670,31 +1780,17 @@
       const vu = document.getElementById('vuLevel');
       const vuPct = document.getElementById('vuPct');
 
-      const djDataArray = new Uint8Array(musicAnalyser.frequencyBinCount);
-
-      function updateVisualMeters() {
+      function updateMasterMeter() {
         if (!isLive) return;
-
         analyser.getByteFrequencyData(dataArray);
         let sum = 0;
         for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
         let pct = Math.min(100, (sum / bufferLength / 128) * 100);
         vu.style.width = pct + '%';
         vuPct.innerText = `${Math.round(pct)}%`;
-
-        if (!aMusic.paused) {
-          musicAnalyser.getByteFrequencyData(djDataArray);
-          let sumMusic = 0;
-          for (let i = 0; i < djDataArray.length; i++) sumMusic += djDataArray[i];
-          let mPct = Math.min(100, (sumMusic / djDataArray.length / 128) * 100);
-          updateParallelLedMeters(mPct, Math.min(100, mPct * 0.94));
-        } else {
-          updateParallelLedMeters(0, 0);
-        }
-
-        requestAnimationFrame(updateVisualMeters);
+        requestAnimationFrame(updateMasterMeter);
       }
-      updateVisualMeters();
+      updateMasterMeter();
 
       // CODIFICADOR MP3 LAMEJS
       if (typeof lamejs !== 'undefined') {
@@ -1843,7 +1939,6 @@
       if (nextBox) nextBox.classList.remove('alert-imminent');
 
       if (processorNode) { try { processorNode.disconnect(); } catch(e){} processorNode = null; }
-      if (audioContext) { try { audioContext.close(); } catch(e){} audioContext = null; }
       if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
       if (ws) { ws.close(); ws = null; }
 
