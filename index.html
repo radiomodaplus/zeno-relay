@@ -1,1 +1,352 @@
-https://radiomodaplus.github.io/zeno-relay/
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Estudio de Transmisión en Vivo</title>
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --accent: #2563eb;
+      --accent-live: #dc2626;
+      --text: #f0f6fc;
+      --text-muted: #8b949e;
+      --border: #30363d;
+      --error: #f85149;
+      --success: #238636;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 14px; min-height: 100vh; display: flex; flex-direction: column; }
+
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h1 { font-size: 1.15rem; font-weight: 800; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
+
+    .badge-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 14px; border-radius: 999px; font-size: 0.75rem;
+      background: #21262d; color: var(--text-muted); margin-top: 6px; font-weight: 700;
+      border: 1px solid var(--border);
+    }
+    .badge-status.live { background: var(--accent-live); color: #fff; border-color: #ef4444; animation: pulse 1.2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px; font-weight: 600; text-transform: uppercase; }
+    .form-group input {
+      width: 100%; padding: 10px 12px; background: #0d1117;
+      border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); font-size: 0.9rem; outline: none; transition: border-color 0.2s, background-color 0.2s;
+    }
+    .form-group input:focus { border-color: var(--accent); }
+    .form-group input.field-error { border-color: var(--error) !important; background: rgba(248, 81, 73, 0.12) !important; }
+    .field-error-msg { color: var(--error); font-size: 0.72rem; margin-top: 3px; display: none; font-weight: 600; }
+
+    .terminal-box {
+      background: #000; border-radius: 8px; padding: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.72rem; color: #58a6ff; min-height: 75px; max-height: 100px;
+      overflow-y: auto; margin-bottom: 14px; border: 1px solid var(--border); line-height: 1.4;
+    }
+
+    .btn-connect {
+      width: 100%; padding: 14px; background: var(--accent);
+      color: #fff; border: none; border-radius: 10px; font-size: 0.95rem;
+      font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      letter-spacing: 0.5px;
+    }
+    .btn-connect.connected { background: var(--accent-live); }
+
+    .mic-panel { display: none; margin-top: 12px; text-align: center; }
+    .meter-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; letter-spacing: 0.5px; }
+    .vu-meter-bar { height: 10px; background: #21262d; border-radius: 5px; overflow: hidden; border: 1px solid #30363d; }
+    .vu-level { height: 100%; width: 0%; background: linear-gradient(90deg, #238636 60%, #d29922 85%, #f85149 100%); transition: width 0.05s linear; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>ESTUDIO DE TRANSMISIÓN</h1>
+    <div id="liveBadge" class="badge-status">● DESCONECTADO</div>
+  </div>
+
+  <div class="card" id="configCard">
+    <div class="form-group">
+      <label>Servidor / Host (Zeno Media)</label>
+      <input type="text" id="host" placeholder="link.zeno.fm" value="link.zeno.fm">
+      <div id="errorHost" class="field-error-msg">Servidor inalcanzable o incorrecto</div>
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <div class="form-group" style="flex: 1;">
+        <label>Puerto</label>
+        <input type="number" id="port" placeholder="80" value="80">
+        <div id="errorPort" class="field-error-msg">Puerto inválido</div>
+      </div>
+      <div class="form-group" style="flex: 2;">
+        <label>Punto de Anclaje (Mount)</label>
+        <input type="text" id="mount" placeholder="/f04sfgq6138uv/source" value="/f04sfgq6138uv/source">
+        <div id="errorMount" class="field-error-msg">El anclaje no existe en Zeno</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Usuario (Source / Zeno)</label>
+      <input type="text" id="user" placeholder="source" value="source">
+      <div id="errorUser" class="field-error-msg">Usuario rechazado</div>
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña (Stream Key)</label>
+      <input type="password" id="password" placeholder="Tu contraseña de Zeno">
+      <div id="errorPassword" class="field-error-msg">Contraseña incorrecta (401 Unauthorized)</div>
+    </div>
+  </div>
+
+  <div class="terminal-box" id="terminal">
+    > Listo. Ingresa las credenciales y pulsa transmitir.
+  </div>
+
+  <button id="btnAction" class="btn-connect" onclick="toggleBroadcast()">
+    INICIAR TRANSMISIÓN EN VIVO
+  </button>
+
+  <div class="card mic-panel" id="micPanel">
+    <div class="meter-label">MODULACIÓN DE MICRÓFONO EN VIVO</div>
+    <div class="vu-meter-bar">
+      <div id="vuLevel" class="vu-level"></div>
+    </div>
+  </div>
+
+  <script>
+    const RELAY_URL = "wss://zeno-relay.onrender.com";
+
+    let isLive = false;
+    let audioContext = null;
+    let mediaStream = null;
+    let processorNode = null;
+    let mp3Encoder = null;
+    let ws = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      ['host', 'port', 'mount', 'user', 'password'].forEach(id => {
+        const saved = localStorage.getItem(`zeno_${id}`);
+        if (saved) document.getElementById(id).value = saved;
+      });
+    });
+
+    function saveCredentials() {
+      ['host', 'port', 'mount', 'user', 'password'].forEach(id => {
+        localStorage.setItem(`zeno_${id}`, document.getElementById(id).value.trim());
+      });
+    }
+
+    function log(msg) {
+      const term = document.getElementById('terminal');
+      term.innerHTML += `<br>> ${msg}`;
+      term.scrollTop = term.scrollHeight;
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.field-error-msg').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('input').forEach(el => el.classList.remove('field-error'));
+    }
+
+    function setFieldError(fieldId, errorMsgId, text) {
+      const field = document.getElementById(fieldId);
+      const msg = document.getElementById(errorMsgId);
+      if (field) field.classList.add('field-error');
+      if (msg) {
+        if (text) msg.innerText = text;
+        msg.style.display = 'block';
+      }
+    }
+
+    async function toggleBroadcast() {
+      if (isLive) {
+        stopAll();
+        log('Transmisión detenida por el locutor.');
+      } else {
+        await startBroadcast();
+      }
+    }
+
+    async function startBroadcast() {
+      clearErrors();
+      let host = document.getElementById('host').value.trim();
+      let port = document.getElementById('port').value.trim();
+      let mount = document.getElementById('mount').value.trim();
+      let user = document.getElementById('user').value.trim();
+      let password = document.getElementById('password').value.trim();
+
+      if (mount && !mount.startsWith('/')) {
+        mount = '/' + mount;
+        document.getElementById('mount').value = mount;
+      }
+
+      let hasError = false;
+      if (!host) { setFieldError('host', 'errorHost', 'Escribe el host'); hasError = true; }
+      if (!port) { setFieldError('port', 'errorPort', 'Puerto requerido'); hasError = true; }
+      if (!mount) { setFieldError('mount', 'errorMount', 'Escribe el anclaje (/mount)'); hasError = true; }
+      if (!password) { setFieldError('password', 'errorPassword', 'Escribe la contraseña'); hasError = true; }
+
+      if (hasError) {
+        log('<span style="color:var(--error)">Completa todos los campos obligatorios.</span>');
+        return;
+      }
+
+      saveCredentials();
+      log(`Solicitando acceso al micrófono...`);
+
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+        });
+        log('<span style="color:var(--success)">Micrófono activado con éxito.</span>');
+      } catch (err) {
+        log(`<span style="color:var(--error)">Error de micrófono: ${err.name} - ${err.message}</span>`);
+        return;
+      }
+
+      log(`Conectando con el relay y autenticando con Zeno Media...`);
+
+      try {
+        ws = new WebSocket(RELAY_URL);
+        ws.binaryType = "arraybuffer";
+
+        ws.onopen = () => {
+          log('Conectado al relay. Verificando credenciales en Zeno...');
+          ws.send(JSON.stringify({
+            action: 'AUTH_ICECAST',
+            host, port, mount, user, password
+          }));
+        };
+
+        ws.onmessage = (event) => {
+          const resp = JSON.parse(event.data);
+          if (resp.status === 'SUCCESS') {
+            log('<span style="color:var(--success)">¡Autenticado con éxito! AL AIRE.</span>');
+            iniciarAudioEngine();
+          } else if (resp.status === 'ERROR') {
+            stopAll();
+            if (resp.code === 401) {
+              setFieldError('password', 'errorPassword', 'Contraseña incorrecta');
+              setFieldError('user', 'errorUser', 'Verifica usuario');
+              log('<span style="color:var(--error)">Error 401: Usuario o contraseña incorrectos en Zeno.</span>');
+            } else if (resp.code === 404) {
+              setFieldError('mount', 'errorMount', 'El punto de anclaje no existe');
+              log('<span style="color:var(--error)">Error 404: Punto de montaje no existe en Zeno.</span>');
+            } else {
+              setFieldError('host', 'errorHost', resp.message || 'Error de conexión');
+              log(`<span style="color:var(--error)">Error del servidor: ${resp.message}</span>`);
+            }
+          }
+        };
+
+        ws.onerror = () => {
+          log('<span style="color:var(--error)">Conectando con el relay... Vuelve a pulsar si tarda.</span>');
+          stopAll();
+        };
+
+        ws.onclose = () => {
+          if (isLive) {
+            log('<span style="color:var(--error)">Transmisión desconectada.</span>');
+            stopAll();
+          }
+        };
+
+      } catch (err) {
+        log(`<span style="color:var(--error)">Error: ${err.message}</span>`);
+        stopAll();
+      }
+    }
+
+    function iniciarAudioEngine() {
+      isLive = true;
+      document.getElementById('liveBadge').className = 'badge-status live';
+      document.getElementById('liveBadge').innerText = '● EN VIVO (AL AIRE)';
+      document.getElementById('btnAction').innerText = 'DETENER TRANSMISIÓN';
+      document.getElementById('btnAction').classList.add('connected');
+      document.getElementById('micPanel').style.display = 'block';
+
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const sampleRate = audioContext.sampleRate;
+      const source = audioContext.createMediaStreamSource(mediaStream);
+
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 128;
+      source.connect(analyser);
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      const vu = document.getElementById('vuLevel');
+
+      function updateVu() {
+        if (!isLive) return;
+        analyser.getByteFrequencyData(dataArray);
+        let sum = 0;
+        for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+        let avg = sum / bufferLength;
+        let pct = Math.min(100, (avg / 128) * 100);
+        vu.style.width = pct + '%';
+        requestAnimationFrame(updateVu);
+      }
+      updateVu();
+
+      if (typeof lamejs !== 'undefined') {
+        mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
+      }
+
+      processorNode = audioContext.createScriptProcessor(4096, 1, 1);
+      processorNode.onaudioprocess = (e) => {
+        if (!isLive || !ws || ws.readyState !== WebSocket.OPEN || !mp3Encoder) return;
+
+        const inputData = e.inputBuffer.getChannelData(0);
+        const sampleBuffer = new Int16Array(inputData.length);
+        for (let i = 0; i < inputData.length; i++) {
+          let s = Math.max(-1, Math.min(1, inputData[i]));
+          sampleBuffer[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+
+        const mp3Chunk = mp3Encoder.encodeBuffer(sampleBuffer);
+        if (mp3Chunk.length > 0) {
+          ws.send(mp3Chunk.buffer);
+        }
+      };
+
+      source.connect(processorNode);
+      processorNode.connect(audioContext.destination);
+    }
+
+    function stopAll() {
+      isLive = false;
+      if (processorNode) {
+        processorNode.disconnect();
+        processorNode = null;
+      }
+      if (audioContext) {
+        audioContext.close();
+        audioContext = null;
+      }
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(t => t.stop());
+        mediaStream = null;
+      }
+      if (ws) {
+        ws.close();
+        ws = null;
+      }
+
+      document.getElementById('liveBadge').className = 'badge-status';
+      document.getElementById('liveBadge').innerText = '● DESCONECTADO';
+      document.getElementById('btnAction').innerText = 'INICIAR TRANSMISIÓN EN VIVO';
+      document.getElementById('btnAction').classList.remove('connected');
+      document.getElementById('micPanel').style.display = 'none';
+      document.getElementById('vuLevel').style.width = '0%';
+    }
+  </script>
+</body>
+</html>
