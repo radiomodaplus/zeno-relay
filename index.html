@@ -88,7 +88,7 @@
     .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
     .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
 
-    /* VÚMETRO MASTER */
+    /* VÚMETRO MASTER CONTINUO */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
@@ -110,7 +110,7 @@
     .queue-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
     .track-box {
       border-radius: 8px; padding: 6px 10px; background: #070c1b; border-width: 2px; border-style: solid;
-      display: flex; flex-direction: column; justify-content: center; position: relative;
+      display: flex; flex-direction: column; justify-content: center; position: relative; transition: all 0.25s ease;
     }
     .track-box.current { border-color: var(--c-green); }
     .track-box.next { border-color: var(--c-blue); }
@@ -204,6 +204,10 @@
       border: 1px solid #475569; background: #1e293b; color: #fff; cursor: pointer;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
+    .btn-stinger.p1 { border-color: var(--c-purple); background: #2e1065; }
+    .btn-stinger.p2 { border-color: var(--c-amber); background: #451a03; }
+    .btn-stinger.lightning { border-color: var(--c-yellow); background: #3b2d04; }
+    .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 900; }
 
     .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 6px; margin-bottom: 6px; }
     .btn-ctrl { padding: 9px 2px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-sub); color: #fff; font-size: 0.7rem; font-weight: 800; cursor: pointer; text-align: center; }
@@ -215,7 +219,6 @@
       color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 0.72rem; text-align: center;
     }
 
-    /* BOTÓN INFERIOR */
     .btn-main-stream {
       width: 100%; padding: 15px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: #fff; border: 2px solid #60a5fa; border-radius: 10px; font-size: 1rem; font-weight: 900;
@@ -249,7 +252,6 @@
       padding: 6px 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
     }
 
-    /* LISTA PANEL PRINCIPAL */
     .playlist-scroll { display: flex; flex-direction: column; gap: 6px; max-height: 55vh; overflow-y: auto; padding-right: 4px; }
     .track-item-card {
       background: #101935; border: 1px solid #233560; border-radius: 8px;
@@ -282,7 +284,6 @@
       padding: 6px 8px; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;
     }
 
-    /* MANUAL DE AYUDA */
     .help-section {
       background: #09132b; border: 1px solid #1e3a6d; border-radius: 8px; padding: 8px; margin-bottom: 8px;
     }
@@ -305,20 +306,19 @@
     </div>
   </div>
 
-  <!-- BARRA SUPERIOR CON ICONO CALENDARIO Y BOTÓN RÁPIDO PLAY ROJO -->
+  <!-- BARRA SUPERIOR -->
   <div class="top-bar">
     <div class="app-title">
       📻 <span>EMISORASplus isecas</span>
     </div>
     <div class="top-actions">
-      <!-- ICONO RÁPIDO DE TRANSMISIÓN PLAY ROJO -->
-      <button id="btnQuickPlay" class="btn-quick-play-stream" type="button" onclick="handleStreamButtonClick()" title="Iniciar / Detener Emisión Inmediata">
+      <!-- BOTÓN RÁPIDO PLAY ROJO -->
+      <button id="btnQuickPlay" class="btn-quick-play-stream" type="button" onclick="handleStreamButtonClick()" title="Emisión Inmediata">
         ▶
       </button>
-
       <button class="btn-crown">👑 PRO</button>
-      <button class="btn-icon" onclick="openPlaylistModal()" title="Panel Principal de Pistas">🎛️</button>
-      <button class="btn-icon" onclick="openCalendarModal()" title="Publicidad y Comerciales">📅</button>
+      <button class="btn-icon" onclick="openPlaylistModal()" title="Panel Principal">🎛️</button>
+      <button class="btn-icon" onclick="openCalendarModal()" title="Publicidad">📅</button>
       <button class="btn-icon" onclick="openHelpModal()" title="Manual de Ayuda">❓</button>
       <button id="btnMonitor" class="btn-icon" onclick="toggleLocalMonitoring()" title="Monitoreo">🎧</button>
       <button class="btn-icon" onclick="openSettingsModal()" title="Ajustes">⚙</button>
@@ -370,8 +370,8 @@
       <div class="track-tag-row">
         <div class="track-tag">● 1. EN EL AIRE (ACTUAL)</div>
         <div style="display:flex; align-items:center; gap:4px;">
-          <div id="airLightningBadge" style="display:none;" class="tag-action-icon tag-lightning">⚡</div>
-          <button id="airClockBtn" class="tag-action-icon tag-clock-btn" onclick="openClockModal()">🕒</button>
+          <div id="airLightningBadge" style="display:none;" class="tag-action-icon tag-lightning" title="Aplica para Rayito">⚡</div>
+          <button id="airClockBtn" class="tag-action-icon tag-clock-btn" onclick="openClockModal()" title="Separador de Reloj">🕒</button>
         </div>
       </div>
       <div class="track-row-air">
@@ -421,7 +421,6 @@
     </div>
   </div>
 
-  <!-- BOTÓN PANEL PRINCIPAL DE PISTAS -->
   <button class="btn-ctrl" style="width:100%; padding:10px; background:linear-gradient(90deg, #6366f1, #8b5cf6); font-weight:900; margin-bottom:6px;" onclick="openPlaylistModal()">
     🎛️ PANEL PRINCIPAL (VER TODAS LAS PISTAS Y ORGANIZAR)
   </button>
@@ -439,15 +438,15 @@
 
   <!-- PISADORES Y RAYITO -->
   <div class="stinger-grid">
-    <button class="btn-stinger" onclick="triggerStinger(1)">
+    <button class="btn-stinger p1" onclick="triggerStinger(1)">
       <span>🔊 PISADOR 1</span>
       <small style="font-size:0.55rem; opacity:0.8;">DISPARAR</small>
     </button>
-    <button class="btn-stinger" onclick="triggerStinger(2)">
+    <button id="btnP2" class="btn-stinger p2" onclick="triggerStinger(2)">
       <span>🔊 PISADOR 2</span>
       <small style="font-size:0.55rem;">DISPARAR</small>
     </button>
-    <button id="btnLightning" class="btn-stinger" onclick="toggleLightningMode()">
+    <button id="btnLightning" class="btn-stinger lightning" onclick="toggleLightningMode()">
       <span>⚡ RAYITO</span>
       <small style="font-size:0.55rem;">AUTO (≥ 1 MIN)</small>
     </button>
@@ -456,14 +455,14 @@
   <!-- CONTROLES DE REPRODUCCIÓN -->
   <div class="player-controls">
     <button id="btnPlayMusic" class="btn-ctrl" onclick="togglePlayMusic()">▶ PLAY</button>
-    <button class="btn-ctrl" style="background:#450a0a; border-color:var(--c-red); color:#fca5a5;" onclick="stopMusicTrack()">⏹ STOP</button>
+    <button class="btn-ctrl btn-stop-music" onclick="stopMusicTrack()">⏹ STOP</button>
     <button class="btn-ctrl" onclick="skipToNextTrack()">⏭ SIG</button>
     <button id="btnMode" class="btn-ctrl" onclick="toggleMode()">CONTINUO</button>
   </div>
 
   <!-- CARGA DE ARCHIVOS -->
   <div class="file-loader">
-    <div class="btn-load-files">📂 CARGAR MÚSICA O VIDEO (GUARDADO AUTOMÁTICO)</div>
+    <div class="btn-load-files">📂 CARGAR MÚSICA (GUARDADO AUTOMÁTICO)</div>
     <input type="file" id="fileTracks" multiple accept="audio/*, video/*" onchange="handleStrictFiles(event)">
   </div>
 
@@ -631,6 +630,9 @@
         <div style="font-size:0.85rem; font-weight:900; color:var(--c-blue);">🎛️ PANEL PRINCIPAL DE PISTAS</div>
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closePlaylistModal()">✕</button>
       </div>
+      <div style="font-size:0.68rem; color:var(--text-muted); margin-bottom:8px;">
+        Pistas que ya sonaron en <b style="color:var(--c-red);">ROJO</b>. Pistas aptas para rayito (≥ 1 min) llevan <b style="color:var(--c-gold);">⚡</b>.
+      </div>
       <div class="playlist-scroll" id="playlistContainer"></div>
       <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closePlaylistModal()">CERRAR PANEL</button>
     </div>
@@ -716,11 +718,16 @@
     let currentIndex = 0;
     let activeStingerAudio = null;
 
-    // Web Audio Nodes (Directo de la arquitectura funcional original)
+    // Web Audio Nodes
     let audioContext = null;
     let mediaStream = null;
     let micSourceNode = null;
+    let micFilterNode = null;
+    let micEqWarmthNode = null;
+    let micEqAirNode = null;
+    let micCompressorNode = null;
     let micGainNode = null;
+
     let musicSourceNode = null;
     let musicGainNode = null;
     let musicAnalyser = null;
@@ -757,9 +764,6 @@
       }
     }
 
-    // ==========================================
-    // DISPARADOR RÁPIDO DE TRANSMISIÓN
-    // ==========================================
     function handleStreamButtonClick() {
       log("Comando recibido: alternando transmisión...");
       toggleBroadcast();
@@ -813,14 +817,14 @@
 
         const bL = document.createElement('div');
         bL.className = 'led-block';
-        bL.id = `ledL_${i}`;
         bL.dataset.type = type;
+        bL.id = `ledL_${i}`;
         colL.appendChild(bL);
 
         const bR = document.createElement('div');
         bR.className = 'led-block';
-        bR.id = `ledR_${i}`;
         bR.dataset.type = type;
+        bR.id = `ledR_${i}`;
         colR.appendChild(bR);
       }
     }
@@ -1146,7 +1150,7 @@
     }
 
     // ==========================================
-    // TRANSMISIÓN ROBUSTA (ORIGINAL RESTAURADA)
+    // TRANSMISIÓN ROBUSTA ZENO MEDIA
     // ==========================================
     async function toggleBroadcast() {
       if (isLive) {
@@ -1164,7 +1168,7 @@
       const password = document.getElementById('password').value.trim();
 
       if (!host || !port || !mount || !password) {
-        alert("Abre Ajustes ⚙ y escribe o pega tu contraseña de Zeno Media.");
+        alert("Abre Ajustes ⚙ y escribe o pega tu Stream Key para transmitir.");
         openSettingsModal();
         return;
       }
@@ -1189,8 +1193,8 @@
         }
         log('<span style="color:var(--c-green)">Micrófono activado con éxito.</span>');
       } catch (err) {
-        log(`<span style="color:var(--c-red)">Error de micrófono: ${err.name} - ${err.message}</span>`);
-        alert("No se pudo acceder al micrófono. Concede el permiso para continuar.");
+        log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
+        alert("Debes permitir el acceso al micrófono para transmitir.");
         return;
       }
 
@@ -1226,15 +1230,15 @@
               log('<span style="color:var(--c-green); font-weight:bold;">¡Autenticado con éxito! AL AIRE.</span>');
               await iniciarAudioEngine();
             } else if (resp.status === 'ERROR') {
-              log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message}</span>`);
+              log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message} (${resp.code || ''})</span>`);
               stopAll();
-              alert(`Error del servidor: ${resp.message}`);
+              alert(`Error del servidor Icecast: ${resp.message}`);
             }
           } catch(e){}
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">Microcorte. Intentando reconectar...</span>');
+          log('<span style="color:var(--c-yellow)">Microcorte de red. Intentando reconectar...</span>');
         };
 
         ws.onclose = () => {
@@ -1271,11 +1275,40 @@
       const sampleRate = audioContext.sampleRate;
       log(`Audio activo: ${sampleRate}Hz`);
 
+      // Cadena de micrófono profesional cálido y nítido
       if (!micSourceNode && mediaStream) {
         micSourceNode = audioContext.createMediaStreamSource(mediaStream);
+        
+        micFilterNode = audioContext.createBiquadFilter();
+        micFilterNode.type = 'highpass';
+        micFilterNode.frequency.value = 80;
+
+        micEqWarmthNode = audioContext.createBiquadFilter();
+        micEqWarmthNode.type = 'peaking';
+        micEqWarmthNode.frequency.value = 250;
+        micEqWarmthNode.Q.value = 1.2;
+        micEqWarmthNode.gain.value = 2.5;
+
+        micEqAirNode = audioContext.createBiquadFilter();
+        micEqAirNode.type = 'highshelf';
+        micEqAirNode.frequency.value = 4500;
+        micEqAirNode.gain.value = 3.5;
+
+        micCompressorNode = audioContext.createDynamicsCompressor();
+        micCompressorNode.threshold.setValueAtTime(-18, audioContext.currentTime);
+        micCompressorNode.knee.setValueAtTime(8, audioContext.currentTime);
+        micCompressorNode.ratio.setValueAtTime(3.8, audioContext.currentTime);
+        micCompressorNode.attack.setValueAtTime(0.003, audioContext.currentTime);
+        micCompressorNode.release.setValueAtTime(0.12, audioContext.currentTime);
+
         micGainNode = audioContext.createGain();
         micGainNode.gain.value = parseFloat(document.getElementById('volMic').value || 1.0);
-        micSourceNode.connect(micGainNode);
+
+        micSourceNode.connect(micFilterNode);
+        micFilterNode.connect(micEqWarmthNode);
+        micEqWarmthNode.connect(micEqAirNode);
+        micEqAirNode.connect(micCompressorNode);
+        micCompressorNode.connect(micGainNode);
         micGainNode.connect(masterMixerNode);
       }
 
@@ -1671,10 +1704,15 @@
           <div style="font-size:0.72rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:240px;">
             ${idx + 1}. ${slot.name} (Minuto ${slot.minute})
           </div>
-          <button class="btn-action-small btn-del" onclick="adSlots.splice(${idx},1); renderAdSlotsList();">🗑</button>
+          <button class="btn-action-small btn-del" onclick="deleteAdSlot(${idx})">🗑</button>
         `;
         container.appendChild(item);
       });
+    }
+
+    function deleteAdSlot(idx) {
+      adSlots.splice(idx, 1);
+      renderAdSlotsList();
     }
 
     function iniciarProgramadorPublicidad() {
@@ -1727,9 +1765,7 @@
       playNextTrack();
     }
 
-    // ==========================================
     // CARPETA RELOJ (🕒)
-    // ==========================================
     function openClockModal() { renderClockSlots(); document.getElementById('clockModal').style.display = 'flex'; }
     function closeClockModal() { document.getElementById('clockModal').style.display = 'none'; }
 
@@ -1762,7 +1798,7 @@
       container.innerHTML = '';
 
       if (clockSlots.length === 0) {
-        container.innerHTML = '<div style="color:var(--text-muted); font-size:0.7rem; text-align:center; padding:10px;">Carpeta vacía. Carga hasta 10 identificaciones.</div>';
+        container.innerHTML = '<div style="color:var(--text-muted); font-size:0.7rem; text-align:center; padding:10px;">Carpeta vacía.</div>';
         return;
       }
 
@@ -1817,7 +1853,7 @@
 
     function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
     function closeSettingsModal() {
-      saveSettings();
+      localStorage.setItem('zeno_password', document.getElementById('password').value.trim());
       document.getElementById('settingsModal').style.display = 'none';
     }
     function openCalendarModal() { renderAdSlotsList(); document.getElementById('calendarModal').style.display = 'flex'; }
@@ -1828,7 +1864,7 @@
     function closeHelpModal() { document.getElementById('helpModal').style.display = 'none'; }
 
     // ==========================================
-    // INICIALIZACIÓN AL ABRIR LA APP
+    // INICIALIZACIÓN
     // ==========================================
     window.addEventListener('DOMContentLoaded', async () => {
       buildLedBlocks();
