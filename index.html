@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -52,7 +52,7 @@
 
     .btn-icon {
       background: #1e293b; border: 1px solid #475569; color: #fff; width: 34px; height: 34px;
-      border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
     .btn-icon.monitor-active { background: #0284c7; border-color: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
 
@@ -110,16 +110,23 @@
     }
     .air-nav-btn:active { background: var(--c-green); color: #000; transform: scale(0.92); }
 
-    /* ESPECTRÓMETRO DJ RÍTMICO EN EL AIRE */
-    .dj-visualizer-bar {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      height: 14px; gap: 2px; margin-top: 5px; background: #030712; padding: 2px 4px; border-radius: 4px; border: 1px solid #14213d;
+    /* CONSOLA DE VOLUMEN DJ Y ESPECTRÓMETRO DIGITAL */
+    .dj-console-box {
+      margin-top: 6px; background: #030611; border: 1px solid #1a2a4a; border-radius: 6px; padding: 4px 6px;
     }
-    .dj-col { flex: 1; background: #22c55e; border-radius: 1px; height: 10%; transition: height 0.05s ease; }
-    .dj-col:nth-child(4n+1) { background: #38bdf8; }
-    .dj-col:nth-child(4n+2) { background: #4ade80; }
-    .dj-col:nth-child(4n+3) { background: #facc15; }
-    .dj-col:nth-child(4n) { background: #f43f5e; }
+    .dj-levels-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;
+    }
+    .dj-vumeter-track {
+      flex: 1; height: 6px; background: #111a2e; border-radius: 3px; overflow: hidden; position: relative;
+    }
+    .dj-vumeter-fill {
+      height: 100%; width: 0%; background: linear-gradient(90deg, #10b981 60%, #eab308 85%, #ef4444 100%);
+      transition: width 0.05s linear;
+    }
+    .dj-spectrum-canvas {
+      width: 100%; height: 26px; display: block; border-radius: 3px; background: #02040a;
+    }
 
     /* MIC Y DUCKING */
     .mic-duck-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 6px; margin-bottom: 6px; }
@@ -149,7 +156,7 @@
     .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 900; }
     .btn-stinger:disabled { opacity: 0.35; filter: grayscale(1); }
 
-    /* CONTROLES PRINCIPALES (PLAY, STOP, SIGUIENTE, MODO) */
+    /* CONTROLES DE REPRODUCCIÓN */
     .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 6px; margin-bottom: 6px; }
     .btn-ctrl { padding: 9px 2px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-sub); color: #fff; font-size: 0.7rem; font-weight: 800; cursor: pointer; text-align: center; }
     .btn-ctrl.btn-stop-music { background: #450a0a; border-color: var(--c-red); color: #fca5a5; }
@@ -175,7 +182,7 @@
 
     .terminal-box {
       background: #030712; border: 1px solid var(--border); border-radius: 6px; padding: 6px;
-      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 50px; overflow-y: auto; margin-top: 6px;
+      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 45px; overflow-y: auto; margin-top: 6px;
     }
 
     /* MODALES */
@@ -185,7 +192,7 @@
     }
     .modal-box {
       background: #0c1427; border: 1px solid #3b82f6; border-radius: 14px;
-      width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; padding: 14px;
+      width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto; padding: 14px;
     }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
     
@@ -203,8 +210,8 @@
       padding: 6px 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
     }
 
-    /* ESTILOS DEL PANEL PRINCIPAL DE PISTAS */
-    .playlist-scroll { display: flex; flex-direction: column; gap: 6px; max-height: 60vh; overflow-y: auto; padding-right: 4px; }
+    /* PANEL PRINCIPAL DE PISTAS */
+    .playlist-scroll { display: flex; flex-direction: column; gap: 6px; max-height: 55vh; overflow-y: auto; padding-right: 4px; }
     .track-item-card {
       background: #101935; border: 1px solid #233560; border-radius: 8px;
       padding: 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px;
@@ -217,9 +224,7 @@
     .track-item-title { font-size: 0.75rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .track-item-meta { display: flex; gap: 5px; align-items: center; font-size: 0.62rem; margin-top: 3px; flex-wrap: wrap; }
     
-    /* BADGE ROJO PARA PISTAS QUE YA SONARON */
     .tag-played-red { background: var(--c-red); color: #fff; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
-    /* BADGE DE RAYITO EN PANEL PRINCIPAL */
     .tag-lightning-ready { background: #854d0e; color: #fef08a; border: 1px solid #eab308; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
     .tag-live { background: var(--c-green); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
     .tag-next { background: var(--c-blue); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
@@ -234,14 +239,13 @@
     .btn-action-small:active { background: var(--c-blue); }
     .btn-action-small.btn-del { border-color: var(--c-red); color: var(--c-red); }
 
-    .cal-card-box {
-      background: linear-gradient(135deg, #1e1b4b, #111827); border: 2px solid #a855f7;
-      border-radius: 12px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 14px rgba(168,85,247,0.25);
+    /* ESTILOS DEL MANUAL DE AYUDA */
+    .help-section {
+      background: #09132b; border: 1px solid #1e3a6d; border-radius: 8px; padding: 8px; margin-bottom: 8px;
     }
-    .ad-card-item {
-      background: #09132b; border: 1px solid #1e3a6d; border-radius: 8px;
-      padding: 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; gap: 6px;
-    }
+    .help-title { font-size: 0.78rem; font-weight: 900; color: var(--c-gold); margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .help-desc { font-size: 0.68rem; color: #cbd5e1; line-height: 1.45; }
+    .help-desc b { color: #fff; }
   </style>
 </head>
 <body>
@@ -255,6 +259,7 @@
       <button id="btnProBadge" class="btn-crown" onclick="openProModal()">👑 PRO</button>
       <button class="btn-icon" onclick="openPlaylistModal()" title="Panel Principal de Pistas">🎛️</button>
       <button id="btnCalendar" class="btn-icon" onclick="openCalendarModal()" title="Publicidad y Calendario">📅</button>
+      <button class="btn-icon" onclick="openHelpModal()" title="Manual de Ayuda">❓</button>
       <button id="btnMonitor" class="btn-icon" onclick="toggleLocalMonitoring()" title="Monitoreo">🎧</button>
       <button class="btn-icon" onclick="openSettingsModal()" title="Ajustes">⚙</button>
     </div>
@@ -274,7 +279,7 @@
   <!-- VÚMETRO MASTER -->
   <div class="card">
     <div class="vu-header">
-      <span>SALIDA AL AIRE (MASTER)</span>
+      <span>SALIDA AL AIRE (MASTER BROADCAST)</span>
       <span id="vuPct">0%</span>
     </div>
     <div class="vu-container">
@@ -313,12 +318,15 @@
         <button class="air-nav-btn" onclick="skipToNextTrack()" title="Siguiente pista (⏭)">⏭</button>
       </div>
 
-      <!-- ESPECTRÓMETRO / BARRA DE NIVELES DJ RÍTMICO -->
-      <div class="dj-visualizer-bar" id="djVisualizer">
-        <div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div>
-        <div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div>
-        <div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div>
-        <div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div><div class="dj-col"></div>
+      <!-- PANEL DJ CONSOLA DE ONDAS Y VOLUMEN ESTÉREO AL RITMO -->
+      <div class="dj-console-box">
+        <div class="dj-levels-row">
+          <span style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">L</span>
+          <div class="dj-vumeter-track"><div id="djVuL" class="dj-vumeter-fill"></div></div>
+          <span style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">R</span>
+          <div class="dj-vumeter-track"><div id="djVuR" class="dj-vumeter-fill"></div></div>
+        </div>
+        <canvas id="djWaveCanvas" class="dj-spectrum-canvas" width="300" height="26"></canvas>
       </div>
     </div>
 
@@ -335,7 +343,7 @@
 
   <!-- BOTÓN PANEL PRINCIPAL DE PISTAS -->
   <button class="btn-panel-main" onclick="openPlaylistModal()">
-    🎛️ PANEL PRINCIPAL (VER PISTAS, ORDENAR Y ELIMINAR)
+    🎛️ PANEL PRINCIPAL (VER TODAS LAS PISTAS Y ORGANIZAR)
   </button>
 
   <!-- MIC Y DUCKING -->
@@ -361,7 +369,7 @@
     </button>
     <button id="btnLightning" class="btn-stinger lightning" onclick="toggleLightningMode()" disabled>
       <span>🔒 ⚡ RAYITO</span>
-      <small style="font-size:0.55rem;">AUTO (>1:40)</small>
+      <small style="font-size:0.55rem;">AUTO (≥ 1 MIN)</small>
     </button>
   </div>
 
@@ -375,7 +383,7 @@
 
   <!-- CARGA DE ARCHIVOS -->
   <div class="file-loader">
-    <div class="btn-load-files" id="lblLoadFiles">📂 CARGAR MÚSICA (AGREGAR A LA LISTA)</div>
+    <div class="btn-load-files" id="lblLoadFiles">📂 CARGAR MÚSICA (GUARDADO AUTOMÁTICO)</div>
     <input type="file" id="fileTracks" multiple accept="audio/mpeg, audio/mp3" onchange="handleStrictFiles(event)">
   </div>
 
@@ -393,6 +401,60 @@
   <audio id="audioLightning" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioAds" style="display:none;" crossorigin="anonymous"></audio>
 
+  <!-- ==================== MODAL DEL MANUAL DE AYUDA (❓) ==================== -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div style="font-size:0.9rem; font-weight:900; color:var(--c-gold);">📖 MANUAL DE AYUDA Y GUÍA DE CABINA</div>
+        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeHelpModal()">✕</button>
+      </div>
+
+      <div class="help-section">
+        <div class="help-title">📻 1. Transmisión y Servidores</div>
+        <div class="help-desc">
+          En <b>Ajustes ⚙</b> configuras tu servidor (Zeno Media o Icecast Universal). Al pulsar <b>INICIAR TRANSMISIÓN</b>, el audio del micrófono, música y efectos se codifican en vivo en MP3 a 128 kbps hacia la nube.
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-title">🎧 2. Monitoreo Local con Audífonos</div>
+        <div class="help-desc">
+          El botón <b>🎧</b> activa o silencia la escucha en el dispositivo. Si está apagado, el teléfono no emitirá sonido por altavoz (para evitar acoples); si está activo, escucharás exactamente la mezcla que sale al aire.
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-title">⚡ 3. Modo Rayito (Auto-Pisador)</div>
+        <div class="help-desc">
+          Cuando está activo, el sistema comprueba la duración de la canción que arranca. <b>Si dura menos de 1 minuto no suena</b>. Si la pista dura <b>1 minuto o más</b>, dispara el audio cargado automáticamente al <b>segundo 0:03</b>.
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-title">🎙️ 4. Micrófono y Ducking Inteligente</div>
+        <div class="help-desc">
+          Cuenta con filtro paso alto (corta ruidos graves) y compresor dinámico. Si <b>DUCKING AUTO</b> está activo, al abrir el micrófono la música bajará automáticamente al 20% para que tu voz se escuche clara como cortina musical.
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-title">🎛️ 5. Panel Principal y Memoria de Pistas</div>
+        <div class="help-desc">
+          Todas las canciones cargadas se guardan en el almacenamiento interno (IndexedDB). Al salir y volver a la app, tus canciones permanecen intactas. Puedes reordenarlas con <b>▲</b> y <b>▼</b>, eliminarlas con <b>🗑</b> y ver en rojo las que ya sonaron.
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-title">📅 6. Comerciales Programados (PRO)</div>
+        <div class="help-desc">
+          Permite crear hasta 5 tandas comerciales. Cada tanda espera automáticamente a que termine la canción al aire para entrar sin cortes bruscos.
+        </div>
+      </div>
+
+      <button class="btn-main-stream" style="padding:10px; margin-top:6px;" onclick="closeHelpModal()">ENTENDIDO / CERRAR GUÍA</button>
+    </div>
+  </div>
+
   <!-- ==================== MODAL DEL PANEL PRINCIPAL (TODAS LAS PISTAS) ==================== -->
   <div class="modal-overlay" id="playlistModal">
     <div class="modal-box">
@@ -402,7 +464,7 @@
       </div>
 
       <div style="font-size:0.68rem; color:var(--text-muted); margin-bottom:8px;">
-        Pistas que ya sonaron en <b style="color:var(--c-red);">ROJO</b>. Pistas aptas para rayito (>1:40 min) llevan el icono <b style="color:var(--c-gold);">⚡</b>.
+        Pistas que ya sonaron en <b style="color:var(--c-red);">ROJO</b>. Pistas aptas para rayito (≥ 1 min) llevan <b style="color:var(--c-gold);">⚡ RAYITO</b>.
       </div>
 
       <div class="playlist-scroll" id="playlistContainer">
@@ -422,15 +484,12 @@
       </div>
 
       <div class="cal-card-box">
-        <div style="font-size:0.75rem; font-weight:900; color:#e9d5ff; margin-bottom:4px;">
-          👑 FUNCIÓN EXCLUSIVA PRO
-        </div>
+        <div style="font-size:0.75rem; font-weight:900; color:#e9d5ff; margin-bottom:4px;">👑 FUNCIÓN EXCLUSIVA PRO</div>
         <p style="font-size:0.68rem; color:#d8b4fe; line-height:1.4;">
-          Guarda hasta <b>5 tandas comerciales</b> programadas. Cada tanda espera automáticamente a que termine la canción actual antes de salir al aire.
+          Guarda hasta <b>5 tandas comerciales</b>. Cada tanda espera automáticamente a que termine la canción actual antes de salir al aire.
         </p>
       </div>
 
-      <!-- FORMULARIO PARA CREAR TANDA -->
       <div id="adFormContainer" style="background:#091226; border:1px solid #1e3a6d; border-radius:10px; padding:10px; margin-bottom:10px;">
         <div style="font-size:0.72rem; font-weight:900; color:var(--c-gold); margin-bottom:6px;">
           ➕ AGREGAR NUEVA TANDA (<span id="adCountDisplay">0</span>/5)
@@ -479,13 +538,8 @@
         </button>
       </div>
 
-      <!-- LISTA DE TANDAS GUARDADAS -->
-      <div style="font-size:0.72rem; font-weight:900; color:var(--c-blue); margin-bottom:6px;">
-        📋 TANDAS GUARDADAS Y ACTIVAS:
-      </div>
-      <div id="adSlotsListContainer">
-        <!-- Render dinámico -->
-      </div>
+      <div style="font-size:0.72rem; font-weight:900; color:var(--c-blue); margin-bottom:6px;">📋 TANDAS ACTIVAS:</div>
+      <div id="adSlotsListContainer"></div>
 
       <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeCalendarModal()">CERRAR CALENDARIO</button>
     </div>
@@ -539,6 +593,11 @@
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeSettingsModal()">✕</button>
       </div>
 
+      <!-- BOTÓN DIRECTO DE AYUDA DENTRO DE AJUSTES -->
+      <button class="btn-ctrl" style="width:100%; background:linear-gradient(90deg, #3b82f6, #1d4ed8); font-weight:900; margin-bottom:10px; padding:8px;" onclick="closeSettingsModal(); openHelpModal();">
+        ❓ ABRIR MANUAL DE AYUDA Y GUÍA
+      </button>
+
       <!-- SELECTOR DE SERVIDOR -->
       <div class="form-group">
         <label style="color:var(--c-gold);">Tipo de Servidor</label>
@@ -565,7 +624,7 @@
         <input type="password" id="password" placeholder="Tu Stream Key">
       </div>
 
-      <!-- BOTÓN RESTABLECER EMISORA (CONFIRMACIÓN PREVIA) -->
+      <!-- BOTÓN RESTABLECER EMISORA -->
       <button class="btn-ctrl" style="width:100%; background:rgba(239, 68, 68, 0.15); border-color:var(--c-red); color:var(--c-red); margin:6px 0 12px 0; font-weight:800; padding:8px;" onclick="promptResetStation()">
         ⚠️ RESTABLECER EMISORA
       </button>
@@ -636,14 +695,12 @@
     let duckingEnabled = true;
     let lightningEnabled = false;
     let isShuffle = false;
-    let isMonitoring = false; // Control de escucha local estricto
+    let isMonitoring = false;
 
-    // Control de Rayito dinámico
     let rayitoIntroFired = false;
-    let rayitoMidFired = false;
 
     // Lista estructurada de canciones
-    let playlist = []; // { file, name, played: false, durationStr: '--:--' }
+    let playlist = []; // { id, blob, name, played: false, durationSec, durationStr, appliesLightning }
     let currentIndex = 0;
     let activeStingerAudio = null;
 
@@ -660,11 +717,11 @@
     let micGainNode = null;
     let musicSourceNode = null;
     let musicGainNode = null;
-    let musicAnalyser = null; // Analizador para visualizador DJ
+    let musicAnalyser = null;
     let adsSourceNode = null;
     let adsGainNode = null;
     let masterMixerNode = null;
-    let monitorGainNode = null; // Nodo que controla el silencio o audio local
+    let monitorGainNode = null;
     let processorNode = null;
     let mp3Encoder = null;
     let ws = null;
@@ -672,7 +729,7 @@
     let packetsSentCount = 0;
     let statsInterval = null;
 
-    // HASTA 5 TANDAS COMERCIALES (PRO)
+    // Tandas Comerciales
     let adSlots = [];
     let temporaryAdFile = null;
     let adIntervalChecker = null;
@@ -684,10 +741,79 @@
     const aLight = document.getElementById('audioLightning');
     const aAds = document.getElementById('audioAds');
 
+    // ========================================================
+    // PERSISTENCIA INDEXEDDB PARA GUARDAR AUDIOS PERMANENTES
+    // ========================================================
+    let dbInstance = null;
+
+    function initIndexedDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open("EmisorasPlusDB", 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains("tracks")) {
+            db.createObjectStore("tracks", { keyPath: "id", autoIncrement: true });
+          }
+        };
+        req.onsuccess = (e) => {
+          dbInstance = e.target.result;
+          resolve(dbInstance);
+        };
+        req.onerror = (e) => reject(e);
+      });
+    }
+
+    async function saveTrackToDB(trackObj) {
+      if (!dbInstance) return;
+      const tx = dbInstance.transaction("tracks", "readwrite");
+      const store = tx.objectStore("tracks");
+      store.add({
+        name: trackObj.name,
+        blob: trackObj.blob,
+        durationSec: trackObj.durationSec,
+        durationStr: trackObj.durationStr,
+        appliesLightning: trackObj.appliesLightning,
+        played: trackObj.played
+      });
+    }
+
+    async function loadTracksFromDB() {
+      if (!dbInstance) return;
+      const tx = dbInstance.transaction("tracks", "readonly");
+      const store = tx.objectStore("tracks");
+      const req = store.getAll();
+      req.onsuccess = () => {
+        const savedTracks = req.result;
+        if (savedTracks && savedTracks.length > 0) {
+          playlist = savedTracks.map(t => ({
+            id: t.id,
+            blob: t.blob,
+            name: t.name,
+            played: t.played || false,
+            durationSec: t.durationSec || 0,
+            durationStr: t.durationStr || '--:--',
+            appliesLightning: t.appliesLightning || false
+          }));
+          updateTrackBoxes();
+          renderPlaylistModal();
+          log(`Se restauraron ${playlist.length} pistas guardadas automáticamente.`);
+          if (playlist.length > 0 && !aMusic.src) {
+            setupTrackSource(0);
+          }
+        }
+      };
+    }
+
+    async function clearDBTracks() {
+      if (!dbInstance) return;
+      const tx = dbInstance.transaction("tracks", "readwrite");
+      tx.objectStore("tracks").clear();
+    }
+
     // ==========================================
-    // PERSISTENCIA DE DATOS
+    // INICIALIZACIÓN GENERAL
     // ==========================================
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
         const val = localStorage.getItem(`ep_saved_${id}`);
         if (val !== null && val !== '') {
@@ -698,6 +824,13 @@
       auth.onAuthStateChanged(user => {
         if (user) activarModoPro(user.email);
       });
+
+      try {
+        await initIndexedDB();
+        await loadTracksFromDB();
+      } catch (err) {
+        console.error("IndexedDB Error:", err);
+      }
 
       iniciarProgramadorPublicidad();
       renderAdSlotsList();
@@ -722,7 +855,11 @@
         document.getElementById('mount').value = '/f04sfgq6138uv/source';
         document.getElementById('user').value = 'source';
         document.getElementById('password').value = '';
-        alert("Los datos de la emisora se han restablecido.");
+        clearDBTracks();
+        playlist = [];
+        updateTrackBoxes();
+        renderPlaylistModal();
+        alert("Los datos de la emisora y las pistas guardadas se han restablecido.");
         log("Emisora restablecida por el usuario.");
       }
     }
@@ -752,7 +889,7 @@
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
     function openCalendarModal() {
       if (!isPro) {
-        alert("El programador de comerciales y calendario es exclusivo del Plan PRO.");
+        alert("El programador de comerciales es exclusivo del Plan PRO.");
         openProModal();
         return;
       }
@@ -762,6 +899,8 @@
     function closeCalendarModal() { document.getElementById('calendarModal').style.display = 'none'; }
     function openPlaylistModal() { renderPlaylistModal(); document.getElementById('playlistModal').style.display = 'flex'; }
     function closePlaylistModal() { document.getElementById('playlistModal').style.display = 'none'; }
+    function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
+    function closeHelpModal() { document.getElementById('helpModal').style.display = 'none'; }
 
     function togglePasswordVisibility() {
       const p = document.getElementById('password');
@@ -785,7 +924,7 @@
         aLight.src = url;
         document.getElementById('lblLightningName').innerText = `Rayito: ${f.name}`;
       }
-      log(`Pisador cargado: ${f.name}`);
+      log(`Pisador asignado: ${f.name}`);
     }
 
     // ==========================================
@@ -796,7 +935,6 @@
       aMusic.currentTime = 0;
       aMusic.play();
       rayitoIntroFired = false;
-      rayitoMidFired = false;
       log("Pista actual reiniciada (⏮).");
     }
 
@@ -810,9 +948,9 @@
       aMusic.pause();
       aMusic.currentTime = 0;
       document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
-      // Reiniciar espectrómetro DJ a nivel 0
-      document.querySelectorAll('.dj-col').forEach(col => col.style.height = '10%');
-      log("⏹ Pista musical detenida por el operador.");
+      document.getElementById('djVuL').style.width = '0%';
+      document.getElementById('djVuR').style.width = '0%';
+      log("⏹ Pista musical detenida.");
     }
 
     // ==========================================
@@ -834,7 +972,7 @@
 
       allowed.forEach(file => {
         const item = {
-          file: file,
+          blob: file,
           name: file.name,
           played: false,
           durationSec: 0,
@@ -850,8 +988,10 @@
           const m = Math.floor(sec / 60);
           const s = (sec % 60).toString().padStart(2, '0');
           item.durationStr = `${m}:${s}`;
-          // Regla: Durar más de 1 minuto y 40 segundos (100 segundos exactos)
-          item.appliesLightning = sec > 100;
+          // REGLA RAYITO: Mayor o igual a 1 minuto (>= 60 segundos)
+          item.appliesLightning = sec >= 60;
+
+          saveTrackToDB(item);
 
           if (document.getElementById('playlistModal').style.display === 'flex') {
             renderPlaylistModal();
@@ -862,7 +1002,7 @@
       });
 
       updateTrackBoxes();
-      log(`${allowed.length} archivo(s) agregado(s) a la lista sin pausar la emisión.`);
+      log(`${allowed.length} archivo(s) agregado(s) a la memoria de cabina.`);
 
       if (wasEmpty && (isLive || !aMusic.src)) {
         playTrack(0);
@@ -894,12 +1034,10 @@
           badgeHtml = '<span class="tag-third">TERCERA (#3)</span>';
         }
 
-        // Si ya sonó, se marca en ROJO
         if (item.played && idx !== currentIndex) {
           badgeHtml += '<span class="tag-played-red">YA SONÓ</span>';
         }
 
-        // Si aplica para rayito (> 1:40 min), muestra icono de rayito
         if (item.appliesLightning) {
           badgeHtml += '<span class="tag-lightning-ready">⚡ RAYITO</span>';
         }
@@ -951,7 +1089,7 @@
 
     function deleteTrack(idx) {
       if (idx === currentIndex && playlist.length > 1) {
-        if (!confirm("Esta pista está sonando ahora mismo. ¿Deseas saltar a la siguiente y eliminarla?")) return;
+        if (!confirm("Esta pista está al aire. ¿Deseas saltar a la siguiente y eliminarla?")) return;
         skipToNextTrack();
       }
       playlist.splice(idx, 1);
@@ -960,7 +1098,7 @@
       }
       updateTrackBoxes();
       renderPlaylistModal();
-      log("Pista eliminada de la lista.");
+      log("Pista eliminada.");
     }
 
     function updateTrackBoxes() {
@@ -972,16 +1110,22 @@
       document.getElementById('track3').innerText = playlist.length > 2 ? playlist[tIdx].name : 'No hay más archivos';
     }
 
+    function setupTrackSource(idx) {
+      if (playlist.length === 0 || !playlist[idx]) return;
+      currentIndex = idx;
+      const item = playlist[currentIndex];
+      aMusic.src = URL.createObjectURL(item.blob);
+      aMusic.load();
+    }
+
     function playTrack(idx) {
       if (playlist.length === 0 || !playlist[idx]) return;
       currentIndex = idx;
       rayitoIntroFired = false;
-      rayitoMidFired = false;
-
       updateTrackBoxes();
 
       const item = playlist[currentIndex];
-      aMusic.src = URL.createObjectURL(item.file);
+      aMusic.src = URL.createObjectURL(item.blob);
       aMusic.load();
       aMusic.play().catch(e => console.log(e));
       document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
@@ -1023,7 +1167,7 @@
       }
     };
 
-    // TIEMPO REAL: CRONÓMETRO + LÓGICA DE DISPARO DEL MODO RAYITO ⚡
+    // EVALUACIÓN DE TIEMPO REAL: CRONÓMETRO Y LÓGICA RAYITO AL SEGUNDO 3 (≥ 1 MINUTO)
     aMusic.ontimeupdate = () => {
       if (!isNaN(aMusic.duration)) {
         const cur = aMusic.currentTime;
@@ -1035,22 +1179,14 @@
         const dS = Math.floor(dur % 60).toString().padStart(2, '0');
         document.getElementById('track1Time').innerText = `${cM}:${cS} / ${dM}:${dS}`;
 
-        // EVALUACIÓN DEL MODO RAYITO:
-        // Solo aplica si el modo rayito está activo, es cuenta PRO, hay pisador cargado y la canción dura > 1m 40s (100 segundos)
-        if (lightningEnabled && isPro && aLight.src && dur > 100) {
-          // 1. Al tercer segundo exacto de haber iniciado
+        // LÓGICA ESTRICTA DE RAYITO:
+        // Solo para pistas mayores o iguales a 1 minuto (dur >= 60 segundos)
+        // Dispara al tercer segundo de haber iniciado (0:03)
+        if (lightningEnabled && isPro && aLight.src && dur >= 60) {
           if (cur >= 3 && cur < 4 && !rayitoIntroFired) {
             rayitoIntroFired = true;
-            log('⚡ Rayito disparado: Segundo 0:03 de intro en pista mayor a 1:40 min.');
-            startStingerPlayback(aLight, "⚡ PISADOR RAYITO (INTRO)");
-          }
-
-          // 2. En el intermedio exacto de la canción
-          const midPoint = dur / 2;
-          if (cur >= midPoint && cur < midPoint + 1.5 && !rayitoMidFired) {
-            rayitoMidFired = true;
-            log('⚡ Rayito disparado: Intermedio de canción en pista mayor a 1:40 min.');
-            startStingerPlayback(aLight, "⚡ PISADOR RAYITO (INTERMEDIO)");
+            log('⚡ Rayito lanzado automáticamente al segundo 0:03 sobre la canción.');
+            startStingerPlayback(aLight, "⚡ RAYITO (AL SEGUNDO 3)");
           }
         }
       }
@@ -1161,7 +1297,7 @@
             if (now.getMinutes() === slot.minute && !slot.triggered) {
               slot.triggered = true;
               currentAdPlayingIndex = idx;
-              log(`📢 Tanda "${slot.name}" lista para sonar al finalizar la canción actual.`);
+              log(`📢 Tanda "${slot.name}" lista para sonar al terminar la canción actual.`);
             } else if (now.getMinutes() !== slot.minute) {
               slot.triggered = false;
             }
@@ -1170,7 +1306,7 @@
             if (now >= target && !slot.triggered) {
               slot.triggered = true;
               currentAdPlayingIndex = idx;
-              log(`📢 Tanda por fecha "${slot.name}" lista para sonar al finalizar la canción.`);
+              log(`📢 Tanda "${slot.name}" lista para sonar al terminar la canción.`);
             }
           }
         });
@@ -1188,7 +1324,7 @@
     }
 
     function playCommercialBreak(slot) {
-      log(`📢 Emitiendo al aire tanda comercial: "${slot.name}"...`);
+      log(`📢 Emitiendo tanda comercial: "${slot.name}"...`);
       aMusic.pause();
       document.getElementById('adsBanner').style.display = 'flex';
       document.getElementById('adsBannerTitle').innerText = slot.name;
@@ -1199,7 +1335,7 @@
 
     aAds.onended = () => {
       document.getElementById('adsBanner').style.display = 'none';
-      log("📢 Tanda comercial finalizada. Continuando emisión regular...");
+      log("📢 Tanda comercial finalizada. Continuando playlist...");
       playNextTrack();
     };
 
@@ -1211,7 +1347,7 @@
     }
 
     // ==========================================
-    // TRANSMISIÓN EN VIVO, MOTOR DE AUDIO Y MONITOREO
+    // TRANSMISIÓN EN VIVO Y PROCESAMIENTO DE AUDIO
     // ==========================================
     async function toggleBroadcast() {
       if (isLive) {
@@ -1242,7 +1378,7 @@
         document.getElementById('mount').value = mount;
       }
 
-      log("1. Accediendo a micrófono con procesador de audio...");
+      log("1. Accediendo a micrófono con filtros de alta definición...");
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -1289,7 +1425,7 @@
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">Relay despertando en la nube. Pulsa conectar en unos segundos.</span>');
+          log('<span style="color:var(--c-yellow)">Relay iniciando en la nube. Pulsa conectar en unos segundos.</span>');
           stopAll();
         };
 
@@ -1336,16 +1472,15 @@
       const sampleRate = audioContext.sampleRate;
       log(`Frecuencia de audio activa: ${sampleRate}Hz`);
 
-      // MEZCLADOR MAESTRO (TODO EL AUDIO SUMADO)
       masterMixerNode = audioContext.createGain();
 
-      // MONITOREO LOCAL (🎧): Si está apagado = ganancia 0 (mudo en el parlante local). Si está encendido = 1 (se escucha en audífonos)
+      // MONITOREO LOCAL ESTRICTO: 0 = SILENCIO ABSOLUTO EN DISPOSITIVO / 1 = ESCUCHA AUDÍFONOS
       monitorGainNode = audioContext.createGain();
       monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
       masterMixerNode.connect(monitorGainNode);
       monitorGainNode.connect(audioContext.destination);
 
-      // FILTRO Y COMPRESOR PARA MICRÓFONO PRO
+      // FILTRO Y COMPRESOR DE VOZ PRO
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
       
       micFilterNode = audioContext.createBiquadFilter();
@@ -1367,13 +1502,13 @@
       micCompressorNode.connect(micGainNode);
       micGainNode.connect(masterMixerNode);
 
-      // CANAL DE MÚSICA + ANALIZADOR RÍTMICO DJ
+      // CANAL MÚSICA CON ANALIZADOR DE ONDAS DJ
       if (!musicSourceNode) musicSourceNode = audioContext.createMediaElementSource(aMusic);
       musicGainNode = audioContext.createGain();
       musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
 
       musicAnalyser = audioContext.createAnalyser();
-      musicAnalyser.fftSize = 64;
+      musicAnalyser.fftSize = 128;
 
       musicSourceNode.connect(musicGainNode);
       musicGainNode.connect(musicAnalyser);
@@ -1386,7 +1521,7 @@
       adsSourceNode.connect(adsGainNode);
       adsGainNode.connect(masterMixerNode);
 
-      // CANALES DE PISADORES
+      // PISADORES
       const stingerGainNode = audioContext.createGain();
       stingerGainNode.gain.value = 0.95;
       const s1Node = audioContext.createMediaElementSource(aS1);
@@ -1407,14 +1542,17 @@
       const vu = document.getElementById('vuLevel');
       const vuPct = document.getElementById('vuPct');
 
-      // LOOP DEL ESPECTRÓMETRO DJ Y VÚMETRO
-      const djCols = document.querySelectorAll('.dj-col');
-      const djFreqData = new Uint8Array(musicAnalyser.frequencyBinCount);
+      // CONSOLA DJ: ONDAS Y VOLUMEN ESTÉREO
+      const canvas = document.getElementById('djWaveCanvas');
+      const canvasCtx = canvas.getContext('2d');
+      const djDataArray = new Uint8Array(musicAnalyser.frequencyBinCount);
+      const vuL = document.getElementById('djVuL');
+      const vuR = document.getElementById('djVuR');
 
       function updateVisualMeters() {
         if (!isLive) return;
 
-        // Vúmetro Master
+        // Vúmetro Master Broadcast
         analyser.getByteFrequencyData(dataArray);
         let sum = 0;
         for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
@@ -1422,16 +1560,44 @@
         vu.style.width = pct + '%';
         vuPct.innerText = `${Math.round(pct)}%`;
 
-        // Espectrómetro Rítmico DJ de la Música
+        // Consola DJ de la música al aire
         if (!aMusic.paused) {
-          musicAnalyser.getByteFrequencyData(djFreqData);
-          for (let i = 0; i < djCols.length; i++) {
-            const val = djFreqData[i] || 0;
-            const h = Math.max(10, Math.min(100, (val / 255) * 100));
-            djCols[i].style.height = `${h}%`;
+          musicAnalyser.getByteFrequencyData(djDataArray);
+          
+          let sumMusic = 0;
+          for (let i = 0; i < djDataArray.length; i++) sumMusic += djDataArray[i];
+          let mPct = Math.min(100, (sumMusic / djDataArray.length / 128) * 100);
+          
+          vuL.style.width = `${mPct}%`;
+          vuR.style.width = `${Math.min(100, mPct * 0.95)}%`;
+
+          // Dibujo de ondas dinámicas tipo radio digital
+          canvasCtx.fillStyle = '#02040a';
+          canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+          canvasCtx.lineWidth = 2;
+          canvasCtx.strokeStyle = '#06b6d4';
+          canvasCtx.beginPath();
+
+          const sliceWidth = canvas.width / djDataArray.length;
+          let x = 0;
+
+          for (let i = 0; i < djDataArray.length; i++) {
+            const v = djDataArray[i] / 128.0;
+            const y = (v * canvas.height) / 2;
+
+            if (i === 0) canvasCtx.moveTo(x, y);
+            else canvasCtx.lineTo(x, y);
+
+            x += sliceWidth;
           }
+          canvasCtx.stroke();
+
         } else {
-          djCols.forEach(col => col.style.height = '10%');
+          vuL.style.width = '0%';
+          vuR.style.width = '0%';
+          canvasCtx.fillStyle = '#02040a';
+          canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
         requestAnimationFrame(updateVisualMeters);
@@ -1461,7 +1627,6 @@
         }
       };
 
-      // Se conecta a la cadena para transmisión continua sin cortes
       masterMixerNode.connect(processorNode);
       processorNode.connect(audioContext.destination);
 
@@ -1505,17 +1670,16 @@
       status.style.color = duckingEnabled ? '#86efac' : '#94a3b8';
     }
 
-    // MONITOREO LOCAL ESTRICTO (🎧)
+    // MONITOREO LOCAL
     function toggleLocalMonitoring() {
       isMonitoring = !isMonitoring;
       const btn = document.getElementById('btnMonitor');
       btn.classList.toggle('monitor-active', isMonitoring);
 
-      // Si monitorGainNode está activo en el motor de audio, mutea o desmutea localmente
       if (monitorGainNode && audioContext) {
         monitorGainNode.gain.setValueAtTime(isMonitoring ? 1.0 : 0.0, audioContext.currentTime);
       }
-      log(isMonitoring ? '🎧 Monitoreo local ENCENDIDO (Escuchando en audífonos)' : '🎧 Monitoreo local APAGADO (Silencio en el dispositivo)');
+      log(isMonitoring ? '🎧 Monitoreo local ENCENDIDO (Escucha activa)' : '🎧 Monitoreo local APAGADO (Silencio en el teléfono)');
     }
 
     function triggerStinger(num) {
@@ -1559,7 +1723,7 @@
       lightningEnabled = !lightningEnabled;
       const btn = document.getElementById('btnLightning');
       btn.classList.toggle('active', lightningEnabled);
-      log(lightningEnabled ? '⚡ Rayito ACTIVO: Disparará al seg 0:03 y en intermedio si pista > 1:40 min.' : '⚡ Rayito apagado.');
+      log(lightningEnabled ? '⚡ Rayito ACTIVO: Disparará al segundo 0:03 si la canción dura ≥ 1 minuto.' : '⚡ Rayito apagado.');
     }
 
     function toggleMode() {
@@ -1586,7 +1750,8 @@
 
       document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
       document.getElementById('adsBanner').style.display = 'none';
-      document.querySelectorAll('.dj-col').forEach(col => col.style.height = '10%');
+      document.getElementById('djVuL').style.width = '0%';
+      document.getElementById('djVuR').style.width = '0%';
 
       if (processorNode) { try { processorNode.disconnect(); } catch(e){} processorNode = null; }
       if (audioContext) { try { audioContext.close(); } catch(e){} audioContext = null; }
