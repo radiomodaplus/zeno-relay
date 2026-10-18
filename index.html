@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>EMISORASplus isecas</title>
   
-  <!-- LameJS para codificación MP3 -->
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
-  
-  <!-- Firebase SDK Global UMD -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
   <style>
     :root {
@@ -88,11 +83,6 @@
     .stinger-banner {
       display: none; background: linear-gradient(135deg, #3b0764, #1e1b4b);
       border: 2px solid var(--c-purple); border-radius: 8px; padding: 6px 10px;
-      margin-bottom: 6px; align-items: center; justify-content: space-between;
-    }
-    .ads-banner {
-      display: none; background: linear-gradient(135deg, #0c4a6e, #075985);
-      border: 2px solid var(--c-blue); border-radius: 8px; padding: 6px 10px;
       margin-bottom: 6px; align-items: center; justify-content: space-between;
     }
 
@@ -221,6 +211,7 @@
     .btn-main-stream {
       width: 100%; padding: 13px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: #fff; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 900; cursor: pointer;
+      position: relative; z-index: 10;
     }
     .btn-main-stream.live { background: linear-gradient(135deg, #ef4444, #b91c1c); }
 
@@ -454,7 +445,7 @@
   </div>
 
   <!-- BOTÓN AL AIRE BLINDADO -->
-  <button id="btnLive" class="btn-main-stream" onclick="toggleBroadcast()">
+  <button id="btnLive" class="btn-main-stream">
     INICIAR TRANSMISIÓN EN VIVO
   </button>
 
@@ -632,7 +623,6 @@
     let currentIndex = 0;
     let activeStingerAudio = null;
 
-    // Web Audio Nodes (Directos del código original funcional)
     let audioContext = null;
     let mediaStream = null;
     let micSourceNode = null;
@@ -646,7 +636,6 @@
     let mp3Encoder = null;
     let ws = null;
 
-    // Carpeta Reloj
     let clockSlots = [];
     let clockTempFile = null;
     let clockFunctionActive = false;
@@ -662,24 +651,28 @@
     // RELOJ DIGITAL COLOMBIA
     // ==========================================
     function updateColombiaStudioClock() {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('es-CO', {
-        timeZone: 'America/Bogota',
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      });
-      const dateStr = now.toLocaleDateString('es-CO', {
-        timeZone: 'America/Bogota',
-        weekday: 'short',
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
+      try {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('es-CO', {
+          timeZone: 'America/Bogota',
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+        const dateStr = now.toLocaleDateString('es-CO', {
+          timeZone: 'America/Bogota',
+          weekday: 'short',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
 
-      document.getElementById('colombiaTimeDisplay').innerText = timeStr;
-      document.getElementById('colombiaDateDisplay').innerText = dateStr;
+        const tEl = document.getElementById('colombiaTimeDisplay');
+        const dEl = document.getElementById('colombiaDateDisplay');
+        if (tEl) tEl.innerText = timeStr;
+        if (dEl) dEl.innerText = dateStr;
+      } catch(e){}
     }
     setInterval(updateColombiaStudioClock, 1000);
     updateColombiaStudioClock();
@@ -723,19 +716,18 @@
         const bR = document.getElementById(`ledR_${i}`);
         if (!bL || !bR) continue;
 
-        const typeL = bL.dataset.type;
-        const typeR = bR.dataset.type;
-
-        bL.className = i < activeCountL ? `led-block active-${typeL}` : 'led-block';
-        bR.className = i < activeCountR ? `led-block active-${typeR}` : 'led-block';
+        bL.className = i < activeCountL ? `led-block active-${bL.dataset.type}` : 'led-block';
+        bR.className = i < activeCountR ? `led-block active-${bR.dataset.type}` : 'led-block';
       }
 
       const dbDisplay = document.getElementById('rackDbDisplay');
-      if (levelPercentL > 2) {
-        const approxDb = Math.round(-30 + (levelPercentL * 0.3));
-        dbDisplay.innerText = `${approxDb} dB`;
-      } else {
-        dbDisplay.innerText = '-∞ dB';
+      if (dbDisplay) {
+        if (levelPercentL > 2) {
+          const approxDb = Math.round(-30 + (levelPercentL * 0.3));
+          dbDisplay.innerText = `${approxDb} dB`;
+        } else {
+          dbDisplay.innerText = '-∞ dB';
+        }
       }
     }
 
@@ -746,58 +738,64 @@
 
     function initIndexedDB() {
       return new Promise((resolve, reject) => {
-        const req = indexedDB.open("EmisorasPlusDB", 1);
-        req.onupgradeneeded = (e) => {
-          const db = e.target.result;
-          if (!db.objectStoreNames.contains("tracks")) {
-            db.createObjectStore("tracks", { keyPath: "id", autoIncrement: true });
-          }
-        };
-        req.onsuccess = (e) => {
-          dbInstance = e.target.result;
-          resolve(dbInstance);
-        };
-        req.onerror = (e) => reject(e);
+        try {
+          const req = indexedDB.open("EmisorasPlusDB", 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains("tracks")) {
+              db.createObjectStore("tracks", { keyPath: "id", autoIncrement: true });
+            }
+          };
+          req.onsuccess = (e) => {
+            dbInstance = e.target.result;
+            resolve(dbInstance);
+          };
+          req.onerror = (e) => resolve(null);
+        } catch(e) { resolve(null); }
       });
     }
 
     async function saveTrackToDB(trackObj) {
       if (!dbInstance) return;
-      const tx = dbInstance.transaction("tracks", "readwrite");
-      tx.objectStore("tracks").add({
-        name: trackObj.name,
-        blob: trackObj.blob,
-        durationSec: trackObj.durationSec,
-        durationStr: trackObj.durationStr,
-        appliesLightning: trackObj.appliesLightning,
-        played: trackObj.played
-      });
+      try {
+        const tx = dbInstance.transaction("tracks", "readwrite");
+        tx.objectStore("tracks").add({
+          name: trackObj.name,
+          blob: trackObj.blob,
+          durationSec: trackObj.durationSec,
+          durationStr: trackObj.durationStr,
+          appliesLightning: trackObj.appliesLightning,
+          played: trackObj.played
+        });
+      } catch(e){}
     }
 
     async function loadTracksFromDB() {
       if (!dbInstance) return;
-      const tx = dbInstance.transaction("tracks", "readonly");
-      const req = tx.objectStore("tracks").getAll();
-      req.onsuccess = () => {
-        const savedTracks = req.result;
-        if (savedTracks && savedTracks.length > 0) {
-          playlist = savedTracks.map(t => ({
-            id: t.id,
-            blob: t.blob,
-            name: t.name,
-            played: t.played || false,
-            durationSec: t.durationSec || 0,
-            durationStr: t.durationStr || '--:--',
-            appliesLightning: t.appliesLightning || false
-          }));
-          updateTrackBoxes();
-          renderPlaylistModal();
-          log(`Restauradas ${playlist.length} pistas guardadas.`);
-          if (playlist.length > 0 && !aMusic.src) {
-            setupTrackSource(0);
+      try {
+        const tx = dbInstance.transaction("tracks", "readonly");
+        const req = tx.objectStore("tracks").getAll();
+        req.onsuccess = () => {
+          const savedTracks = req.result;
+          if (savedTracks && savedTracks.length > 0) {
+            playlist = savedTracks.map(t => ({
+              id: t.id,
+              blob: t.blob,
+              name: t.name,
+              played: t.played || false,
+              durationSec: t.durationSec || 0,
+              durationStr: t.durationStr || '--:--',
+              appliesLightning: t.appliesLightning || false
+            }));
+            updateTrackBoxes();
+            renderPlaylistModal();
+            log(`Restauradas ${playlist.length} pistas guardadas.`);
+            if (playlist.length > 0 && !aMusic.src) {
+              setupTrackSource(0);
+            }
           }
-        }
-      };
+        };
+      } catch(e){}
     }
 
     // ==========================================
@@ -823,17 +821,19 @@
       }
 
       if (!musicSourceNode) {
-        musicSourceNode = audioContext.createMediaElementSource(aMusic);
-        musicGainNode = audioContext.createGain();
-        musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
+        try {
+          musicSourceNode = audioContext.createMediaElementSource(aMusic);
+          musicGainNode = audioContext.createGain();
+          musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value || 0.75);
 
-        musicAnalyser = audioContext.createAnalyser();
-        musicAnalyser.fftSize = 256;
-        musicAnalyser.smoothingTimeConstant = 0.75;
+          musicAnalyser = audioContext.createAnalyser();
+          musicAnalyser.fftSize = 256;
+          musicAnalyser.smoothingTimeConstant = 0.75;
 
-        musicSourceNode.connect(musicGainNode);
-        musicGainNode.connect(musicAnalyser);
-        musicGainNode.connect(masterMixerNode);
+          musicSourceNode.connect(musicGainNode);
+          musicGainNode.connect(musicAnalyser);
+          musicGainNode.connect(masterMixerNode);
+        } catch(e){}
       }
     }
 
@@ -1048,7 +1048,6 @@
       };
     }
 
-    // SEGUNDERO, ALERTA ROJA (<=8s) Y RAYITO AL SEGUNDO 3 (>=60s)
     aMusic.ontimeupdate = () => {
       if (!isNaN(aMusic.duration)) {
         const cur = aMusic.currentTime;
@@ -1140,47 +1139,43 @@
     }
 
     async function startBroadcast() {
-      // Lectura en tiempo real del input de contraseña
-      const host = document.getElementById('host').value.trim();
-      const port = document.getElementById('port').value.trim();
-      let mount = document.getElementById('mount').value.trim();
-      const user = document.getElementById('user').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!host || !port || !mount || !password) {
-        alert("Pega la contraseña (Stream Key) y verifica los datos en Ajustes ⚙.");
-        openSettingsModal();
-        return;
-      }
-
-      if (!mount.startsWith('/')) {
-        mount = '/' + mount;
-        document.getElementById('mount').value = mount;
-      }
-
-      // Guardar de inmediato
-      localStorage.setItem('zeno_host', host);
-      localStorage.setItem('zeno_port', port);
-      localStorage.setItem('zeno_mount', mount);
-      localStorage.setItem('zeno_user', user);
-      localStorage.setItem('zeno_password', password);
-
-      log("Solicitando acceso al micrófono...");
       try {
-        if (!mediaStream) {
-          mediaStream = await navigator.mediaDevices.getUserMedia({
-            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-          });
+        saveSettings();
+
+        // 1. Lectura directa de campos
+        const host = document.getElementById('host').value.trim();
+        const port = document.getElementById('port').value.trim();
+        let mount = document.getElementById('mount').value.trim();
+        const user = document.getElementById('user').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!host || !port || !mount || !password) {
+          alert("Por favor abre Ajustes ⚙ y pega la contraseña (Stream Key).");
+          openSettingsModal();
+          return;
         }
-        log('<span style="color:var(--c-green)">Micrófono activado con éxito.</span>');
-      } catch (err) {
-        log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
-        return;
-      }
 
-      log(`Conectando con el relay y autenticando en Zeno Media...`);
+        if (!mount.startsWith('/')) {
+          mount = '/' + mount;
+          document.getElementById('mount').value = mount;
+        }
 
-      try {
+        log("Solicitando acceso al micrófono...");
+        try {
+          if (!mediaStream) {
+            mediaStream = await navigator.mediaDevices.getUserMedia({
+              audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+            });
+          }
+          log('<span style="color:var(--c-green)">Micrófono activado con éxito.</span>');
+        } catch (err) {
+          log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
+          alert("Debes permitir el acceso al micrófono en el navegador o app para transmitir.");
+          return;
+        }
+
+        log(`Conectando con relay y autenticando en Zeno Media...`);
+
         ws = new WebSocket(RELAY_URL);
         ws.binaryType = "arraybuffer";
 
@@ -1195,7 +1190,6 @@
             password: password
           }));
 
-          // Heartbeat para mantener conexión sin interrupciones
           if (keepAliveInterval) clearInterval(keepAliveInterval);
           keepAliveInterval = setInterval(() => {
             if (ws && ws.readyState === WebSocket.OPEN) {
@@ -1232,7 +1226,7 @@
         };
 
       } catch (err) {
-        log(`<span style="color:var(--c-red)">Error: ${err.message}</span>`);
+        log(`<span style="color:var(--c-red)">Error de inicio: ${err.message}</span>`);
         stopAll();
       }
     }
@@ -1248,22 +1242,19 @@
       const sampleRate = audioContext.sampleRate;
       log(`Audio activo: ${sampleRate}Hz`);
 
-      // Conexión del micrófono al mezclador maestro
-      if (!micSourceNode) {
+      if (!micSourceNode && mediaStream) {
         micSourceNode = audioContext.createMediaStreamSource(mediaStream);
         micGainNode = audioContext.createGain();
-        micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
+        micGainNode.gain.value = parseFloat(document.getElementById('volMic').value || 1.0);
         micSourceNode.connect(micGainNode);
         micGainNode.connect(masterMixerNode);
       }
 
-      // Conexión de audio de reloj al mezclador
       try {
         const clockNode = audioContext.createMediaElementSource(aClock);
         clockNode.connect(masterMixerNode);
       } catch(e){}
 
-      // Conexión de pisadores
       try {
         const stingerGainNode = audioContext.createGain();
         stingerGainNode.gain.value = 0.95;
@@ -1317,14 +1308,13 @@
         }
       };
 
-      // Cadena directa que no suspende el audio
       masterMixerNode.connect(processorNode);
       processorNode.connect(audioContext.destination);
 
       if (playlist.length > 0 && aMusic.paused) playTrack(currentIndex);
     }
 
-    // ÚNICA VÍA PARA DETENER TRANSMISIÓN (VOLUNTARIO)
+    // ÚNICA VÍA PARA DETENER TRANSMISIÓN
     function stopAll() {
       isLive = false;
       if (keepAliveInterval) { clearInterval(keepAliveInterval); keepAliveInterval = null; }
@@ -1598,6 +1588,12 @@
     window.addEventListener('DOMContentLoaded', async () => {
       buildLedBlocks();
       startDjVisualLoop();
+
+      // Enlace directo del botón físico para evitar fallos de click
+      const btnLive = document.getElementById('btnLive');
+      if (btnLive) {
+        btnLive.addEventListener('click', toggleBroadcast);
+      }
 
       ['host', 'port', 'mount', 'user', 'password'].forEach(id => {
         const val = localStorage.getItem(`zeno_${id}`);
