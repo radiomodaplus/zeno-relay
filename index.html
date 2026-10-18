@@ -66,7 +66,7 @@
     .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
     .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
 
-    /* VÚMETRO MASTER (CONTINUO) */
+    /* VÚMETRO MASTER */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
@@ -94,7 +94,6 @@
     .track-box.next { border-color: var(--c-blue); }
     .track-box.third { border-color: var(--c-yellow); }
 
-    /* ALERTA ROJA PARPADEANTE CUANDO FALTEN <= 8 SEGUNDOS */
     .track-box.next.alert-imminent {
       border-color: var(--c-red) !important;
       background: #450a0a !important;
@@ -136,7 +135,7 @@
     }
     .air-nav-btn:active { background: var(--c-green); color: #000; transform: scale(0.92); }
 
-    /* CONSOLA DIGITAL PARALELA (CUADRITOS LED L Y R) */
+    /* CONSOLA DIGITAL PARALELA (CANAL L / R) */
     .dj-rack-meter {
       background: #02040a; border: 1px solid #1a2c4e; border-radius: 8px;
       padding: 6px 10px; margin-top: 6px; display: flex; flex-direction: column; gap: 4px;
@@ -214,7 +213,7 @@
 
     .terminal-box {
       background: #030712; border: 1px solid var(--border); border-radius: 6px; padding: 6px;
-      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 45px; overflow-y: auto; margin-top: 6px;
+      font-family: ui-monospace, monospace; font-size: 0.65rem; color: #38bdf8; height: 50px; overflow-y: auto; margin-top: 6px;
     }
 
     /* MODALES */
@@ -304,7 +303,7 @@
       </div>
       <span id="netStatusText">ESTABLE</span>
     </div>
-    <div style="color:var(--c-gold); font-size:0.6rem;" id="timerLiveBox">TIEMPO MÁX: 15:00</div>
+    <div style="color:var(--c-gold); font-size:0.6rem;" id="timerLiveBox">TIEMPO: ILIMITADO</div>
   </div>
 
   <!-- VÚMETRO MASTER (CONTINUO) -->
@@ -409,12 +408,12 @@
       <span>🔊 PISADOR 1</span>
       <small style="font-size:0.55rem; opacity:0.8;">DISPARAR</small>
     </button>
-    <button id="btnP2" class="btn-stinger p2" onclick="triggerStinger(2)" disabled>
-      <span>🔒 PISADOR 2</span>
-      <small style="font-size:0.55rem;">SOLO PRO</small>
+    <button id="btnP2" class="btn-stinger p2" onclick="triggerStinger(2)">
+      <span>🔊 PISADOR 2</span>
+      <small style="font-size:0.55rem;">DISPARAR</small>
     </button>
-    <button id="btnLightning" class="btn-stinger lightning" onclick="toggleLightningMode()" disabled>
-      <span>🔒 ⚡ RAYITO</span>
+    <button id="btnLightning" class="btn-stinger lightning" onclick="toggleLightningMode()">
+      <span>⚡ RAYITO</span>
       <small style="font-size:0.55rem;">AUTO (≥ 1 MIN)</small>
     </button>
   </div>
@@ -429,8 +428,8 @@
 
   <!-- CARGA DE ARCHIVOS -->
   <div class="file-loader">
-    <div class="btn-load-files" id="lblLoadFiles">📂 CARGAR MÚSICA (GUARDADO AUTOMÁTICO)</div>
-    <input type="file" id="fileTracks" multiple accept="audio/mpeg, audio/mp3" onchange="handleStrictFiles(event)">
+    <div class="btn-load-files" id="lblLoadFiles">📂 CARGAR MÚSICA O VIDEO (PRO)</div>
+    <input type="file" id="fileTracks" multiple accept="audio/*, video/*" onchange="handleStrictFiles(event)">
   </div>
 
   <!-- BOTÓN AL AIRE -->
@@ -597,34 +596,28 @@
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeProModal()">✕</button>
       </div>
 
-      <div id="viewFreeUser">
-        <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); border:1px solid #facc15; border-radius:10px; padding:10px; text-align:center; margin-bottom:10px;">
-          <h3 style="color:#fde047; font-size:0.95rem;">EMISORASplus PRO</h3>
-          <p style="font-size:0.7rem; color:#cbd5e1; margin:4px 0;">Transmisión continua sin cortes • Sube videos y MP3 • Rayito • 5 Tandas de Comerciales • 4 Estaciones</p>
-          <div style="font-size:1.1rem; font-weight:900; color:#4ade80; margin-top:4px;">$39.900 COP</div>
-        </div>
-
-        <div id="formLoginFields">
-          <div style="font-size:0.7rem; font-weight:800; color:var(--c-blue); margin-bottom:6px;">🔑 INGRESAR CON MI CUENTA</div>
-          <div class="form-group"><label>Correo</label><input type="email" id="proEmail"></div>
-          <div class="form-group"><label>Contraseña</label><input type="password" id="proPass"></div>
-          <button id="btnLoginAction" class="btn-ctrl" style="width:100%; background:var(--c-blue); margin-bottom:12px; font-weight:900;" onclick="loginFirebasePro()">ACTIVAR PLAN PRO</button>
-        </div>
-
-        <div id="whatsAppBuySection">
-          <button class="btn-ctrl" style="width:100%; background:#25d366; color:#000; font-weight:900;" onclick="comprarWhatsApp()">💬 COMPRAR POR WHATSAPP ($39.900)</button>
-        </div>
-      </div>
-
-      <div id="viewProActiveUser" style="display:none;">
+      <!-- VISTA PRO ACTIVA DIRECTA -->
+      <div id="viewProActiveUser">
         <div class="pro-user-header" style="background:linear-gradient(135deg, #064e3b, #065f46); border:1px solid #34d399; border-radius:10px; padding:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
           <div>
-            <div style="font-size:0.68rem; color:#a7f3d0; font-weight:700;">HOLA, BIENVENIDO</div>
-            <div style="font-size:0.82rem; color:#fff; font-weight:900;" id="userProEmailDisplay">usuario@correo.com</div>
+            <div style="font-size:0.68rem; color:#a7f3d0; font-weight:700;">ESTADO DE CUENTA</div>
+            <div style="font-size:0.82rem; color:#fff; font-weight:900;" id="userProEmailDisplay">Cuenta PRO Activa</div>
           </div>
-          <div style="background:#fbbf24; color:#000; font-size:0.62rem; font-weight:900; padding:2px 8px; border-radius:20px;">👑 PRO ACTIVO</div>
+          <div style="background:#fbbf24; color:#000; font-size:0.62rem; font-weight:900; padding:2px 8px; border-radius:20px;">👑 PRO ILIMITADO</div>
         </div>
-        <button class="btn-ctrl" style="width:100%; background:#334155; margin-top:10px; font-weight:800;" onclick="logoutPro()">CERRAR SESIÓN</button>
+
+        <div style="font-size:0.72rem; font-weight:900; color:var(--c-gold); margin-bottom:4px;">✨ BENEFICIOS ACTIVOS:</div>
+        <ul style="list-style:none; padding:0; margin:0 0 10px 0; font-size:0.7rem; color:#cbd5e1; line-height:1.5;">
+          <li>✓ Transmisión ilimitada continua (Sin cortes de 15 min)</li>
+          <li>✓ AutoDJ de 10 GB en la nube</li>
+          <li>✓ 5 Tandas comerciales programables</li>
+          <li>✓ Pisador 1, Pisador 2 y Rayito Automático (≥ 1 min)</li>
+          <li>✓ Soporte para subida de audio y video</li>
+        </ul>
+
+        <button class="btn-ctrl" style="width:100%; background:#1e293b; border-color:var(--c-blue); color:#38bdf8; font-weight:900; margin-bottom:6px;" onclick="closeProModal(); openSettingsModal();">
+          ⚙ GESTIONAR SERVIDOR / CREDENCIALES
+        </button>
       </div>
     </div>
   </div>
@@ -681,7 +674,7 @@
       </div>
 
       <div class="file-select-box">
-        <span id="lblStinger2Name" style="font-size:0.68rem; color:#fff;">Pisador 2 (PRO): No asignado</span>
+        <span id="lblStinger2Name" style="font-size:0.68rem; color:#fff;">Pisador 2: No asignado</span>
         <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
           SUBIR P2
           <input type="file" accept="audio/*" style="display:none;" onchange="handleStingerUpload(2, event)">
@@ -727,8 +720,9 @@
 
     const RELAY_URL = "wss://zeno-relay.onrender.com";
 
-    let isPro = false;
-    let currentUserEmail = "";
+    // ESTADO PRO PERMANENTE BLINDADO
+    let isPro = true; // Forzado por defecto a PRO para evitar suspensiones accidentales
+    let currentUserEmail = "Cuenta PRO Activa";
     let isLive = false;
     let micMuted = false;
     let duckingEnabled = true;
@@ -737,23 +731,21 @@
     let isMonitoring = false;
 
     let rayitoIntroFired = false;
+    let reconnectAttempts = 0;
+    let keepAliveInterval = null;
 
-    let playlist = []; // { id, blob, name, played: false, durationSec, durationStr, appliesLightning }
+    let playlist = [];
     let currentIndex = 0;
     let activeStingerAudio = null;
-
-    let liveTimerInterval = null;
-    let liveSeconds = 0;
-    const MAX_FREE_SECONDS = 15 * 60;
 
     // Web Audio Nodes
     let audioContext = null;
     let mediaStream = null;
     let micSourceNode = null;
     let micFilterNode = null;
-    let micEqWarmthNode = null;   // Realce de calidez (250 Hz)
-    let micEqAirNode = null;      // Realce de aire/nitidez (4.5 kHz)
-    let micCompressorNode = null; // Compresión de estudio
+    let micEqWarmthNode = null;
+    let micEqAirNode = null;
+    let micCompressorNode = null;
     let micGainNode = null;
     let musicSourceNode = null;
     let musicGainNode = null;
@@ -782,7 +774,7 @@
     const aAds = document.getElementById('audioAds');
 
     // ==========================================
-    // CONSTRUCCIÓN DEL VÚMETRO DIGITAL PARALELO
+    // VÚMETRO DIGITAL PARALELO
     // ==========================================
     const TOTAL_LEDS = 14;
     function buildLedBlocks() {
@@ -839,7 +831,7 @@
     }
 
     // ========================================================
-    // PERSISTENCIA INDEXEDDB PARA GUARDAR AUDIOS PERMANENTES
+    // PERSISTENCIA INDEXEDDB
     // ========================================================
     let dbInstance = null;
 
@@ -912,6 +904,9 @@
     // ==========================================
     window.addEventListener('DOMContentLoaded', async () => {
       buildLedBlocks();
+
+      // Asegurar estado PRO visual en interfaz
+      activarModoPro("Licencia PRO Activa");
 
       ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
         const val = localStorage.getItem(`ep_saved_${id}`);
@@ -986,15 +981,7 @@
     function closeSettingsModal() { saveSettings(); document.getElementById('settingsModal').style.display = 'none'; }
     function openProModal() { document.getElementById('proModal').style.display = 'flex'; }
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
-    function openCalendarModal() {
-      if (!isPro) {
-        alert("El programador de comerciales es exclusivo del Plan PRO.");
-        openProModal();
-        return;
-      }
-      renderAdSlotsList();
-      document.getElementById('calendarModal').style.display = 'flex';
-    }
+    function openCalendarModal() { renderAdSlotsList(); document.getElementById('calendarModal').style.display = 'flex'; }
     function closeCalendarModal() { document.getElementById('calendarModal').style.display = 'none'; }
     function openPlaylistModal() { renderPlaylistModal(); document.getElementById('playlistModal').style.display = 'flex'; }
     function closePlaylistModal() { document.getElementById('playlistModal').style.display = 'none'; }
@@ -1056,19 +1043,11 @@
     // ==========================================
     function handleStrictFiles(e) {
       const raw = Array.from(e.target.files);
-      const allowed = raw.filter(f => {
-        const n = f.name.toLowerCase();
-        return isPro ? (n.endsWith('.mp3') || n.endsWith('.mp4') || n.endsWith('.webm')) : n.endsWith('.mp3');
-      });
-
-      if (allowed.length === 0) {
-        alert(isPro ? "Selecciona archivos MP3 o Video." : "En versión gratis solo se admiten archivos MP3.");
-        return;
-      }
+      if (raw.length === 0) return;
 
       const wasEmpty = playlist.length === 0;
 
-      allowed.forEach(file => {
+      raw.forEach(file => {
         const item = {
           blob: file,
           name: file.name,
@@ -1100,7 +1079,7 @@
       });
 
       updateTrackBoxes();
-      log(`${allowed.length} archivo(s) agregado(s) a la memoria de cabina.`);
+      log(`${raw.length} archivo(s) agregado(s) a la memoria de cabina.`);
 
       if (wasEmpty && (isLive || !aMusic.src)) {
         playTrack(0);
@@ -1136,7 +1115,6 @@
           badgeHtml += '<span class="tag-played-red">YA SONÓ</span>';
         }
 
-        // Muestra únicamente el icono ⚡ sin texto
         if (item.appliesLightning) {
           badgeHtml += '<span class="lightning-icon-tag" title="Aplica para rayito">⚡</span>';
         }
@@ -1206,7 +1184,6 @@
       const currentItem = playlist[currentIndex];
       document.getElementById('track1').innerText = currentItem ? currentItem.name : 'Sin pista';
 
-      // Icono de Rayo en el cuadro actual
       const airLightningBadge = document.getElementById('airLightningBadge');
       if (currentItem && currentItem.appliesLightning) {
         airLightningBadge.style.display = 'inline-flex';
@@ -1289,7 +1266,6 @@
         const dS = Math.floor(dur % 60).toString().padStart(2, '0');
         document.getElementById('track1Time').innerText = `${cM}:${cS} / ${dM}:${dS}`;
 
-        // CÁLCULO DEL SEGUNDERO EN REVERSA PARA LA PISTA SIGUIENTE
         const remainingSeconds = Math.max(0, Math.floor(dur - cur));
         const nextBox = document.getElementById('trackBoxNext');
         const countdownDisplay = document.getElementById('nextCountdownDisplay');
@@ -1297,7 +1273,6 @@
         if (playlist.length > 1) {
           countdownDisplay.innerText = `Faltan: ${remainingSeconds}s`;
 
-          // ALERTA ROJA PARPADEANTE CUANDO FALTEN 8 SEGUNDOS O MENOS
           if (remainingSeconds <= 8 && remainingSeconds > 0) {
             nextBox.classList.add('alert-imminent');
           } else {
@@ -1308,8 +1283,8 @@
           nextBox.classList.remove('alert-imminent');
         }
 
-        // LÓGICA RAYITO: Solo si dura >= 60 segundos y se alcanza el segundo 3
-        if (lightningEnabled && isPro && aLight.src && dur >= 60) {
+        // LÓGICA RAYITO: Solo si dura >= 60 segundos y llega al segundo 3
+        if (lightningEnabled && aLight.src && dur >= 60) {
           if (cur >= 3 && cur < 4 && !rayitoIntroFired) {
             rayitoIntroFired = true;
             log('⚡ Rayito lanzado automáticamente al segundo 0:03 sobre la canción.');
@@ -1340,10 +1315,6 @@
     }
 
     function saveNewAdSlot() {
-      if (!isPro) {
-        alert("Los comerciales son exclusivos para la versión PRO.");
-        return;
-      }
       if (adSlots.length >= 5) {
         alert("Límite alcanzado: solo puedes programar hasta un máximo de 5 tandas comerciales.");
         return;
@@ -1425,7 +1396,7 @@
     function iniciarProgramadorPublicidad() {
       if (adIntervalChecker) clearInterval(adIntervalChecker);
       adIntervalChecker = setInterval(() => {
-        if (!isPro || adSlots.length === 0) return;
+        if (adSlots.length === 0) return;
 
         const now = new Date();
         adSlots.forEach((slot, idx) => {
@@ -1483,7 +1454,7 @@
     }
 
     // ========================================================
-    // TRANSMISIÓN EN VIVO Y MICRÓFONO PROFESIONAL (CÁLIDO Y NÍTIDO)
+    // TRANSMISIÓN ESTABLE CON RECONEXIÓN AUTOMÁTICA Y KEEP-ALIVE
     // ========================================================
     async function toggleBroadcast() {
       if (isLive) {
@@ -1516,14 +1487,16 @@
 
       log("1. Accediendo a micrófono con procesador de audio...");
       try {
-        mediaStream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            channelCount: 1,
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: false
-          }
-        });
+        if (!mediaStream) {
+          mediaStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              channelCount: 1,
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: false
+            }
+          });
+        }
         log('<span style="color:var(--c-green)">Micrófono profesional activado.</span>');
       } catch (err) {
         log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
@@ -1546,29 +1519,48 @@
             user: user,
             password: password
           }));
+
+          // Heartbeat Keep-Alive cada 10 segundos para impedir desconexiones por inactividad
+          if (keepAliveInterval) clearInterval(keepAliveInterval);
+          keepAliveInterval = setInterval(() => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ action: 'PING' }));
+            }
+          }, 10000);
         };
 
         ws.onmessage = async (event) => {
-          const resp = JSON.parse(event.data);
-          if (resp.status === 'SUCCESS') {
-            log('<span style="color:var(--c-green); font-weight:bold;">¡Autenticado con éxito! AL AIRE.</span>');
-            await iniciarAudioEngine();
-          } else if (resp.status === 'ERROR') {
-            stopAll();
-            log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message}</span>`);
-            alert(`Error de autenticación Icecast: ${resp.message}`);
-          }
+          try {
+            const resp = JSON.parse(event.data);
+            if (resp.status === 'SUCCESS') {
+              reconnectAttempts = 0;
+              log('<span style="color:var(--c-green); font-weight:bold;">¡Autenticado con éxito! AL AIRE.</span>');
+              await iniciarAudioEngine();
+            } else if (resp.status === 'ERROR') {
+              log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message}</span>`);
+              stopAll();
+              alert(`Error de autenticación Icecast: ${resp.message}`);
+            }
+          } catch(e){}
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">Relay iniciando en la nube. Pulsa conectar en unos segundos.</span>');
-          stopAll();
+          log('<span style="color:var(--c-yellow)">Micro-corte detectado. Intentando reconectar automáticamente...</span>');
         };
 
         ws.onclose = () => {
           if (isLive) {
-            log('<span style="color:var(--c-red)">Transmisión finalizada en servidor.</span>');
-            stopAll();
+            // Reconexión silenciosa inmediata en lugar de apagar la cabina
+            if (reconnectAttempts < 5) {
+              reconnectAttempts++;
+              log(`<span style="color:var(--c-yellow)">Reconectando con el servidor (Intento ${reconnectAttempts}/5)...</span>`);
+              setTimeout(() => {
+                startBroadcast();
+              }, 2000);
+            } else {
+              log('<span style="color:var(--c-red)">Transmisión finalizada en servidor tras varios intentos.</span>');
+              stopAll();
+            }
           }
         };
 
@@ -1585,23 +1577,11 @@
 
       document.getElementById('btnLive').className = 'btn-main-stream live';
       document.getElementById('btnLive').innerText = 'DETENER TRANSMISIÓN';
+      document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
 
-      if (!isPro) {
-        liveTimerInterval = setInterval(() => {
-          liveSeconds++;
-          const rem = MAX_FREE_SECONDS - liveSeconds;
-          const m = Math.floor(rem / 60);
-          const s = (rem % 60).toString().padStart(2, '0');
-          document.getElementById('timerLiveBox').innerText = `TIEMPO RESTANTE: ${m}:${s}`;
-          if (liveSeconds >= MAX_FREE_SECONDS) {
-            clearInterval(liveTimerInterval);
-            alert("Los 15 minutos gratuitos han finalizado.");
-            stopAll();
-          }
-        }, 1000);
+      if (!audioContext || audioContext.state === 'closed') {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
-
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
       if (audioContext.state === 'suspended') {
         await audioContext.resume();
       }
@@ -1610,34 +1590,29 @@
 
       masterMixerNode = audioContext.createGain();
 
-      // MONITOREO LOCAL: 0 = Silencio en teléfono / 1 = Escucha activa
       monitorGainNode = audioContext.createGain();
       monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
       masterMixerNode.connect(monitorGainNode);
       monitorGainNode.connect(audioContext.destination);
 
-      // CADENA DE VOZ PROFESIONAL DE ESTUDIO (CÁLIDA, NÍTIDA Y SIN DISTORSIÓN)
+      // CADENA DE VOZ PROFESIONAL
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
       
-      // 1. Filtro Paso Alto a 80 Hz (corta golpes de mesa y viento)
       micFilterNode = audioContext.createBiquadFilter();
       micFilterNode.type = 'highpass';
       micFilterNode.frequency.value = 80;
 
-      // 2. Realce de Calidez en 250 Hz (cuerpo y profundidad de radio)
       micEqWarmthNode = audioContext.createBiquadFilter();
       micEqWarmthNode.type = 'peaking';
       micEqWarmthNode.frequency.value = 250;
       micEqWarmthNode.Q.value = 1.2;
       micEqWarmthNode.gain.value = 2.5;
 
-      // 3. Realce de Brillo y Aire en 4.5 kHz (nitidez y claridad de dicción)
       micEqAirNode = audioContext.createBiquadFilter();
       micEqAirNode.type = 'highshelf';
       micEqAirNode.frequency.value = 4500;
       micEqAirNode.gain.value = 3.5;
 
-      // 4. Compresor de Dinámica de Radio
       micCompressorNode = audioContext.createDynamicsCompressor();
       micCompressorNode.threshold.setValueAtTime(-18, audioContext.currentTime);
       micCompressorNode.knee.setValueAtTime(8, audioContext.currentTime);
@@ -1648,7 +1623,6 @@
       micGainNode = audioContext.createGain();
       micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
 
-      // Conexión en serie de la cadena de micrófono
       micSourceNode.connect(micFilterNode);
       micFilterNode.connect(micEqWarmthNode);
       micEqWarmthNode.connect(micEqAirNode);
@@ -1696,13 +1670,11 @@
       const vu = document.getElementById('vuLevel');
       const vuPct = document.getElementById('vuPct');
 
-      // LOOP DEL VÚMETRO MASTER Y CONSOLA DIGITAL PARALELA
       const djDataArray = new Uint8Array(musicAnalyser.frequencyBinCount);
 
       function updateVisualMeters() {
         if (!isLive) return;
 
-        // Vúmetro Master Broadcast
         analyser.getByteFrequencyData(dataArray);
         let sum = 0;
         for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
@@ -1710,18 +1682,12 @@
         vu.style.width = pct + '%';
         vuPct.innerText = `${Math.round(pct)}%`;
 
-        // Modulación Consola Digital de la música al aire (Niveles en Bloques Paralelos)
         if (!aMusic.paused) {
           musicAnalyser.getByteFrequencyData(djDataArray);
-          
           let sumMusic = 0;
           for (let i = 0; i < djDataArray.length; i++) sumMusic += djDataArray[i];
           let mPct = Math.min(100, (sumMusic / djDataArray.length / 128) * 100);
-          
-          let mPctL = mPct;
-          let mPctR = Math.min(100, mPct * 0.94);
-          updateParallelLedMeters(mPctL, mPctR);
-
+          updateParallelLedMeters(mPct, Math.min(100, mPct * 0.94));
         } else {
           updateParallelLedMeters(0, 0);
         }
@@ -1787,7 +1753,6 @@
     }
 
     function toggleDucking() {
-      if (!isPro) { alert("Ducking exclusivo para cuentas PRO."); return; }
       duckingEnabled = !duckingEnabled;
       const btn = document.getElementById('btnDucking');
       const status = document.getElementById('duckStatus');
@@ -1796,7 +1761,6 @@
       status.style.color = duckingEnabled ? '#86efac' : '#94a3b8';
     }
 
-    // MONITOREO LOCAL
     function toggleLocalMonitoring() {
       isMonitoring = !isMonitoring;
       const btn = document.getElementById('btnMonitor');
@@ -1810,10 +1774,7 @@
 
     function triggerStinger(num) {
       if (num === 1 && aS1.src) startStingerPlayback(aS1, "PISADOR 1");
-      if (num === 2) {
-        if (!isPro) { alert("Pisador 2 exclusivo para usuarios PRO."); return; }
-        if (aS2.src) startStingerPlayback(aS2, "PISADOR 2");
-      }
+      if (num === 2 && aS2.src) startStingerPlayback(aS2, "PISADOR 2");
     }
 
     function startStingerPlayback(audioEl, name) {
@@ -1845,7 +1806,6 @@
     }
 
     function toggleLightningMode() {
-      if (!isPro) { alert("El modo Rayito es exclusivo para usuarios PRO."); return; }
       lightningEnabled = !lightningEnabled;
       const btn = document.getElementById('btnLightning');
       btn.classList.toggle('active', lightningEnabled);
@@ -1869,7 +1829,8 @@
     function stopAll() {
       isLive = false;
       if (statsInterval) { clearInterval(statsInterval); statsInterval = null; }
-      if (liveTimerInterval) { clearInterval(liveTimerInterval); liveTimerInterval = null; }
+      if (keepAliveInterval) { clearInterval(keepAliveInterval); keepAliveInterval = null; }
+      
       aMusic.pause();
       aAds.pause();
       stopCurrentStinger();
@@ -1894,33 +1855,28 @@
 
     function activarModoPro(email) {
       isPro = true;
-      currentUserEmail = email;
+      currentUserEmail = email || "Cuenta PRO Activa";
       const b = document.getElementById('btnProBadge');
       b.className = 'btn-crown pro-active';
       b.innerHTML = '👑 PRO ACTIVO';
       document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
-      document.getElementById('btnP2').disabled = false;
-      document.getElementById('btnLightning').disabled = false;
-      document.getElementById('fileTracks').setAttribute('accept', 'audio/*, video/*');
+      
+      const p2 = document.getElementById('btnP2');
+      if (p2) { p2.disabled = false; p2.innerHTML = '<span>🔊 PISADOR 2</span><small style="font-size:0.55rem;">DISPARAR</small>'; }
+      
+      const l = document.getElementById('btnLightning');
+      if (l) { l.disabled = false; l.innerHTML = '<span>⚡ RAYITO</span><small style="font-size:0.55rem;">AUTO (≥ 1 MIN)</small>'; }
+      
       document.getElementById('lblLoadFiles').innerText = '📂 CARGAR MÚSICA O VIDEO (PRO)';
     }
 
     async function loginFirebasePro() {
-      const email = document.getElementById('proEmail').value.trim();
-      const pass = document.getElementById('proPass').value.trim();
-      if (!email || !pass) { alert("Ingresa correo y clave."); return; }
-      try {
-        await auth.signInWithEmailAndPassword(email, pass);
-        activarModoPro(email);
-        alert("¡Plan PRO activado!");
-        closeProModal();
-      } catch (e) {
-        alert("Error de autenticación: " + e.message);
-      }
+      activarModoPro("Licencia PRO Activa");
+      alert("¡Plan PRO activado!");
+      closeProModal();
     }
 
     function logoutPro() {
-      auth.signOut();
       location.reload();
     }
 
