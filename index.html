@@ -5,45 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>EMISORASplus isecas</title>
   
-  <!-- Codificador MP3 en tiempo real -->
+  <!-- LameJS para codificación MP3 -->
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   
-  <!-- Firebase SDK modular -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, updatePassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCDzqYbaYZuwlW_qfV25Cy-muz-srF85L8",
-      authDomain: "emisorasplus.firebaseapp.com",
-      projectId: "emisorasplus",
-      storageBucket: "emisorasplus.firebasestorage.app",
-      messagingSenderId: "48567736821",
-      appId: "1:48567736821:web:47218e33e3e8619ea928bc"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    window.fbAuth = getAuth(app);
-    window.fbDb = getFirestore(app);
-    window.fbSignIn = signInWithEmailAndPassword;
-    window.fbSignOut = signOut;
-    window.fbUpdatePass = updatePassword;
-    window.fbDoc = doc;
-    window.fbGetDoc = getDoc;
-    window.fbUpdateDoc = updateDoc;
-
-    // Escucha cambios de sesión en Firebase
-    onAuthStateChanged(window.fbAuth, async (user) => {
-      if (user) {
-        window.currentUserEmail = user.email;
-        activarModoPro(user.email);
-      } else {
-        window.currentUserEmail = null;
-        desactivarModoPro();
-      }
-    });
-  </script>
+  <!-- Firebase App & Auth SDK (Versión UMD Global Compatible) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
   <style>
     :root {
@@ -103,20 +71,20 @@
     .signal-bars.mid .b1, .signal-bars.mid .b2, .signal-bars.mid .b3 { background: var(--c-yellow); }
     .signal-bars.low .b1 { background: var(--c-red); }
 
-    /* VÚMETRO MASTER */
+    /* VÚMETRO */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
     .vu-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--c-green) 50%, var(--c-yellow) 80%, var(--c-red) 100%); transition: width 0.05s linear; }
 
-    /* BANNER PISADOR EN CURSO */
+    /* BANNER PISADOR */
     .stinger-banner {
       display: none; background: linear-gradient(135deg, #3b0764, #1e1b4b);
       border: 2px solid var(--c-purple); border-radius: 8px; padding: 6px 10px;
       margin-bottom: 6px; align-items: center; justify-content: space-between;
     }
 
-    /* 3 CUADROS DE COLA DE PISTAS */
+    /* COLA DE 3 PISTAS */
     .queue-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
     .track-box {
       border-radius: 8px; padding: 6px 10px; background: #070c1b; border-width: 2px; border-style: solid;
@@ -204,7 +172,6 @@
     .vol-row input[type=range] { flex: 1; accent-color: var(--c-blue); }
     .vol-val { font-size: 0.68rem; font-weight: 800; width: 35px; text-align: right; color: #fff; }
 
-    /* ESTILOS ESPECÍFICOS DEL MODAL PRO */
     .pro-user-header {
       background: linear-gradient(135deg, #064e3b, #065f46); border: 1px solid #34d399;
       border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
@@ -255,7 +222,7 @@
     </div>
   </div>
 
-  <!-- BANNER PISADOR EN CURSO -->
+  <!-- BANNER PISADOR -->
   <div class="stinger-banner" id="stingerBanner">
     <div style="display:flex; flex-direction:column;">
       <span style="font-size:0.75rem; font-weight:900; color:#f0abfc;" id="bannerStingerName">🔊 PISADOR SONANDO</span>
@@ -334,17 +301,16 @@
   <audio id="audioStinger2" style="display:none;"></audio>
   <audio id="audioLightning" style="display:none;"></audio>
 
-  <!-- ==================== MODAL DE PLAN PRO / GESTIÓN ==================== -->
+  <!-- MODAL DE PLAN PRO -->
   <div class="modal-overlay" id="proModal">
     <div class="modal-box">
       
-      <!-- CABECERA MODAL -->
       <div class="modal-header">
         <div id="modalProHeaderTitle" style="font-size:0.9rem; font-weight:900; color:var(--c-gold);">👑 PLAN PRO</div>
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeProModal()">✕</button>
       </div>
 
-      <!-- VISTA 1: CUANDO ES USUARIO GRATIS -->
+      <!-- VISTA 1: GRATIS -->
       <div id="viewFreeUser">
         <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); border:1px solid #facc15; border-radius:10px; padding:10px; text-align:center; margin-bottom:10px;">
           <h3 style="color:#fde047; font-size:0.95rem;">EMISORASplus PRO</h3>
@@ -365,7 +331,7 @@
           <label>Contraseña</label>
           <input type="password" id="proPass" placeholder="Tu clave asignada">
         </div>
-        <button class="btn-ctrl" style="width:100%; background:var(--c-blue); margin-bottom:12px; font-weight:900;" onclick="loginFirebasePro()">
+        <button id="btnLoginAction" class="btn-ctrl" style="width:100%; background:var(--c-blue); margin-bottom:12px; font-weight:900;" onclick="loginFirebasePro()">
           ACTIVAR PLAN PRO AHORA
         </button>
 
@@ -387,7 +353,7 @@
         </button>
       </div>
 
-      <!-- VISTA 2: CUANDO YA ES USUARIO PRO ACTIVO -->
+      <!-- VISTA 2: PRO ACTIVO -->
       <div id="viewProActiveUser" style="display:none;">
         <div class="pro-user-header">
           <div>
@@ -410,15 +376,13 @@
           <li><span>✓</span> Soporte para hasta 4 servidores / estaciones</li>
         </ul>
 
-        <!-- BOTÓN DE AJUSTES DE SEGURIDAD / CONTRASEÑA -->
         <button class="btn-ctrl" style="width:100%; background:#1e293b; border-color:var(--c-blue); color:#38bdf8; font-weight:900; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="toggleSecurityPanel()">
           ⚙ AJUSTES DE SEGURIDAD / CAMBIAR MI CLAVE
         </button>
 
-        <!-- PANEL DESPLEGABLE PARA CAMBIO DE CONTRASEÑA OBLIGATORIO -->
         <div id="securityPanel" style="display:none; background:#070c1b; border:1px solid var(--border); border-radius:10px; padding:10px; margin-top:8px;">
           <div style="font-size:0.68rem; color:var(--c-yellow); font-weight:800; margin-bottom:6px;">
-            🔒 CAMBIO DE CLAVE OBLIGATORIO (SEGURIDAD)
+            🔒 CAMBIO DE CLAVE (SEGURIDAD)
           </div>
           <div class="form-group">
             <label>Nueva Contraseña</label>
@@ -447,7 +411,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL DE AJUSTES GENERALES ==================== -->
+  <!-- MODAL DE AJUSTES GENERALES -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -534,9 +498,26 @@
   </div>
 
   <script>
+    // Configuración Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCDzqYbaYZuwlW_qfV25Cy-muz-srF85L8",
+      authDomain: "emisorasplus.firebaseapp.com",
+      projectId: "emisorasplus",
+      storageBucket: "emisorasplus.firebasestorage.app",
+      messagingSenderId: "48567736821",
+      appId: "1:48567736821:web:47218e33e3e8619ea928bc"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
     const RELAY_URL = "wss://zeno-relay.onrender.com";
 
     let isPro = false;
+    let currentUserEmail = "";
     let isLive = false;
     let micMuted = false;
     let duckingEnabled = true;
@@ -550,7 +531,7 @@
 
     let liveTimerInterval = null;
     let liveSeconds = 0;
-    const MAX_FREE_SECONDS = 15 * 60; // 15 minutos exactos
+    const MAX_FREE_SECONDS = 15 * 60;
 
     let currentStation = 1;
     let stationsData = {
@@ -560,7 +541,6 @@
       4: { host: "", port: "80", mount: "", user: "source", password: "" }
     };
 
-    // Web Audio Nodes
     let audioContext = null;
     let mediaStream = null;
     let micSourceNode = null;
@@ -583,6 +563,20 @@
     const aLight = document.getElementById('audioLightning');
 
     window.addEventListener('DOMContentLoaded', () => {
+      // Verificar si ya estaba logueado localmente
+      const savedPro = localStorage.getItem('ep_is_pro');
+      const savedEmail = localStorage.getItem('ep_pro_email');
+      if (savedPro === 'true' && savedEmail) {
+        activarModoPro(savedEmail);
+      }
+
+      // Escuchar cambios de Firebase Auth
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          activarModoPro(user.email);
+        }
+      });
+
       loadSavedStations();
       iniciarMonitorPing();
     });
@@ -598,7 +592,7 @@
       if (isPro) {
         document.getElementById('viewFreeUser').style.display = 'none';
         document.getElementById('viewProActiveUser').style.display = 'block';
-        document.getElementById('userProEmailDisplay').innerText = window.currentUserEmail || "Cuenta PRO Activa";
+        document.getElementById('userProEmailDisplay').innerText = currentUserEmail || "Cuenta PRO Activa";
         document.getElementById('modalProHeaderTitle').innerText = '👑 MI PLAN PRO ACTIVO';
       } else {
         document.getElementById('viewFreeUser').style.display = 'block';
@@ -610,25 +604,53 @@
 
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
 
-    // LOGIN FIREBASE
+    // LOGIN FIREBASE MEJORADO Y CONFIABLE
     async function loginFirebasePro() {
       const email = document.getElementById('proEmail').value.trim();
       const pass = document.getElementById('proPass').value.trim();
-      if (!email || !pass) { alert("Ingresa tu correo y clave asignados."); return; }
-      
+      const btn = document.getElementById('btnLoginAction');
+
+      if (!email || !pass) {
+        alert("Por favor ingresa tu correo y contraseña.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "VERIFICANDO...";
+
       try {
-        log("Validando credenciales en Firebase...");
-        await window.fbSignIn(window.fbAuth, email, pass);
-        alert("¡Licencia PRO verificada con éxito!");
+        log("Validando credenciales con Firebase...");
+        const userCredential = await auth.signInWithEmailAndPassword(email, pass);
+        const user = userCredential.user;
+        
+        // Activar PRO de inmediato tras autenticar
+        activarModoPro(user.email);
+        alert(`¡Bienvenido! Plan PRO activado para: ${user.email}`);
         openProModal();
       } catch (err) {
-        alert("Error de autenticación: " + err.message);
+        let msg = err.message;
+        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+          msg = "Contraseña incorrecta. Verifica tu clave de ventas.";
+        } else if (err.code === 'auth/user-not-found') {
+          msg = "No existe una cuenta asignada con este correo.";
+        } else if (err.code === 'auth/invalid-email') {
+          msg = "El formato de correo no es válido.";
+        }
+        alert("Error de inicio de sesión: " + msg);
+        log(`<span style="color:var(--c-red)">Fallo de autenticación: ${err.code}</span>`);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "ACTIVAR PLAN PRO AHORA";
       }
     }
 
     // ACTIVACIÓN DE FUNCIONES PRO
     function activarModoPro(email) {
       isPro = true;
+      currentUserEmail = email;
+      localStorage.setItem('ep_is_pro', 'true');
+      localStorage.setItem('ep_pro_email', email);
+
       const b = document.getElementById('btnProBadge');
       b.className = 'btn-crown pro-active';
       b.innerHTML = '👑 PRO ACTIVO';
@@ -663,17 +685,21 @@
       document.getElementById('barAutoDj').style.background = 'var(--c-green)';
       document.getElementById('lblAutoDjCap').innerText = 'AutoDJ activado en la nube con 10 GB de capacidad.';
 
-      log(`Plan PRO activo: ${email}`);
+      log(`Plan PRO verificado: ${email}`);
     }
 
     function desactivarModoPro() {
       isPro = false;
+      currentUserEmail = "";
+      localStorage.removeItem('ep_is_pro');
+      localStorage.removeItem('ep_pro_email');
+
       document.getElementById('btnProBadge').className = 'btn-crown';
       document.getElementById('btnProBadge').innerHTML = '👑 PRO';
       document.getElementById('timerLiveBox').innerText = 'TIEMPO MÁX: 15:00';
     }
 
-    // GESTIÓN DE SEGURIDAD / CAMBIO DE CLAVE OBLIGATORIO
+    // CAMBIO DE CLAVE
     function toggleSecurityPanel() {
       const p = document.getElementById('securityPanel');
       p.style.display = p.style.display === 'none' ? 'block' : 'none';
@@ -689,35 +715,40 @@
       const p2 = document.getElementById('newPass2').value.trim();
 
       if (!p1 || p1.length < 6) {
-        alert("La nueva contraseña debe tener mínimo 6 caracteres.");
+        alert("La contraseña debe tener mínimo 6 caracteres.");
         return;
       }
       if (p1 !== p2) {
-        alert("Las contraseñas no coinciden. Verifícalas e intenta nuevamente.");
+        alert("Las contraseñas no coinciden. Intenta de nuevo.");
         return;
       }
 
-      const user = window.fbAuth.currentUser;
+      const user = auth.currentUser;
       if (!user) {
-        alert("No hay una sesión activa para cambiar la contraseña.");
+        alert("Tu sesión expiró. Inicia sesión nuevamente.");
         return;
       }
 
       try {
-        log("Actualizando contraseña en Firebase...");
-        await window.fbUpdatePass(user, p1);
-        alert("¡Contraseña actualizada correctamente! Guárdala bien.");
+        log("Actualizando clave de usuario...");
+        await user.updatePassword(p1);
+        alert("¡Tu contraseña ha sido actualizada con éxito!");
         document.getElementById('newPass1').value = '';
         document.getElementById('newPass2').value = '';
         toggleSecurityPanel();
       } catch (err) {
-        alert("Error al actualizar la contraseña: " + err.message);
+        if (err.code === 'auth/requires-recent-login') {
+          alert("Por seguridad, debes cerrar sesión e ingresar nuevamente antes de cambiar la clave.");
+        } else {
+          alert("Error al actualizar: " + err.message);
+        }
       }
     }
 
     async function logoutPro() {
-      if (confirm("¿Deseas cerrar tu sesión PRO en este dispositivo?")) {
-        await window.fbSignOut(window.fbAuth);
+      if (confirm("¿Deseas cerrar tu sesión PRO?")) {
+        try { await auth.signOut(); } catch (e) {}
+        desactivarModoPro();
         closeProModal();
         location.reload();
       }
@@ -733,7 +764,7 @@
       window.open(url, '_blank');
     }
 
-    // MONITOR DE CONEXIÓN PING
+    // MONITOR PING
     function iniciarMonitorPing() {
       setInterval(async () => {
         const start = Date.now();
@@ -760,7 +791,7 @@
       }, 5000);
     }
 
-    // GESTIÓN DE ESTACIONES
+    // GESTIÓN ESTACIONES
     function loadSavedStations() {
       const s = localStorage.getItem('ep_stations');
       if (s) {
