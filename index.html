@@ -66,7 +66,7 @@
     .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
     .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
 
-    /* VÚMETRO MASTER */
+    /* VÚMETRO MASTER (CONTINUO) */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
@@ -88,17 +88,43 @@
     .queue-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
     .track-box {
       border-radius: 8px; padding: 6px 10px; background: #070c1b; border-width: 2px; border-style: solid;
-      display: flex; flex-direction: column; justify-content: center; position: relative;
+      display: flex; flex-direction: column; justify-content: center; position: relative; transition: all 0.25s ease;
     }
     .track-box.current { border-color: var(--c-green); box-shadow: 0 0 10px rgba(16,185,129,0.2); }
     .track-box.next { border-color: var(--c-blue); }
     .track-box.third { border-color: var(--c-yellow); }
 
+    /* ALERTA ROJA PARPADEANTE CUANDO FALTEN <= 8 SEGUNDOS */
+    .track-box.next.alert-imminent {
+      border-color: var(--c-red) !important;
+      background: #450a0a !important;
+      animation: alertPulse 0.7s infinite alternate ease-in-out !important;
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.6) !important;
+    }
+    @keyframes alertPulse {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0.75; transform: scale(0.99); }
+    }
+
+    .track-tag-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
     .track-tag { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; }
     .track-box.current .track-tag { color: var(--c-green); }
     .track-box.next .track-tag { color: var(--c-blue); }
     .track-box.third .track-tag { color: var(--c-yellow); }
     
+    .countdown-pill {
+      font-size: 0.62rem; font-weight: 900; color: #bae6fd; background: #0c4a6e;
+      padding: 2px 6px; border-radius: 4px; border: 1px solid #0284c7;
+    }
+    .track-box.next.alert-imminent .countdown-pill {
+      background: #dc2626 !important; color: #fff !important; border-color: #f87171 !important;
+    }
+
+    .lightning-icon-tag {
+      font-size: 0.72rem; padding: 1px 5px; border-radius: 4px;
+      background: #854d0e; border: 1px solid #eab308; color: #fef08a; display: inline-flex; align-items: center;
+    }
+
     .track-row-air { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 2px; }
     .track-name { font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; flex: 1; }
     .track-time { font-size: 0.65rem; color: var(--text-muted); }
@@ -110,23 +136,29 @@
     }
     .air-nav-btn:active { background: var(--c-green); color: #000; transform: scale(0.92); }
 
-    /* CONSOLA DE VOLUMEN DJ Y ESPECTRÓMETRO DIGITAL */
-    .dj-console-box {
-      margin-top: 6px; background: #030611; border: 1px solid #1a2a4a; border-radius: 6px; padding: 4px 6px;
+    /* CONSOLA DIGITAL PARALELA (CUADRITOS LED L Y R) */
+    .dj-rack-meter {
+      background: #02040a; border: 1px solid #1a2c4e; border-radius: 8px;
+      padding: 6px 10px; margin-top: 6px; display: flex; flex-direction: column; gap: 4px;
     }
-    .dj-levels-row {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;
+    .rack-header {
+      display: flex; justify-content: space-between; font-size: 0.58rem; font-weight: 900; color: #38bdf8; letter-spacing: 0.5px;
     }
-    .dj-vumeter-track {
-      flex: 1; height: 6px; background: #111a2e; border-radius: 3px; overflow: hidden; position: relative;
+    .rack-columns {
+      display: flex; gap: 14px; justify-content: center; align-items: center; height: 48px;
     }
-    .dj-vumeter-fill {
-      height: 100%; width: 0%; background: linear-gradient(90deg, #10b981 60%, #eab308 85%, #ef4444 100%);
-      transition: width 0.05s linear;
+    .meter-column {
+      display: flex; flex-direction: column-reverse; gap: 2px; flex: 1; height: 100%; max-width: 140px;
     }
-    .dj-spectrum-canvas {
-      width: 100%; height: 26px; display: block; border-radius: 3px; background: #02040a;
+    .meter-col-label {
+      font-size: 0.55rem; font-weight: 900; color: var(--text-muted); text-align: center; margin-top: 1px;
     }
+    .led-block {
+      height: 2px; border-radius: 1px; background: #111a2e; transition: background 0.04s ease;
+    }
+    .led-block.active-green { background: #10b981; box-shadow: 0 0 4px #10b981; }
+    .led-block.active-yellow { background: #facc15; box-shadow: 0 0 4px #facc15; }
+    .led-block.active-red { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
 
     /* MIC Y DUCKING */
     .mic-duck-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 6px; margin-bottom: 6px; }
@@ -225,7 +257,6 @@
     .track-item-meta { display: flex; gap: 5px; align-items: center; font-size: 0.62rem; margin-top: 3px; flex-wrap: wrap; }
     
     .tag-played-red { background: var(--c-red); color: #fff; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
-    .tag-lightning-ready { background: #854d0e; color: #fef08a; border: 1px solid #eab308; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
     .tag-live { background: var(--c-green); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
     .tag-next { background: var(--c-blue); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
     .tag-third { background: var(--c-yellow); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
@@ -239,7 +270,7 @@
     .btn-action-small:active { background: var(--c-blue); }
     .btn-action-small.btn-del { border-color: var(--c-red); color: var(--c-red); }
 
-    /* ESTILOS DEL MANUAL DE AYUDA */
+    /* MANUAL DE AYUDA */
     .help-section {
       background: #09132b; border: 1px solid #1e3a6d; border-radius: 8px; padding: 8px; margin-bottom: 8px;
     }
@@ -276,7 +307,7 @@
     <div style="color:var(--c-gold); font-size:0.6rem;" id="timerLiveBox">TIEMPO MÁX: 15:00</div>
   </div>
 
-  <!-- VÚMETRO MASTER -->
+  <!-- VÚMETRO MASTER (CONTINUO) -->
   <div class="card">
     <div class="vu-header">
       <span>SALIDA AL AIRE (MASTER BROADCAST)</span>
@@ -287,7 +318,7 @@
     </div>
   </div>
 
-  <!-- BANNER PUBLICIDAD EN CURSO -->
+  <!-- BANNERS DINÁMICOS -->
   <div class="ads-banner" id="adsBanner">
     <div style="display:flex; flex-direction:column;">
       <span style="font-size:0.75rem; font-weight:900; color:#38bdf8;">📢 TANDA COMERCIAL AL AIRE</span>
@@ -296,7 +327,6 @@
     <button onclick="stopCurrentAd()" style="background:var(--c-red); border:none; color:#fff; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.68rem; cursor:pointer;">⏹ CORTAR</button>
   </div>
 
-  <!-- BANNER PISADOR -->
   <div class="stinger-banner" id="stingerBanner">
     <div style="display:flex; flex-direction:column;">
       <span style="font-size:0.75rem; font-weight:900; color:#f0abfc;" id="bannerStingerName">🔊 PISADOR SONANDO</span>
@@ -307,8 +337,12 @@
 
   <!-- COLA DE 3 PISTAS -->
   <div class="queue-grid">
+    <!-- PISTA 1: AL AIRE -->
     <div class="track-box current">
-      <div class="track-tag">● 1. EN EL AIRE (ACTUAL)</div>
+      <div class="track-tag-row">
+        <div class="track-tag">● 1. EN EL AIRE (ACTUAL)</div>
+        <div id="airLightningBadge" style="display:none;" class="lightning-icon-tag" title="Esta pista aplica para rayito">⚡</div>
+      </div>
       <div class="track-row-air">
         <button class="air-nav-btn" onclick="repeatCurrentTrack()" title="Repetir pista (⏮)">⏮</button>
         <div style="flex:1; overflow:hidden;">
@@ -318,23 +352,35 @@
         <button class="air-nav-btn" onclick="skipToNextTrack()" title="Siguiente pista (⏭)">⏭</button>
       </div>
 
-      <!-- PANEL DJ CONSOLA DE ONDAS Y VOLUMEN ESTÉREO AL RITMO -->
-      <div class="dj-console-box">
-        <div class="dj-levels-row">
-          <span style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">L</span>
-          <div class="dj-vumeter-track"><div id="djVuL" class="dj-vumeter-fill"></div></div>
-          <span style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">R</span>
-          <div class="dj-vumeter-track"><div id="djVuR" class="dj-vumeter-fill"></div></div>
+      <!-- CONSOLA DIGITAL PARALELA (CANAL L / R) -->
+      <div class="dj-rack-meter">
+        <div class="rack-header">
+          <span>CONSOLE VU STEREO (EN EL AIRE)</span>
+          <span id="rackDbDisplay">-∞ dB</span>
         </div>
-        <canvas id="djWaveCanvas" class="dj-spectrum-canvas" width="300" height="26"></canvas>
+        <div class="rack-columns">
+          <div style="display:flex; flex-direction:column; align-items:center; flex:1;">
+            <div class="meter-column" id="colLeftMeter"></div>
+            <div class="meter-col-label">CANAL L</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; flex:1;">
+            <div class="meter-column" id="colRightMeter"></div>
+            <div class="meter-col-label">CANAL R</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="track-box next">
-      <div class="track-tag">▶ 2. SIGUIENTE EN COLA</div>
+    <!-- PISTA 2: SIGUIENTE EN COLA (CON SEGUNDERO Y ALERTA ROJA PARPADEANTE A <= 8s) -->
+    <div class="track-box next" id="trackBoxNext">
+      <div class="track-tag-row">
+        <div class="track-tag">▶ 2. SIGUIENTE EN COLA</div>
+        <div class="countdown-pill" id="nextCountdownDisplay">Faltan: --s</div>
+      </div>
       <div class="track-name" id="track2">En espera...</div>
     </div>
 
+    <!-- PISTA 3: TERCERA EN ESPERA -->
     <div class="track-box third">
       <div class="track-tag">⏭ 3. EN ESPERA (TERCERA)</div>
       <div class="track-name" id="track3">En espera...</div>
@@ -412,42 +458,42 @@
       <div class="help-section">
         <div class="help-title">📻 1. Transmisión y Servidores</div>
         <div class="help-desc">
-          En <b>Ajustes ⚙</b> configuras tu servidor (Zeno Media o Icecast Universal). Al pulsar <b>INICIAR TRANSMISIÓN</b>, el audio del micrófono, música y efectos se codifican en vivo en MP3 a 128 kbps hacia la nube.
+          En <b>Ajustes ⚙</b> configuras tu servidor (Zeno Media o Icecast Universal). Al pulsar <b>INICIAR TRANSMISIÓN</b>, el audio se codifica en vivo en MP3 a 128 kbps.
         </div>
       </div>
 
       <div class="help-section">
         <div class="help-title">🎧 2. Monitoreo Local con Audífonos</div>
         <div class="help-desc">
-          El botón <b>🎧</b> activa o silencia la escucha en el dispositivo. Si está apagado, el teléfono no emitirá sonido por altavoz (para evitar acoples); si está activo, escucharás exactamente la mezcla que sale al aire.
+          El botón <b>🎧</b> controla la escucha en el dispositivo. Si está apagado, el teléfono queda en silencio para evitar acoples de retroalimentación; si está activo, escucharás exactamente la mezcla en vivo.
         </div>
       </div>
 
       <div class="help-section">
         <div class="help-title">⚡ 3. Modo Rayito (Auto-Pisador)</div>
         <div class="help-desc">
-          Cuando está activo, el sistema comprueba la duración de la canción que arranca. <b>Si dura menos de 1 minuto no suena</b>. Si la pista dura <b>1 minuto o más</b>, dispara el audio cargado automáticamente al <b>segundo 0:03</b>.
+          Evalúa la duración de cada tema. <b>Si dura menos de 1 minuto no suena</b>. Si la pista dura <b>1 minuto o más</b>, dispara el audio cargado automáticamente al <b>segundo 0:03</b>.
         </div>
       </div>
 
       <div class="help-section">
-        <div class="help-title">🎙️ 4. Micrófono y Ducking Inteligente</div>
+        <div class="help-title">⏱️ 4. Segundero y Alerta Roja en Cola</div>
         <div class="help-desc">
-          Cuenta con filtro paso alto (corta ruidos graves) y compresor dinámico. Si <b>DUCKING AUTO</b> está activo, al abrir el micrófono la música bajará automáticamente al 20% para que tu voz se escuche clara como cortina musical.
+          El cuadro de la pista #2 muestra un segundero en reversa con el tiempo restante para que termine la actual. Al faltar <b>8 segundos o menos</b>, todo el cuadro parpadeará en rojo para avisarte el cambio.
         </div>
       </div>
 
       <div class="help-section">
-        <div class="help-title">🎛️ 5. Panel Principal y Memoria de Pistas</div>
+        <div class="help-title">🎙️ 5. Micrófono Cálido y Profesional</div>
         <div class="help-desc">
-          Todas las canciones cargadas se guardan en el almacenamiento interno (IndexedDB). Al salir y volver a la app, tus canciones permanecen intactas. Puedes reordenarlas con <b>▲</b> y <b>▼</b>, eliminarlas con <b>🗑</b> y ver en rojo las que ya sonaron.
+          Integra filtro paso alto (80 Hz), realce de calidez en 250 Hz (+2.5 dB), brillo en 4.5 kHz (+3.5 dB) y compresor de radio. Si <b>DUCKING AUTO</b> está encendido, la música baja suavemente al hablar.
         </div>
       </div>
 
       <div class="help-section">
-        <div class="help-title">📅 6. Comerciales Programados (PRO)</div>
+        <div class="help-title">🎛️ 6. Panel Principal y Memoria de Pistas</div>
         <div class="help-desc">
-          Permite crear hasta 5 tandas comerciales. Cada tanda espera automáticamente a que termine la canción al aire para entrar sin cortes bruscos.
+          Las canciones se guardan automáticamente en tu dispositivo (IndexedDB). Puedes reordenar con <b>▲</b> y <b>▼</b>, borrar con <b>🗑</b>, y ver en rojo las que ya sonaron.
         </div>
       </div>
 
@@ -464,12 +510,10 @@
       </div>
 
       <div style="font-size:0.68rem; color:var(--text-muted); margin-bottom:8px;">
-        Pistas que ya sonaron en <b style="color:var(--c-red);">ROJO</b>. Pistas aptas para rayito (≥ 1 min) llevan <b style="color:var(--c-gold);">⚡ RAYITO</b>.
+        Pistas que ya sonaron en <b style="color:var(--c-red);">ROJO</b>. Pistas aptas para rayito (≥ 1 min) llevan únicamente el icono <b style="color:var(--c-gold);">⚡</b>.
       </div>
 
-      <div class="playlist-scroll" id="playlistContainer">
-        <!-- Render dinámico de canciones -->
-      </div>
+      <div class="playlist-scroll" id="playlistContainer"></div>
 
       <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closePlaylistModal()">CERRAR PANEL</button>
     </div>
@@ -483,7 +527,7 @@
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeCalendarModal()">✕</button>
       </div>
 
-      <div class="cal-card-box">
+      <div style="background: linear-gradient(135deg, #1e1b4b, #111827); border: 2px solid #a855f7; border-radius: 12px; padding: 10px; margin-bottom: 10px;">
         <div style="font-size:0.75rem; font-weight:900; color:#e9d5ff; margin-bottom:4px;">👑 FUNCIÓN EXCLUSIVA PRO</div>
         <p style="font-size:0.68rem; color:#d8b4fe; line-height:1.4;">
           Guarda hasta <b>5 tandas comerciales</b>. Cada tanda espera automáticamente a que termine la canción actual antes de salir al aire.
@@ -593,12 +637,10 @@
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeSettingsModal()">✕</button>
       </div>
 
-      <!-- BOTÓN DIRECTO DE AYUDA DENTRO DE AJUSTES -->
       <button class="btn-ctrl" style="width:100%; background:linear-gradient(90deg, #3b82f6, #1d4ed8); font-weight:900; margin-bottom:10px; padding:8px;" onclick="closeSettingsModal(); openHelpModal();">
         ❓ ABRIR MANUAL DE AYUDA Y GUÍA
       </button>
 
-      <!-- SELECTOR DE SERVIDOR -->
       <div class="form-group">
         <label style="color:var(--c-gold);">Tipo de Servidor</label>
         <select id="serverType" onchange="adjustServerDefaults(this.value)">
@@ -624,12 +666,10 @@
         <input type="password" id="password" placeholder="Tu Stream Key">
       </div>
 
-      <!-- BOTÓN RESTABLECER EMISORA -->
       <button class="btn-ctrl" style="width:100%; background:rgba(239, 68, 68, 0.15); border-color:var(--c-red); color:var(--c-red); margin:6px 0 12px 0; font-weight:800; padding:8px;" onclick="promptResetStation()">
         ⚠️ RESTABLECER EMISORA
       </button>
 
-      <!-- CARGA DE PISADORES -->
       <div style="font-size:0.7rem; font-weight:900; color:var(--c-purple); margin:6px 0 4px 0;">🎙 CARGAR AUDIOS DE PISADORES</div>
       
       <div class="file-select-box">
@@ -656,7 +696,6 @@
         </label>
       </div>
 
-      <!-- VOLÚMENES -->
       <div style="font-size:0.7rem; font-weight:900; color:var(--c-yellow); margin-top:8px;">🎚 VOLÚMENES</div>
       <div class="vol-row">
         <span class="vol-label">🎤 Mic</span>
@@ -699,7 +738,6 @@
 
     let rayitoIntroFired = false;
 
-    // Lista estructurada de canciones
     let playlist = []; // { id, blob, name, played: false, durationSec, durationStr, appliesLightning }
     let currentIndex = 0;
     let activeStingerAudio = null;
@@ -713,7 +751,9 @@
     let mediaStream = null;
     let micSourceNode = null;
     let micFilterNode = null;
-    let micCompressorNode = null;
+    let micEqWarmthNode = null;   // Realce de calidez (250 Hz)
+    let micEqAirNode = null;      // Realce de aire/nitidez (4.5 kHz)
+    let micCompressorNode = null; // Compresión de estudio
     let micGainNode = null;
     let musicSourceNode = null;
     let musicGainNode = null;
@@ -729,7 +769,7 @@
     let packetsSentCount = 0;
     let statsInterval = null;
 
-    // Tandas Comerciales
+    // Comerciales
     let adSlots = [];
     let temporaryAdFile = null;
     let adIntervalChecker = null;
@@ -740,6 +780,63 @@
     const aS2 = document.getElementById('audioStinger2');
     const aLight = document.getElementById('audioLightning');
     const aAds = document.getElementById('audioAds');
+
+    // ==========================================
+    // CONSTRUCCIÓN DEL VÚMETRO DIGITAL PARALELO
+    // ==========================================
+    const TOTAL_LEDS = 14;
+    function buildLedBlocks() {
+      const colL = document.getElementById('colLeftMeter');
+      const colR = document.getElementById('colRightMeter');
+      colL.innerHTML = '';
+      colR.innerHTML = '';
+
+      for (let i = 0; i < TOTAL_LEDS; i++) {
+        let type = 'green';
+        if (i >= 11) type = 'red';
+        else if (i >= 8) type = 'yellow';
+
+        const bL = document.createElement('div');
+        bL.className = 'led-block';
+        bL.dataset.type = type;
+        bL.id = `ledL_${i}`;
+        colL.appendChild(bL);
+
+        const bR = document.createElement('div');
+        bR.className = 'led-block';
+        bR.dataset.type = type;
+        bR.id = `ledR_${i}`;
+        colR.appendChild(bR);
+      }
+    }
+
+    function updateParallelLedMeters(levelPercentL, levelPercentR) {
+      const activeCountL = Math.round((levelPercentL / 100) * TOTAL_LEDS);
+      const activeCountR = Math.round((levelPercentR / 100) * TOTAL_LEDS);
+
+      for (let i = 0; i < TOTAL_LEDS; i++) {
+        const bL = document.getElementById(`ledL_${i}`);
+        const bR = document.getElementById(`ledR_${i}`);
+        if (!bL || !bR) continue;
+
+        const typeL = bL.dataset.type;
+        const typeR = bR.dataset.type;
+
+        if (i < activeCountL) bL.className = `led-block active-${typeL}`;
+        else bL.className = 'led-block';
+
+        if (i < activeCountR) bR.className = `led-block active-${typeR}`;
+        else bR.className = 'led-block';
+      }
+
+      const dbDisplay = document.getElementById('rackDbDisplay');
+      if (levelPercentL > 2) {
+        const approxDb = Math.round(-30 + (levelPercentL * 0.3));
+        dbDisplay.innerText = `${approxDb} dB`;
+      } else {
+        dbDisplay.innerText = '-∞ dB';
+      }
+    }
 
     // ========================================================
     // PERSISTENCIA INDEXEDDB PARA GUARDAR AUDIOS PERMANENTES
@@ -814,6 +911,8 @@
     // INICIALIZACIÓN GENERAL
     // ==========================================
     window.addEventListener('DOMContentLoaded', async () => {
+      buildLedBlocks();
+
       ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
         const val = localStorage.getItem(`ep_saved_${id}`);
         if (val !== null && val !== '') {
@@ -948,8 +1047,7 @@
       aMusic.pause();
       aMusic.currentTime = 0;
       document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
-      document.getElementById('djVuL').style.width = '0%';
-      document.getElementById('djVuR').style.width = '0%';
+      updateParallelLedMeters(0, 0);
       log("⏹ Pista musical detenida.");
     }
 
@@ -988,7 +1086,7 @@
           const m = Math.floor(sec / 60);
           const s = (sec % 60).toString().padStart(2, '0');
           item.durationStr = `${m}:${s}`;
-          // REGLA RAYITO: Mayor o igual a 1 minuto (>= 60 segundos)
+          // REGLA: Mayor o igual a 1 minuto (>= 60 segundos)
           item.appliesLightning = sec >= 60;
 
           saveTrackToDB(item);
@@ -1038,8 +1136,9 @@
           badgeHtml += '<span class="tag-played-red">YA SONÓ</span>';
         }
 
+        // Muestra únicamente el icono ⚡ sin texto
         if (item.appliesLightning) {
-          badgeHtml += '<span class="tag-lightning-ready">⚡ RAYITO</span>';
+          badgeHtml += '<span class="lightning-icon-tag" title="Aplica para rayito">⚡</span>';
         }
 
         card.className = cardClass;
@@ -1103,7 +1202,18 @@
 
     function updateTrackBoxes() {
       if (playlist.length === 0) return;
-      document.getElementById('track1').innerText = playlist[currentIndex] ? playlist[currentIndex].name : 'Sin pista';
+      
+      const currentItem = playlist[currentIndex];
+      document.getElementById('track1').innerText = currentItem ? currentItem.name : 'Sin pista';
+
+      // Icono de Rayo en el cuadro actual
+      const airLightningBadge = document.getElementById('airLightningBadge');
+      if (currentItem && currentItem.appliesLightning) {
+        airLightningBadge.style.display = 'inline-flex';
+      } else {
+        airLightningBadge.style.display = 'none';
+      }
+
       const nIdx = (currentIndex + 1) % playlist.length;
       document.getElementById('track2').innerText = playlist.length > 1 ? playlist[nIdx].name : 'No hay más archivos';
       const tIdx = (currentIndex + 2) % playlist.length;
@@ -1167,7 +1277,7 @@
       }
     };
 
-    // EVALUACIÓN DE TIEMPO REAL: CRONÓMETRO Y LÓGICA RAYITO AL SEGUNDO 3 (≥ 1 MINUTO)
+    // SEGUNDERO, ALERTA ROJA (<= 8s) Y DISPARO RAYITO AL SEGUNDO 3 (>= 1 MINUTO)
     aMusic.ontimeupdate = () => {
       if (!isNaN(aMusic.duration)) {
         const cur = aMusic.currentTime;
@@ -1179,14 +1289,31 @@
         const dS = Math.floor(dur % 60).toString().padStart(2, '0');
         document.getElementById('track1Time').innerText = `${cM}:${cS} / ${dM}:${dS}`;
 
-        // LÓGICA ESTRICTA DE RAYITO:
-        // Solo para pistas mayores o iguales a 1 minuto (dur >= 60 segundos)
-        // Dispara al tercer segundo de haber iniciado (0:03)
+        // CÁLCULO DEL SEGUNDERO EN REVERSA PARA LA PISTA SIGUIENTE
+        const remainingSeconds = Math.max(0, Math.floor(dur - cur));
+        const nextBox = document.getElementById('trackBoxNext');
+        const countdownDisplay = document.getElementById('nextCountdownDisplay');
+
+        if (playlist.length > 1) {
+          countdownDisplay.innerText = `Faltan: ${remainingSeconds}s`;
+
+          // ALERTA ROJA PARPADEANTE CUANDO FALTEN 8 SEGUNDOS O MENOS
+          if (remainingSeconds <= 8 && remainingSeconds > 0) {
+            nextBox.classList.add('alert-imminent');
+          } else {
+            nextBox.classList.remove('alert-imminent');
+          }
+        } else {
+          countdownDisplay.innerText = `Faltan: --s`;
+          nextBox.classList.remove('alert-imminent');
+        }
+
+        // LÓGICA RAYITO: Solo si dura >= 60 segundos y se alcanza el segundo 3
         if (lightningEnabled && isPro && aLight.src && dur >= 60) {
           if (cur >= 3 && cur < 4 && !rayitoIntroFired) {
             rayitoIntroFired = true;
             log('⚡ Rayito lanzado automáticamente al segundo 0:03 sobre la canción.');
-            startStingerPlayback(aLight, "⚡ RAYITO (AL SEGUNDO 3)");
+            startStingerPlayback(aLight, "⚡ RAYITO (0:03)");
           }
         }
       }
@@ -1265,7 +1392,16 @@
 
       adSlots.forEach((slot, index) => {
         const item = document.createElement('div');
-        item.className = 'ad-card-item';
+        item.style.background = '#09132b';
+        item.style.border = '1px solid #1e3a6d';
+        item.style.borderRadius = '8px';
+        item.style.padding = '8px';
+        item.style.marginBottom = '6px';
+        item.style.display = 'flex';
+        item.style.alignItems = 'center';
+        item.style.justifyContent = 'space-between';
+        item.style.gap = '6px';
+
         const progDesc = slot.type === 'hourly' ? `Todas las horas al min ${slot.minute}` : `Fecha: ${slot.datetime || 'Única'}`;
         item.innerHTML = `
           <div style="flex:1; overflow:hidden;">
@@ -1306,7 +1442,7 @@
             if (now >= target && !slot.triggered) {
               slot.triggered = true;
               currentAdPlayingIndex = idx;
-              log(`📢 Tanda "${slot.name}" lista para sonar al terminar la canción.`);
+              log(`📢 Tanda por fecha "${slot.name}" lista para sonar al terminar la canción.`);
             }
           }
         });
@@ -1346,9 +1482,9 @@
       playNextTrack();
     }
 
-    // ==========================================
-    // TRANSMISIÓN EN VIVO Y PROCESAMIENTO DE AUDIO
-    // ==========================================
+    // ========================================================
+    // TRANSMISIÓN EN VIVO Y MICRÓFONO PROFESIONAL (CÁLIDO Y NÍTIDO)
+    // ========================================================
     async function toggleBroadcast() {
       if (isLive) {
         stopAll();
@@ -1378,7 +1514,7 @@
         document.getElementById('mount').value = mount;
       }
 
-      log("1. Accediendo a micrófono con filtros de alta definición...");
+      log("1. Accediendo a micrófono con procesador de audio...");
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -1388,7 +1524,7 @@
             autoGainControl: false
           }
         });
-        log('<span style="color:var(--c-green)">Micrófono Pro activado con éxito.</span>');
+        log('<span style="color:var(--c-green)">Micrófono profesional activado.</span>');
       } catch (err) {
         log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
         return;
@@ -1474,41 +1610,59 @@
 
       masterMixerNode = audioContext.createGain();
 
-      // MONITOREO LOCAL ESTRICTO: 0 = SILENCIO ABSOLUTO EN DISPOSITIVO / 1 = ESCUCHA AUDÍFONOS
+      // MONITOREO LOCAL: 0 = Silencio en teléfono / 1 = Escucha activa
       monitorGainNode = audioContext.createGain();
       monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
       masterMixerNode.connect(monitorGainNode);
       monitorGainNode.connect(audioContext.destination);
 
-      // FILTRO Y COMPRESOR DE VOZ PRO
+      // CADENA DE VOZ PROFESIONAL DE ESTUDIO (CÁLIDA, NÍTIDA Y SIN DISTORSIÓN)
       micSourceNode = audioContext.createMediaStreamSource(mediaStream);
       
+      // 1. Filtro Paso Alto a 80 Hz (corta golpes de mesa y viento)
       micFilterNode = audioContext.createBiquadFilter();
       micFilterNode.type = 'highpass';
-      micFilterNode.frequency.value = 85;
+      micFilterNode.frequency.value = 80;
 
+      // 2. Realce de Calidez en 250 Hz (cuerpo y profundidad de radio)
+      micEqWarmthNode = audioContext.createBiquadFilter();
+      micEqWarmthNode.type = 'peaking';
+      micEqWarmthNode.frequency.value = 250;
+      micEqWarmthNode.Q.value = 1.2;
+      micEqWarmthNode.gain.value = 2.5;
+
+      // 3. Realce de Brillo y Aire en 4.5 kHz (nitidez y claridad de dicción)
+      micEqAirNode = audioContext.createBiquadFilter();
+      micEqAirNode.type = 'highshelf';
+      micEqAirNode.frequency.value = 4500;
+      micEqAirNode.gain.value = 3.5;
+
+      // 4. Compresor de Dinámica de Radio
       micCompressorNode = audioContext.createDynamicsCompressor();
       micCompressorNode.threshold.setValueAtTime(-18, audioContext.currentTime);
-      micCompressorNode.knee.setValueAtTime(10, audioContext.currentTime);
-      micCompressorNode.ratio.setValueAtTime(4, audioContext.currentTime);
-      micCompressorNode.attack.setValueAtTime(0.005, audioContext.currentTime);
-      micCompressorNode.release.setValueAtTime(0.1, audioContext.currentTime);
+      micCompressorNode.knee.setValueAtTime(8, audioContext.currentTime);
+      micCompressorNode.ratio.setValueAtTime(3.8, audioContext.currentTime);
+      micCompressorNode.attack.setValueAtTime(0.003, audioContext.currentTime);
+      micCompressorNode.release.setValueAtTime(0.12, audioContext.currentTime);
 
       micGainNode = audioContext.createGain();
       micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
 
+      // Conexión en serie de la cadena de micrófono
       micSourceNode.connect(micFilterNode);
-      micFilterNode.connect(micCompressorNode);
+      micFilterNode.connect(micEqWarmthNode);
+      micEqWarmthNode.connect(micEqAirNode);
+      micEqAirNode.connect(micCompressorNode);
       micCompressorNode.connect(micGainNode);
       micGainNode.connect(masterMixerNode);
 
-      // CANAL MÚSICA CON ANALIZADOR DE ONDAS DJ
+      // CANAL MÚSICA CON ANALIZADOR ESTÉREO DJ
       if (!musicSourceNode) musicSourceNode = audioContext.createMediaElementSource(aMusic);
       musicGainNode = audioContext.createGain();
       musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value);
 
       musicAnalyser = audioContext.createAnalyser();
-      musicAnalyser.fftSize = 128;
+      musicAnalyser.fftSize = 64;
 
       musicSourceNode.connect(musicGainNode);
       musicGainNode.connect(musicAnalyser);
@@ -1542,12 +1696,8 @@
       const vu = document.getElementById('vuLevel');
       const vuPct = document.getElementById('vuPct');
 
-      // CONSOLA DJ: ONDAS Y VOLUMEN ESTÉREO
-      const canvas = document.getElementById('djWaveCanvas');
-      const canvasCtx = canvas.getContext('2d');
+      // LOOP DEL VÚMETRO MASTER Y CONSOLA DIGITAL PARALELA
       const djDataArray = new Uint8Array(musicAnalyser.frequencyBinCount);
-      const vuL = document.getElementById('djVuL');
-      const vuR = document.getElementById('djVuR');
 
       function updateVisualMeters() {
         if (!isLive) return;
@@ -1560,7 +1710,7 @@
         vu.style.width = pct + '%';
         vuPct.innerText = `${Math.round(pct)}%`;
 
-        // Consola DJ de la música al aire
+        // Modulación Consola Digital de la música al aire (Niveles en Bloques Paralelos)
         if (!aMusic.paused) {
           musicAnalyser.getByteFrequencyData(djDataArray);
           
@@ -1568,36 +1718,12 @@
           for (let i = 0; i < djDataArray.length; i++) sumMusic += djDataArray[i];
           let mPct = Math.min(100, (sumMusic / djDataArray.length / 128) * 100);
           
-          vuL.style.width = `${mPct}%`;
-          vuR.style.width = `${Math.min(100, mPct * 0.95)}%`;
-
-          // Dibujo de ondas dinámicas tipo radio digital
-          canvasCtx.fillStyle = '#02040a';
-          canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-          canvasCtx.lineWidth = 2;
-          canvasCtx.strokeStyle = '#06b6d4';
-          canvasCtx.beginPath();
-
-          const sliceWidth = canvas.width / djDataArray.length;
-          let x = 0;
-
-          for (let i = 0; i < djDataArray.length; i++) {
-            const v = djDataArray[i] / 128.0;
-            const y = (v * canvas.height) / 2;
-
-            if (i === 0) canvasCtx.moveTo(x, y);
-            else canvasCtx.lineTo(x, y);
-
-            x += sliceWidth;
-          }
-          canvasCtx.stroke();
+          let mPctL = mPct;
+          let mPctR = Math.min(100, mPct * 0.94);
+          updateParallelLedMeters(mPctL, mPctR);
 
         } else {
-          vuL.style.width = '0%';
-          vuR.style.width = '0%';
-          canvasCtx.fillStyle = '#02040a';
-          canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+          updateParallelLedMeters(0, 0);
         }
 
         requestAnimationFrame(updateVisualMeters);
@@ -1750,8 +1876,10 @@
 
       document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
       document.getElementById('adsBanner').style.display = 'none';
-      document.getElementById('djVuL').style.width = '0%';
-      document.getElementById('djVuR').style.width = '0%';
+      updateParallelLedMeters(0, 0);
+
+      const nextBox = document.getElementById('trackBoxNext');
+      if (nextBox) nextBox.classList.remove('alert-imminent');
 
       if (processorNode) { try { processorNode.disconnect(); } catch(e){} processorNode = null; }
       if (audioContext) { try { audioContext.close(); } catch(e){} audioContext = null; }
