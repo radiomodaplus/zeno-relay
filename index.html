@@ -6,8 +6,6 @@
   <title>EMISORASplus isecas</title>
   
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
   <style>
     :root {
@@ -30,7 +28,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 8px; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-    /* RELOJ DIGITAL DE CABINA (COLOMBIA) */
+    /* RELOJ DIGITAL OFICIAL COLOMBIA */
     .studio-clock-bar {
       background: #02040a; border: 1px solid #1a2c4e; border-radius: 8px;
       padding: 6px 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
@@ -54,11 +52,10 @@
 
     .top-actions { display: flex; align-items: center; gap: 5px; }
     .btn-crown {
-      background: linear-gradient(135deg, #f59e0b, #d97706); border: 1px solid #fde047; color: #fff;
+      background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #6ee7b7; color: #fff;
       padding: 6px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; cursor: pointer;
-      display: flex; align-items: center; gap: 4px; box-shadow: 0 0 10px rgba(245,158,11,0.5);
+      display: flex; align-items: center; gap: 4px; box-shadow: 0 0 10px rgba(16,185,129,0.5);
     }
-    .btn-crown.pro-active { background: linear-gradient(135deg, #10b981, #059669); border-color: #6ee7b7; box-shadow: 0 0 10px rgba(16,185,129,0.5); }
 
     .btn-icon {
       background: #1e293b; border: 1px solid #475569; color: #fff; width: 34px; height: 34px;
@@ -66,7 +63,7 @@
     }
     .btn-icon.monitor-active { background: #0284c7; border-color: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
 
-    /* MEDIDOR DE RED BLINDADO */
+    /* MEDIDOR DE RED */
     .net-box {
       background: #090e1a; border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px;
       margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.65rem; font-weight: 800;
@@ -76,7 +73,7 @@
     .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
     .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
 
-    /* VÚMETRO MASTER SUPERIOR */
+    /* VÚMETRO MASTER CONTINUO */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
@@ -86,11 +83,6 @@
     .stinger-banner {
       display: none; background: linear-gradient(135deg, #3b0764, #1e1b4b);
       border: 2px solid var(--c-purple); border-radius: 8px; padding: 6px 10px;
-      margin-bottom: 6px; align-items: center; justify-content: space-between;
-    }
-    .ads-banner {
-      display: none; background: linear-gradient(135deg, #0c4a6e, #075985);
-      border: 2px solid var(--c-blue); border-radius: 8px; padding: 6px 10px;
       margin-bottom: 6px; align-items: center; justify-content: space-between;
     }
 
@@ -145,7 +137,7 @@
     }
     .air-nav-btn:active { background: var(--c-green); color: #000; transform: scale(0.92); }
 
-    /* CONSOLA DIGITAL PARALELA CON ONDAS */
+    /* CONSOLA DIGITAL ONDAS Y BARRAS LED PARALELAS */
     .dj-rack-meter {
       background: #02050e; border: 1px solid #1a2c4e; border-radius: 8px;
       padding: 6px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px;
@@ -153,9 +145,7 @@
     .rack-header {
       display: flex; justify-content: space-between; align-items: center; font-size: 0.58rem; font-weight: 900; color: #38bdf8; letter-spacing: 0.5px;
     }
-    .rack-main-stage {
-      display: flex; gap: 8px; align-items: center; height: 52px;
-    }
+    .rack-main-stage { display: flex; gap: 8px; align-items: center; height: 50px; }
     .wave-canvas-box {
       flex: 1.4; height: 100%; background: #010307; border: 1px solid #101c36; border-radius: 4px; overflow: hidden;
     }
@@ -164,19 +154,12 @@
     .parallel-led-box {
       flex: 1; display: flex; gap: 8px; height: 100%; align-items: center; justify-content: center;
     }
-    .meter-column-wrap {
-      display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%;
-    }
-    .meter-column {
-      display: flex; flex-direction: column-reverse; gap: 1.5px; width: 100%; height: 42px;
-    }
-    .meter-col-label {
-      font-size: 0.5rem; font-weight: 900; color: var(--text-muted); text-align: center; margin-top: 1px;
-    }
-    .led-block {
-      height: 2px; width: 100%; border-radius: 1px; background: #0b1329; transition: background 0.03s ease;
-    }
-    .led-block.active-green { background: #10b981; box-shadow: 0 0 4px #10b981; }
+    .meter-column-wrap { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; }
+    .meter-column { display: flex; flex-direction: column-reverse; gap: 1.5px; width: 100%; height: 40px; }
+    .meter-col-label { font-size: 0.5rem; font-weight: 900; color: var(--text-muted); text-align: center; margin-top: 1px; }
+    
+    .led-block { height: 2px; width: 100%; border-radius: 1px; background: #0b1329; transition: background 0.03s ease; }
+    .led-block.active-green { background: #10b981; box-shadow: 0 0 3px #10b981; }
     .led-block.active-yellow { background: #facc15; box-shadow: 0 0 4px #facc15; }
     .led-block.active-red { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
 
@@ -215,7 +198,7 @@
     .btn-panel-main {
       width: 100%; padding: 10px; background: linear-gradient(90deg, #6366f1, #8b5cf6);
       color: #fff; border: none; border-radius: 8px; font-weight: 900; font-size: 0.78rem; text-align: center;
-      margin-bottom: 6px; cursor: pointer; box-shadow: 0 0 10px rgba(99,102,241,0.3);
+      margin-bottom: 6px; cursor: pointer;
     }
 
     .file-loader { position: relative; overflow: hidden; margin-bottom: 6px; }
@@ -289,7 +272,6 @@
     .btn-action-small:active { background: var(--c-blue); }
     .btn-action-small.btn-del { border-color: var(--c-red); color: var(--c-red); }
 
-    /* ESTILOS DE LA CARPETA RELOJ (HASTA 10 AUDIOS/VIDEOS) */
     .clock-slot-item {
       background: #0d172e; border: 1px solid #1e3a6d; border-radius: 6px;
       padding: 6px 8px; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;
@@ -298,10 +280,10 @@
 </head>
 <body>
 
-  <!-- RELOJ DIGITAL OFICIAL DE CABINA (HORA DE COLOMBIA EN TIEMPO REAL) -->
+  <!-- RELOJ DIGITAL OFICIAL COLOMBIA -->
   <div class="studio-clock-bar">
     <div>
-      <div style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">HORA OFICIAL COLOMBIA</div>
+      <div style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">HORA COLOMBIA</div>
       <div id="colombiaTimeDisplay" class="clock-time">--:--:--</div>
     </div>
     <div style="text-align:right;">
@@ -316,16 +298,15 @@
       📻 <span>EMISORASplus isecas</span>
     </div>
     <div class="top-actions">
-      <button id="btnProBadge" class="btn-crown pro-active" onclick="openProModal()">👑 PRO</button>
+      <button id="btnProBadge" class="btn-crown pro-active">👑 PRO</button>
       <button class="btn-icon" onclick="openPlaylistModal()" title="Panel Principal de Pistas">🎛️</button>
-      <button id="btnCalendar" class="btn-icon" onclick="openCalendarModal()" title="Publicidad y Calendario">📅</button>
       <button class="btn-icon" onclick="openHelpModal()" title="Manual de Ayuda">❓</button>
       <button id="btnMonitor" class="btn-icon" onclick="toggleLocalMonitoring()" title="Monitoreo">🎧</button>
       <button class="btn-icon" onclick="openSettingsModal()" title="Ajustes">⚙</button>
     </div>
   </div>
 
-  <!-- MEDIDOR DE RED BLINDADO -->
+  <!-- MEDIDOR DE RED -->
   <div class="net-box">
     <div style="display:flex; align-items:center; gap:6px;">
       <div id="netBars" class="signal-bars good">
@@ -336,7 +317,7 @@
     <div style="color:var(--c-gold); font-size:0.6rem;" id="timerLiveBox">TIEMPO: ILIMITADO</div>
   </div>
 
-  <!-- VÚMETRO MASTER (CONTINUO) -->
+  <!-- VÚMETRO MASTER CONTINUO -->
   <div class="card">
     <div class="vu-header">
       <span>SALIDA AL AIRE (MASTER BROADCAST)</span>
@@ -347,15 +328,7 @@
     </div>
   </div>
 
-  <!-- BANNERS DINÁMICOS -->
-  <div class="ads-banner" id="adsBanner">
-    <div style="display:flex; flex-direction:column;">
-      <span style="font-size:0.75rem; font-weight:900; color:#38bdf8;">📢 TANDA COMERCIAL AL AIRE</span>
-      <span style="font-size:0.65rem; color:#bae6fd;" id="adsBannerTitle">Emitiendo tanda...</span>
-    </div>
-    <button onclick="stopCurrentAd()" style="background:var(--c-red); border:none; color:#fff; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.68rem; cursor:pointer;">⏹ CORTAR</button>
-  </div>
-
+  <!-- BANNERS -->
   <div class="stinger-banner" id="stingerBanner">
     <div style="display:flex; flex-direction:column;">
       <span style="font-size:0.75rem; font-weight:900; color:#f0abfc;" id="bannerStingerName">🔊 PISADOR SONANDO</span>
@@ -366,13 +339,13 @@
 
   <!-- COLA DE 3 PISTAS -->
   <div class="queue-grid">
-    <!-- PISTA 1: AL AIRE CON ICONO DE RAYO (⚡) Y NUEVO ICONO RELOJ (🕒) -->
+    <!-- PISTA 1: AL AIRE CON ICONO ⚡ Y BOTÓN 🕒 -->
     <div class="track-box current">
       <div class="track-tag-row">
         <div class="track-tag">● 1. EN EL AIRE (ACTUAL)</div>
         <div style="display:flex; align-items:center; gap:4px;">
           <div id="airLightningBadge" style="display:none;" class="tag-action-icon tag-lightning" title="Esta pista aplica para rayito">⚡</div>
-          <button id="airClockBtn" class="tag-action-icon tag-clock-btn" onclick="openClockModal()" title="Audios/Videos entre canciones">🕒</button>
+          <button id="airClockBtn" class="tag-action-icon tag-clock-btn" onclick="openClockModal()" title="Separador de Reloj entre canciones">🕒</button>
         </div>
       </div>
       <div class="track-row-air">
@@ -384,7 +357,7 @@
         <button class="air-nav-btn" onclick="skipToNextTrack()" title="Siguiente pista (⏭)">⏭</button>
       </div>
 
-      <!-- CONSOLA DIGITAL PROFESIONAL: ONDAS Y BARRAS LED PARALELAS -->
+      <!-- CONSOLA DIGITAL CON ONDAS Y LEDS PARALELOS -->
       <div class="dj-rack-meter">
         <div class="rack-header">
           <span>CONSOLE DIGITAL STEREO & WAVE</span>
@@ -392,7 +365,7 @@
         </div>
         <div class="rack-main-stage">
           <div class="wave-canvas-box">
-            <canvas id="djWaveCanvas" width="220" height="52"></canvas>
+            <canvas id="djWaveCanvas" width="220" height="50"></canvas>
           </div>
           <div class="parallel-led-box">
             <div class="meter-column-wrap">
@@ -408,7 +381,7 @@
       </div>
     </div>
 
-    <!-- PISTA 2: SIGUIENTE EN COLA -->
+    <!-- PISTA 2: SIGUIENTE EN COLA (SEGUNDERO Y ALERTA ROJA) -->
     <div class="track-box next" id="trackBoxNext">
       <div class="track-tag-row">
         <div class="track-tag">▶ 2. SIGUIENTE EN COLA</div>
@@ -456,7 +429,7 @@
     </button>
   </div>
 
-  <!-- CONTROLES DE REPRODUCCIÓN (PLAY, STOP, SIGUIENTE, MODO) -->
+  <!-- CONTROLES DE REPRODUCCIÓN -->
   <div class="player-controls">
     <button id="btnPlayMusic" class="btn-ctrl" onclick="togglePlayMusic()">▶ PLAY</button>
     <button class="btn-ctrl btn-stop-music" onclick="stopMusicTrack()">⏹ STOP</button>
@@ -471,21 +444,20 @@
   </div>
 
   <!-- BOTÓN AL AIRE BLINDADO -->
-  <button id="btnLive" class="btn-main-stream" onclick="toggleStream()">
+  <button id="btnLive" class="btn-main-stream" onclick="toggleBroadcast()">
     INICIAR TRANSMISIÓN EN VIVO
   </button>
 
   <div class="terminal-box" id="terminal">> Listo. Configura tu emisora y pulsa transmitir.</div>
 
-  <!-- AUDIOS INTERNOS -->
+  <!-- ELEMENTOS DE AUDIO -->
   <audio id="audioMusic" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioStinger1" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioStinger2" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioLightning" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioAds" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioClockSlot" style="display:none;" crossorigin="anonymous"></audio>
 
-  <!-- ==================== MODAL DE CARPETA RELOJ (🕒) ==================== -->
+  <!-- MODAL DE CARPETA RELOJ (🕒) -->
   <div class="modal-overlay" id="clockModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -494,7 +466,7 @@
       </div>
 
       <div style="font-size:0.68rem; color:#cbd5e1; margin-bottom:8px; line-height:1.4;">
-        Carga hasta <b>10 audios o videos</b>. Si la función está activa, cada vez que finalice una canción al aire, sonará un archivo de esta lista antes de dar paso a la siguiente pista en cola.
+        Carga hasta <b>10 audios o videos</b>. Si la función está activa, cada vez que finalice una canción al aire, sonará un archivo de esta lista antes de dar paso a la siguiente pista.
       </div>
 
       <div style="display:flex; align-items:center; justify-content:space-between; background:#091226; border:1px solid #1e3a6d; border-radius:8px; padding:8px; margin-bottom:10px;">
@@ -506,8 +478,8 @@
 
       <div class="form-group">
         <label style="color:var(--c-blue);">Subir Archivo a Reloj (<span id="clockCountDisplay">0</span>/10)</label>
-        <div class="file-select-box" style="border-color:#38bdf8;">
-          <span id="lblClockTempName" style="font-size:0.7rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">Sin archivo seleccionado</span>
+        <div class="file-select-box">
+          <span id="lblClockTempName" style="font-size:0.7rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">Sin archivo</span>
           <label class="btn-ctrl" style="padding:4px 8px; background:#0284c7; cursor:pointer; font-weight:900;">
             ELEGIR
             <input type="file" accept="audio/*, video/*" style="display:none;" onchange="handleClockFileSelect(event)">
@@ -521,11 +493,11 @@
       <div style="font-size:0.7rem; font-weight:900; color:var(--c-yellow); margin:10px 0 4px 0;">LISTA DE ARCHIVOS GUARDADOS:</div>
       <div id="clockSlotsContainer" style="max-height:35vh; overflow-y:auto;"></div>
 
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeClockModal()">GUARDAR Y CERRAR</button>
+      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeClockModal()">CERRAR</button>
     </div>
   </div>
 
-  <!-- ==================== MODAL DEL MANUAL DE AYUDA (❓) ==================== -->
+  <!-- MODAL DEL MANUAL DE AYUDA (❓) -->
   <div class="modal-overlay" id="helpModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -533,109 +505,44 @@
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeHelpModal()">✕</button>
       </div>
 
-      <div class="help-section">
-        <div class="help-title">🛡️ 1. Blindaje de Transmisión</div>
-        <div class="help-desc">
-          Tu transmisión está <b>protegida y blindada</b>: no se desconectará por tiempo ni por segundo plano. Solo se detiene si pulsas voluntariamente <b>DETENER TRANSMISIÓN</b>.
+      <div class="help-section" style="background:#09132b; border:1px solid #1e3a6d; border-radius:8px; padding:8px; margin-bottom:8px;">
+        <div style="font-size:0.78rem; font-weight:900; color:var(--c-gold); margin-bottom:4px;">🛡️ 1. Blindaje de Transmisión</div>
+        <div style="font-size:0.68rem; color:#cbd5e1; line-height:1.45;">
+          Tu transmisión está <b>protegida y blindada</b>. No se desconectará por tiempo ni por segundo plano. Solo se detiene si pulsas voluntariamente <b>DETENER TRANSMISIÓN</b>.
         </div>
       </div>
 
-      <div class="help-section">
-        <div class="help-title">🕒 2. Separador de Reloj entre Canciones</div>
-        <div class="help-desc">
+      <div class="help-section" style="background:#09132b; border:1px solid #1e3a6d; border-radius:8px; padding:8px; margin-bottom:8px;">
+        <div style="font-size:0.78rem; font-weight:900; color:var(--c-gold); margin-bottom:4px;">🕒 2. Separador de Reloj entre Canciones</div>
+        <div style="font-size:0.68rem; color:#cbd5e1; line-height:1.45;">
           Tocando el icono <b>🕒</b> cargas hasta 10 audios/videos. Al activarlo, cada vez que acabe una canción al aire se emitirá un separador de reloj antes de continuar con la siguiente.
         </div>
       </div>
 
-      <div class="help-section">
-        <div class="help-title">⚡ 3. Modo Rayito (≥ 1 Minuto)</div>
-        <div class="help-desc">
+      <div class="help-section" style="background:#09132b; border:1px solid #1e3a6d; border-radius:8px; padding:8px; margin-bottom:8px;">
+        <div style="font-size:0.78rem; font-weight:900; color:var(--c-gold); margin-bottom:4px;">⚡ 3. Modo Rayito (≥ 1 Minuto)</div>
+        <div style="font-size:0.68rem; color:#cbd5e1; line-height:1.45;">
           Aplica únicamente a canciones con duración mayor o igual a 1 minuto (60s). Dispara el pisador automáticamente al <b>segundo 0:03</b>.
         </div>
       </div>
 
-      <div class="help-section">
-        <div class="help-title">🎙️ 4. Micrófono Pro y Consola DJ</div>
-        <div class="help-desc">
-          Sonido cálido y nítido con compresor de radio. El visualizador DJ muestra en tiempo real las ondas senoidales y las columnas LED paralelas L y R de la pista al aire.
-        </div>
-      </div>
-
-      <button class="btn-main-stream" style="padding:10px; margin-top:6px;" onclick="closeHelpModal()">ENTENDIDO / CERRAR</button>
+      <button class="btn-main-stream" style="padding:10px;" onclick="closeHelpModal()">CERRAR GUÍA</button>
     </div>
   </div>
 
-  <!-- ==================== MODAL DEL PANEL PRINCIPAL (PISTAS) ==================== -->
+  <!-- MODAL PANEL PRINCIPAL (PISTAS) -->
   <div class="modal-overlay" id="playlistModal">
     <div class="modal-box">
       <div class="modal-header">
         <div style="font-size:0.85rem; font-weight:900; color:var(--c-blue);">🎛️ PANEL PRINCIPAL DE PISTAS</div>
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closePlaylistModal()">✕</button>
       </div>
-
-      <div style="font-size:0.68rem; color:var(--text-muted); margin-bottom:8px;">
-        Pistas reproducidas en <b style="color:var(--c-red);">ROJO</b>. Pistas aptas para rayito llevan el icono <b style="color:var(--c-gold);">⚡</b>.
-      </div>
-
       <div class="playlist-scroll" id="playlistContainer"></div>
-
       <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closePlaylistModal()">CERRAR PANEL</button>
     </div>
   </div>
 
-  <!-- ==================== MODAL DE CALENDARIO / PUBLICIDAD ==================== -->
-  <div class="modal-overlay" id="calendarModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:var(--c-purple);">📅 COMERCIALES (MÁXIMO 5 TANDAS)</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeCalendarModal()">✕</button>
-      </div>
-
-      <div id="adFormContainer" style="background:#091226; border:1px solid #1e3a6d; border-radius:10px; padding:10px; margin-bottom:10px;">
-        <div class="form-group">
-          <label style="color:var(--c-blue);">Nombre de la Tanda</label>
-          <input type="text" id="newAdName" placeholder="Ej: Comercial Patrocinador">
-        </div>
-        <div class="form-group">
-          <label style="color:var(--c-yellow);">Archivo</label>
-          <div class="file-select-box">
-            <span id="lblNewAdFileName" style="font-size:0.7rem; color:#fff;">Sin archivo</span>
-            <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
-              SUBIR
-              <input type="file" accept="audio/*, video/*" style="display:none;" onchange="handleNewAdFile(event)">
-            </label>
-          </div>
-        </div>
-        <div class="form-group">
-          <label style="color:var(--c-green);">Minuto de la hora (0 a 59)</label>
-          <input type="number" id="newAdMinute" min="0" max="59" value="30">
-        </div>
-        <button class="btn-ctrl" style="width:100%; background:var(--c-green); font-weight:900; padding:8px;" onclick="saveNewAdSlot()">
-          GUARDAR TANDA
-        </button>
-      </div>
-
-      <div id="adSlotsListContainer"></div>
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeCalendarModal()">CERRAR</button>
-    </div>
-  </div>
-
-  <!-- ==================== MODAL DE PLAN PRO ==================== -->
-  <div class="modal-overlay" id="proModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:var(--c-gold);">👑 PLAN PRO ILIMITADO</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeProModal()">✕</button>
-      </div>
-      <div style="background:#064e3b; border:1px solid #34d399; border-radius:10px; padding:10px; margin-bottom:10px;">
-        <div style="font-size:0.85rem; color:#fff; font-weight:900;">👑 CUENTA PRO TOTALMENTE BLINDADA</div>
-        <p style="font-size:0.7rem; color:#a7f3d0; margin-top:4px;">Transmisión continua sin límites de tiempo y funciones de cabina 100% activas.</p>
-      </div>
-      <button class="btn-main-stream" style="padding:10px;" onclick="closeProModal()">CERRAR</button>
-    </div>
-  </div>
-
-  <!-- ==================== MODAL DE AJUSTES ==================== -->
+  <!-- MODAL DE AJUSTES -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -644,15 +551,7 @@
       </div>
 
       <div class="form-group">
-        <label>Tipo de Servidor</label>
-        <select id="serverType" onchange="adjustServerDefaults(this.value)">
-          <option value="zeno">Zeno Media (link.zeno.fm)</option>
-          <option value="icecast">Icecast Universal / SonicPanel / Otro</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Servidor / Host</label>
+        <label>Servidor / Host (Zeno Media)</label>
         <input type="text" id="host" value="link.zeno.fm">
       </div>
       <div style="display:flex; gap:6px;">
@@ -662,15 +561,11 @@
       <div class="form-group"><label>Usuario</label><input type="text" id="user" value="source"></div>
       <div class="form-group">
         <div style="display:flex; justify-content:space-between;">
-          <label>Contraseña</label>
+          <label>Contraseña (Stream Key)</label>
           <span style="font-size:0.65rem; color:var(--c-blue); cursor:pointer;" onclick="togglePasswordVisibility()">👁 Ver / Ocultar</span>
         </div>
-        <input type="password" id="password" placeholder="Tu Stream Key">
+        <input type="password" id="password" placeholder="Tu contraseña de Zeno">
       </div>
-
-      <button class="btn-ctrl" style="width:100%; background:rgba(239, 68, 68, 0.15); border-color:var(--c-red); color:var(--c-red); margin:6px 0 12px 0; font-weight:800; padding:8px;" onclick="promptResetStation()">
-        ⚠️ RESTABLECER EMISORA
-      </button>
 
       <div style="font-size:0.7rem; font-weight:900; color:var(--c-purple); margin:6px 0 4px 0;">🎙 CARGAR AUDIOS DE PISADORES</div>
       <div class="file-select-box">
@@ -713,8 +608,6 @@
   <script>
     const RELAY_URL = "wss://zeno-relay.onrender.com";
 
-    // BLINDAJE PRO TOTAL (SIN DETENCIONES POR TIEMPO)
-    let isPro = true;
     let isLive = false;
     let micMuted = false;
     let duckingEnabled = true;
@@ -729,60 +622,37 @@
     let currentIndex = 0;
     let activeStingerAudio = null;
 
-    // Web Audio Nodes
+    // Web Audio Nodes (Directos del código original)
     let audioContext = null;
     let mediaStream = null;
     let micSourceNode = null;
-    let micFilterNode = null;
-    let micEqWarmthNode = null;
-    let micEqAirNode = null;
-    let micCompressorNode = null;
     let micGainNode = null;
-
     let musicSourceNode = null;
     let musicGainNode = null;
     let musicAnalyser = null;
-    let musicDataArray = null;
-    let musicWaveArray = null;
-
-    let adsSourceNode = null;
-    let adsGainNode = null;
-    let clockSourceNode = null;
-    let clockGainNode = null;
     let masterMixerNode = null;
     let monitorGainNode = null;
     let processorNode = null;
     let mp3Encoder = null;
     let ws = null;
 
-    let packetsSentCount = 0;
-    let statsInterval = null;
-
-    // CARPETA RELOJ (HASTA 10 AUDIOS/VIDEOS)
-    let clockSlots = []; // { id, name, file, url }
+    // Carpeta Reloj
+    let clockSlots = [];
     let clockTempFile = null;
     let clockFunctionActive = false;
     let nextClockSlotIndex = 0;
-
-    // COMERCIALES
-    let adSlots = [];
-    let temporaryAdFile = null;
-    let adIntervalChecker = null;
-    let currentAdPlayingIndex = -1;
 
     const aMusic = document.getElementById('audioMusic');
     const aS1 = document.getElementById('audioStinger1');
     const aS2 = document.getElementById('audioStinger2');
     const aLight = document.getElementById('audioLightning');
-    const aAds = document.getElementById('audioAds');
     const aClock = document.getElementById('audioClockSlot');
 
     // ==========================================
-    // RELOJ DIGITAL OFICIAL DE COLOMBIA
+    // RELOJ DIGITAL COLOMBIA
     // ==========================================
     function updateColombiaStudioClock() {
       const now = new Date();
-      // Formato Hora Colombia
       const timeStr = now.toLocaleTimeString('es-CO', {
         timeZone: 'America/Bogota',
         hour12: false,
@@ -790,7 +660,6 @@
         minute: '2-digit',
         second: '2-digit'
       });
-      // Formato Fecha Colombia
       const dateStr = now.toLocaleDateString('es-CO', {
         timeZone: 'America/Bogota',
         weekday: 'short',
@@ -806,7 +675,7 @@
     updateColombiaStudioClock();
 
     // ==========================================
-    // VÚMETRO DIGITAL PARALELO (16 NIVELES L/R)
+    // VÚMETRO DIGITAL PARALELO
     // ==========================================
     const TOTAL_LEDS = 16;
     function buildLedBlocks() {
@@ -912,7 +781,7 @@
           }));
           updateTrackBoxes();
           renderPlaylistModal();
-          log(`Se restauraron ${playlist.length} pistas de cabina.`);
+          log(`Restauradas ${playlist.length} pistas guardadas.`);
           if (playlist.length > 0 && !aMusic.src) {
             setupTrackSource(0);
           }
@@ -921,9 +790,9 @@
     }
 
     // ==========================================
-    // AUDIO CONTEXT Y VISUALIZADOR DJ CONTINUO
+    // AUDIO ENGINE Y VISUALIZADOR DJ
     // ==========================================
-    function ensureAudioContext() {
+    function ensureAudioEngine() {
       if (!audioContext || audioContext.state === 'closed') {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
@@ -931,7 +800,9 @@
         audioContext.resume();
       }
 
-      if (!masterMixerNode) masterMixerNode = audioContext.createGain();
+      if (!masterMixerNode) {
+        masterMixerNode = audioContext.createGain();
+      }
 
       if (!monitorGainNode) {
         monitorGainNode = audioContext.createGain();
@@ -948,8 +819,6 @@
         musicAnalyser = audioContext.createAnalyser();
         musicAnalyser.fftSize = 256;
         musicAnalyser.smoothingTimeConstant = 0.75;
-        musicDataArray = new Uint8Array(musicAnalyser.frequencyBinCount);
-        musicWaveArray = new Uint8Array(musicAnalyser.frequencyBinCount);
 
         musicSourceNode.connect(musicGainNode);
         musicGainNode.connect(musicAnalyser);
@@ -961,6 +830,8 @@
       const canvas = document.getElementById('djWaveCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
+      const freqData = new Uint8Array(128);
+      const waveData = new Uint8Array(128);
 
       function draw() {
         requestAnimationFrame(draw);
@@ -978,53 +849,45 @@
           return;
         }
 
-        musicAnalyser.getByteFrequencyData(musicDataArray);
-        musicAnalyser.getByteTimeDomainData(musicWaveArray);
+        musicAnalyser.getByteFrequencyData(freqData);
+        musicAnalyser.getByteTimeDomainData(waveData);
 
-        // Dibujo de ondas dinámicas
+        // Ondas
         ctx.fillStyle = 'rgba(1, 3, 7, 0.4)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#06b6d4';
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = '#06b6d4';
         ctx.beginPath();
 
-        const sliceWidth = canvas.width / musicWaveArray.length;
+        const sliceWidth = canvas.width / waveData.length;
         let x = 0;
 
-        for (let i = 0; i < musicWaveArray.length; i++) {
-          const v = musicWaveArray[i] / 128.0;
+        for (let i = 0; i < waveData.length; i++) {
+          const v = waveData[i] / 128.0;
           const y = (v * canvas.height) / 2;
           if (i === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
           x += sliceWidth;
         }
         ctx.stroke();
-        ctx.shadowBlur = 0;
 
-        // Modulación LED paralela
-        let bSum = 0, tSum = 0;
-        const half = Math.floor(musicDataArray.length / 2);
-        for (let i = 0; i < half; i++) bSum += musicDataArray[i];
-        for (let i = half; i < musicDataArray.length; i++) tSum += musicDataArray[i];
+        // Bloques LED
+        let sumL = 0, sumR = 0;
+        for (let i = 0; i < 64; i++) sumL += freqData[i];
+        for (let i = 64; i < 128; i++) sumR += freqData[i];
 
-        const avgL = (bSum / half / 255) * 100;
-        const avgR = (tSum / (musicDataArray.length - half) / 255) * 100;
+        const avgL = (sumL / 64 / 255) * 100;
+        const avgR = (sumR / 64 / 255) * 100;
 
-        updateParallelLedMeters(Math.min(100, avgL * 1.35), Math.min(100, avgR * 1.35));
+        updateParallelLedMeters(Math.min(100, avgL * 1.3), Math.min(100, avgR * 1.3));
       }
       draw();
     }
 
     // ==========================================
-    // CARPETA DE RELOJ (ENTRE CANCIONES - HASTA 10)
+    // CARPETA RELOJ (🕒)
     // ==========================================
-    function openClockModal() {
-      renderClockSlots();
-      document.getElementById('clockModal').style.display = 'flex';
-    }
+    function openClockModal() { renderClockSlots(); document.getElementById('clockModal').style.display = 'flex'; }
     function closeClockModal() { document.getElementById('clockModal').style.display = 'none'; }
 
     function handleClockFileSelect(e) {
@@ -1035,14 +898,8 @@
     }
 
     function addClockSlot() {
-      if (clockSlots.length >= 10) {
-        alert("Límite alcanzado: máximo 10 archivos en la carpeta de Reloj.");
-        return;
-      }
-      if (!clockTempFile) {
-        alert("Elige un archivo de audio o video primero.");
-        return;
-      }
+      if (clockSlots.length >= 10) { alert("Máximo 10 archivos en Reloj."); return; }
+      if (!clockTempFile) { alert("Elige un archivo primero."); return; }
 
       clockSlots.push({
         id: Date.now(),
@@ -1051,9 +908,9 @@
       });
 
       clockTempFile = null;
-      document.getElementById('lblClockTempName').innerText = "Sin archivo seleccionado";
+      document.getElementById('lblClockTempName').innerText = "Sin archivo";
       renderClockSlots();
-      log(`Archivo agregado a la carpeta Reloj (${clockSlots.length}/10).`);
+      log(`Archivo agregado a Reloj (${clockSlots.length}/10).`);
     }
 
     function renderClockSlots() {
@@ -1082,7 +939,6 @@
     function deleteClockSlot(idx) {
       clockSlots.splice(idx, 1);
       renderClockSlots();
-      log("Archivo retirado de carpeta Reloj.");
     }
 
     function toggleClockActiveState() {
@@ -1106,7 +962,7 @@
     }
 
     // ==========================================
-    // REPRODUCCIÓN Y FLUJO DE PISTAS
+    // REPRODUCCIÓN DE PISTAS
     // ==========================================
     function setupTrackSource(idx) {
       if (playlist.length === 0 || !playlist[idx]) return;
@@ -1117,7 +973,7 @@
 
     function playTrack(idx) {
       if (playlist.length === 0 || !playlist[idx]) return;
-      ensureAudioContext();
+      ensureAudioEngine();
       currentIndex = idx;
       rayitoIntroFired = false;
       updateTrackBoxes();
@@ -1129,7 +985,7 @@
     }
 
     function togglePlayMusic() {
-      ensureAudioContext();
+      ensureAudioEngine();
       const btn = document.getElementById('btnPlayMusic');
       if (aMusic.paused) {
         if (!aMusic.src && playlist.length > 0) playTrack(currentIndex);
@@ -1143,7 +999,6 @@
 
     function playNextTrack() {
       if (playlist.length === 0) return;
-      if (checkAndPlayScheduledAd()) return;
 
       if (playlist[currentIndex]) {
         playlist[currentIndex].played = true;
@@ -1156,16 +1011,14 @@
       }
     }
 
-    // AL TERMINAR CANCIÓN: DISPARA RELOJ (SI ESTÁ ACTIVO) O CONTINÚA
     aMusic.onended = () => {
       if (playlist[currentIndex]) {
         playlist[currentIndex].played = true;
       }
 
-      // Si Reloj está activo y hay audios cargados, suena antes de la siguiente pista
       if (clockFunctionActive && clockSlots.length > 0) {
         playClockSlotTransition();
-      } else if (!checkAndPlayScheduledAd()) {
+      } else {
         playNextTrack();
       }
     };
@@ -1173,16 +1026,14 @@
     function playClockSlotTransition() {
       const slot = clockSlots[nextClockSlotIndex % clockSlots.length];
       nextClockSlotIndex++;
-      log(`🕒 Sonando separador de Reloj: "${slot.name}" antes de la siguiente pista.`);
+      log(`🕒 Sonando separador de Reloj: "${slot.name}".`);
 
       aClock.src = slot.url;
       aClock.currentTime = 0;
       aClock.play().catch(e => console.log(e));
 
       aClock.onended = () => {
-        if (!checkAndPlayScheduledAd()) {
-          playNextTrack();
-        }
+        playNextTrack();
       };
     }
 
@@ -1214,7 +1065,7 @@
           nextBox.classList.remove('alert-imminent');
         }
 
-        // RAYITO: Solo si dura 1 minuto o más (>= 60s) al segundo 3
+        // RAYITO: Solo si dura >= 60s al segundo 3 exacto
         if (lightningEnabled && aLight.src && dur >= 60) {
           if (cur >= 3 && cur < 4 && !rayitoIntroFired) {
             rayitoIntroFired = true;
@@ -1246,7 +1097,7 @@
 
     function repeatCurrentTrack() {
       if (playlist.length === 0) return;
-      ensureAudioContext();
+      ensureAudioEngine();
       aMusic.currentTime = 0;
       aMusic.play();
       rayitoIntroFired = false;
@@ -1267,7 +1118,7 @@
     }
 
     // ========================================================
-    // TRANSMISIÓN BLINDADA TOTAL (ANTI-DETENCIÓN)
+    // TRANSMISIÓN EN VIVO PURA (CONEXIÓN DIRECTA Y ROBUSTA)
     // ========================================================
     async function toggleBroadcast() {
       if (isLive) {
@@ -1276,11 +1127,11 @@
         await startBroadcast();
       }
     }
-    const toggleStream = toggleBroadcast;
 
     async function startBroadcast() {
       saveSettings();
 
+      // Lectura en tiempo real del input de contraseña
       const host = document.getElementById('host').value.trim();
       const port = document.getElementById('port').value.trim();
       let mount = document.getElementById('mount').value.trim();
@@ -1288,7 +1139,7 @@
       const password = document.getElementById('password').value.trim();
 
       if (!host || !port || !mount || !password) {
-        alert("Completa todos los datos de tu emisora en Ajustes ⚙.");
+        alert("Pega la contraseña (Stream Key) y verifica los datos en Ajustes ⚙.");
         openSettingsModal();
         return;
       }
@@ -1298,25 +1149,20 @@
         document.getElementById('mount').value = mount;
       }
 
-      log("1. Accediendo al micrófono...");
+      log("Solicitando acceso al micrófono...");
       try {
         if (!mediaStream) {
           mediaStream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              channelCount: 1,
-              echoCancellation: true,
-              noiseSuppression: true,
-              autoGainControl: false
-            }
+            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
           });
         }
-        log('<span style="color:var(--c-green)">Micrófono blindado activado.</span>');
+        log('<span style="color:var(--c-green)">Micrófono activado con éxito.</span>');
       } catch (err) {
-        log(`<span style="color:var(--c-red)">Error micrófono: ${err.name}</span>`);
+        log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
         return;
       }
 
-      log(`2. Conectando con servidor en ${host}...`);
+      log(`Conectando con el relay y autenticando en Zeno Media...`);
 
       try {
         ws = new WebSocket(RELAY_URL);
@@ -1333,7 +1179,7 @@
             password: password
           }));
 
-          // Heartbeat para que la conexión nunca expire
+          // Heartbeat para mantener conexión sin interrupciones
           if (keepAliveInterval) clearInterval(keepAliveInterval);
           keepAliveInterval = setInterval(() => {
             if (ws && ws.readyState === WebSocket.OPEN) {
@@ -1346,24 +1192,23 @@
           try {
             const resp = JSON.parse(event.data);
             if (resp.status === 'SUCCESS') {
-              log('<span style="color:var(--c-green); font-weight:bold;">¡AL AIRE! Conectado con éxito y blindado.</span>');
+              log('<span style="color:var(--c-green); font-weight:bold;">¡Autenticado con éxito! AL AIRE.</span>');
               await iniciarAudioEngine();
             } else if (resp.status === 'ERROR') {
-              log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message}</span>`);
+              log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message} (${resp.code || ''})</span>`);
               stopAll();
-              alert(`Error Icecast: ${resp.message}`);
+              alert(`Error del servidor Icecast: ${resp.message}`);
             }
           } catch(e){}
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">Microcorte de red. Reconectando automáticamente...</span>');
+          log('<span style="color:var(--c-yellow)">Microcorte de red. Intentando reconectar...</span>');
         };
 
-        // RECONEXIÓN AUTOMÁTICA EN BUCLE (NO DETIENE CABINA)
         ws.onclose = () => {
           if (isLive) {
-            log('<span style="color:var(--c-yellow)">Restableciendo conexión con el servidor...</span>');
+            log('<span style="color:var(--c-yellow)">Reanudando conexión con Zeno Media...</span>');
             setTimeout(() => {
               if (isLive) startBroadcast();
             }, 2000);
@@ -1378,69 +1223,29 @@
 
     async function iniciarAudioEngine() {
       isLive = true;
-      packetsSentCount = 0;
 
       document.getElementById('btnLive').className = 'btn-main-stream live';
       document.getElementById('btnLive').innerText = 'DETENER TRANSMISIÓN';
       document.getElementById('timerLiveBox').innerText = 'TIEMPO: ILIMITADO';
 
-      ensureAudioContext();
+      ensureAudioEngine();
       const sampleRate = audioContext.sampleRate;
+      log(`Audio activo: ${sampleRate}Hz`);
 
-      // CADENA MICRÓFONO PRO
+      // Conexión del micrófono al mezclador maestro
       if (!micSourceNode) {
         micSourceNode = audioContext.createMediaStreamSource(mediaStream);
-        
-        micFilterNode = audioContext.createBiquadFilter();
-        micFilterNode.type = 'highpass';
-        micFilterNode.frequency.value = 80;
-
-        micEqWarmthNode = audioContext.createBiquadFilter();
-        micEqWarmthNode.type = 'peaking';
-        micEqWarmthNode.frequency.value = 250;
-        micEqWarmthNode.Q.value = 1.2;
-        micEqWarmthNode.gain.value = 2.5;
-
-        micEqAirNode = audioContext.createBiquadFilter();
-        micEqAirNode.type = 'highshelf';
-        micEqAirNode.frequency.value = 4500;
-        micEqAirNode.gain.value = 3.5;
-
-        micCompressorNode = audioContext.createDynamicsCompressor();
-        micCompressorNode.threshold.setValueAtTime(-18, audioContext.currentTime);
-        micCompressorNode.knee.setValueAtTime(8, audioContext.currentTime);
-        micCompressorNode.ratio.setValueAtTime(3.8, audioContext.currentTime);
-        micCompressorNode.attack.setValueAtTime(0.003, audioContext.currentTime);
-        micCompressorNode.release.setValueAtTime(0.12, audioContext.currentTime);
-
         micGainNode = audioContext.createGain();
         micGainNode.gain.value = parseFloat(document.getElementById('volMic').value);
-
-        micSourceNode.connect(micFilterNode);
-        micFilterNode.connect(micEqWarmthNode);
-        micEqWarmthNode.connect(micEqAirNode);
-        micEqAirNode.connect(micCompressorNode);
-        micCompressorNode.connect(micGainNode);
+        micSourceNode.connect(micGainNode);
         micGainNode.connect(masterMixerNode);
       }
 
-      // PUBLICIDAD Y RELOJ AL MEZCLADOR
-      if (!adsSourceNode) {
-        adsSourceNode = audioContext.createMediaElementSource(aAds);
-        adsGainNode = audioContext.createGain();
-        adsGainNode.gain.value = 0.95;
-        adsSourceNode.connect(adsGainNode);
-        adsGainNode.connect(masterMixerNode);
-      }
-      if (!clockSourceNode) {
-        clockSourceNode = audioContext.createMediaElementSource(aClock);
-        clockGainNode = audioContext.createGain();
-        clockGainNode.gain.value = 0.95;
-        clockSourceNode.connect(clockGainNode);
-        clockGainNode.connect(masterMixerNode);
-      }
+      // Conexión de audio de reloj al mezclador
+      const clockNode = audioContext.createMediaElementSource(aClock);
+      clockNode.connect(masterMixerNode);
 
-      // PISADORES
+      // Conexión de pisadores
       const stingerGainNode = audioContext.createGain();
       stingerGainNode.gain.value = 0.95;
       audioContext.createMediaElementSource(aS1).connect(stingerGainNode);
@@ -1448,7 +1253,7 @@
       audioContext.createMediaElementSource(aLight).connect(stingerGainNode);
       stingerGainNode.connect(masterMixerNode);
 
-      // VÚMETRO MASTER
+      // Vúmetro Master
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 128;
       masterMixerNode.connect(analyser);
@@ -1470,7 +1275,7 @@
       }
       updateMasterMeter();
 
-      // MP3 ENCODER
+      // MP3 Encoder directo del código original
       if (typeof lamejs !== 'undefined') {
         mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
       }
@@ -1489,28 +1294,26 @@
         const mp3Chunk = mp3Encoder.encodeBuffer(sampleBuffer);
         if (mp3Chunk.length > 0) {
           ws.send(mp3Chunk.buffer);
-          packetsSentCount++;
         }
       };
 
+      // Cadena directa que no suspende el audio
       masterMixerNode.connect(processorNode);
       processorNode.connect(audioContext.destination);
 
       if (playlist.length > 0 && aMusic.paused) playTrack(currentIndex);
     }
 
-    // ÚNICA VÍA PARA DETENER TRANSMISIÓN (ACCIÓN VOLUNTARIA DEL USUARIO)
+    // ÚNICA VÍA PARA DETENER TRANSMISIÓN (VOLUNTARIO)
     function stopAll() {
       isLive = false;
       if (keepAliveInterval) { clearInterval(keepAliveInterval); keepAliveInterval = null; }
       
       aMusic.pause();
-      aAds.pause();
       aClock.pause();
       stopCurrentStinger();
 
       document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
-      document.getElementById('adsBanner').style.display = 'none';
       updateParallelLedMeters(0, 0);
 
       const nextBox = document.getElementById('trackBoxNext');
@@ -1524,7 +1327,7 @@
       document.getElementById('btnLive').innerText = 'INICIAR TRANSMISIÓN EN VIVO';
       document.getElementById('vuLevel').style.width = '0%';
       document.getElementById('vuPct').innerText = '0%';
-      log("⏹ Transmisión detenida voluntariamente por el usuario.");
+      log("⏹ Transmisión detenida por el locutor.");
     }
 
     // ==========================================
@@ -1625,34 +1428,10 @@
       if (musicGainNode && audioContext) musicGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
     }
 
-    function promptResetStation() {
-      if (confirm("¿Restablecer datos de emisora y credenciales?")) {
-        ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
-          localStorage.removeItem(`ep_saved_${id}`);
-        });
-        document.getElementById('password').value = '';
-        alert("Emisora restablecida.");
-        log("Emisora restablecida.");
-      }
-    }
-
     function saveSettings() {
-      ['serverType', 'host', 'port', 'mount', 'user', 'password'].forEach(id => {
+      ['host', 'port', 'mount', 'user', 'password'].forEach(id => {
         localStorage.setItem(`ep_saved_${id}`, document.getElementById(id).value.trim());
       });
-    }
-
-    function adjustServerDefaults(type) {
-      if (type === 'zeno') {
-        document.getElementById('host').value = 'link.zeno.fm';
-        document.getElementById('port').value = '80';
-        document.getElementById('mount').value = '/f04sfgq6138uv/source';
-        document.getElementById('user').value = 'source';
-      } else {
-        document.getElementById('port').value = '8000';
-        document.getElementById('mount').value = '/live';
-        document.getElementById('user').value = 'source';
-      }
     }
 
     function handleStingerUpload(num, e) {
@@ -1780,85 +1559,6 @@
       updateTrackBoxes(); renderPlaylistModal();
     }
 
-    // PUBLICIDAD
-    function handleNewAdFile(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      temporaryAdFile = f;
-      document.getElementById('lblNewAdFileName').innerText = f.name;
-    }
-
-    function saveNewAdSlot() {
-      if (!temporaryAdFile) { alert("Selecciona archivo de publicidad."); return; }
-      adSlots.push({
-        id: Date.now(),
-        name: document.getElementById('newAdName').value.trim() || `Tanda #${adSlots.length + 1}`,
-        url: URL.createObjectURL(temporaryAdFile),
-        minute: parseInt(document.getElementById('newAdMinute').value) || 30,
-        triggered: false
-      });
-      temporaryAdFile = null;
-      document.getElementById('lblNewAdFileName').innerText = "Sin archivo";
-      renderAdSlotsList();
-      log("Tanda comercial programada.");
-    }
-
-    function renderAdSlotsList() {
-      const c = document.getElementById('adSlotsListContainer');
-      if (!c) return;
-      c.innerHTML = '';
-      adSlots.forEach((s, i) => {
-        c.innerHTML += `
-          <div style="background:#09132b; border:1px solid #1e3a6d; border-radius:6px; padding:6px; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-size:0.7rem; color:#fff;">${i + 1}. ${s.name} (Min ${s.minute})</div>
-            <button class="btn-action-small btn-del" onclick="adSlots.splice(${i},1); renderAdSlotsList();">🗑</button>
-          </div>
-        `;
-      });
-    }
-
-    function iniciarProgramadorPublicidad() {
-      if (adIntervalChecker) clearInterval(adIntervalChecker);
-      adIntervalChecker = setInterval(() => {
-        if (adSlots.length === 0) return;
-        const now = new Date();
-        adSlots.forEach((slot, idx) => {
-          if (now.getMinutes() === slot.minute && !slot.triggered) {
-            slot.triggered = true;
-            currentAdPlayingIndex = idx;
-          } else if (now.getMinutes() !== slot.minute) {
-            slot.triggered = false;
-          }
-        });
-      }, 15000);
-    }
-
-    function checkAndPlayScheduledAd() {
-      if (currentAdPlayingIndex !== -1 && adSlots[currentAdPlayingIndex]) {
-        const slot = adSlots[currentAdPlayingIndex];
-        currentAdPlayingIndex = -1;
-        aMusic.pause();
-        document.getElementById('adsBanner').style.display = 'flex';
-        document.getElementById('adsBannerTitle').innerText = slot.name;
-        aAds.src = slot.url;
-        aAds.currentTime = 0;
-        aAds.play().catch(e => console.log(e));
-        return true;
-      }
-      return false;
-    }
-
-    aAds.onended = () => {
-      document.getElementById('adsBanner').style.display = 'none';
-      playNextTrack();
-    };
-
-    function stopCurrentAd() {
-      aAds.pause();
-      document.getElementById('adsBanner').style.display = 'none';
-      playNextTrack();
-    }
-
     function togglePasswordVisibility() {
       const p = document.getElementById('password');
       p.type = p.type === 'password' ? 'text' : 'password';
@@ -1866,14 +1566,28 @@
 
     function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
     function closeSettingsModal() { saveSettings(); document.getElementById('settingsModal').style.display = 'none'; }
-    function openProModal() { document.getElementById('proModal').style.display = 'flex'; }
-    function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
-    function openCalendarModal() { renderAdSlotsList(); document.getElementById('calendarModal').style.display = 'flex'; }
-    function closeCalendarModal() { document.getElementById('calendarModal').style.display = 'none'; }
     function openPlaylistModal() { renderPlaylistModal(); document.getElementById('playlistModal').style.display = 'flex'; }
     function closePlaylistModal() { document.getElementById('playlistModal').style.display = 'none'; }
     function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
     function closeHelpModal() { document.getElementById('helpModal').style.display = 'none'; }
+
+    // INICIALIZACIÓN
+    window.addEventListener('DOMContentLoaded', async () => {
+      buildLedBlocks();
+      startDjVisualLoop();
+
+      ['host', 'port', 'mount', 'user', 'password'].forEach(id => {
+        const val = localStorage.getItem(`ep_saved_${id}`);
+        if (val !== null && val !== '') {
+          document.getElementById(id).value = val;
+        }
+      });
+
+      try {
+        await initIndexedDB();
+        await loadTracksFromDB();
+      } catch (err) {}
+    });
   </script>
 </body>
 </html>
