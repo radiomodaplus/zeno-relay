@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -107,7 +107,6 @@
       background: #162444; border: 1px solid var(--border); color: #fff;
       width: 32px; height: 32px; border-radius: 6px; font-size: 0.85rem;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
     }
     .air-nav-btn:active { background: var(--c-green); color: #000; transform: scale(0.92); }
 
@@ -213,17 +212,22 @@
     .tag-third { background: var(--c-yellow); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
 
     .track-item-actions { display: flex; gap: 4px; }
-    .btn-reorder {
+    .btn-action-small {
       background: #1e293b; border: 1px solid #475569; color: #fff;
       width: 28px; height: 28px; border-radius: 6px; font-size: 0.75rem;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
-    .btn-reorder:active { background: var(--c-blue); }
+    .btn-action-small:active { background: var(--c-blue); }
+    .btn-action-small.btn-del { border-color: var(--c-red); color: var(--c-red); }
 
-    /* ESTILOS MULTICOLOR PARA CALENDARIO */
+    /* ESTILOS MULTICOLOR PARA CALENDARIO DE COMERCIALES */
     .cal-card-box {
       background: linear-gradient(135deg, #1e1b4b, #111827); border: 2px solid #a855f7;
-      border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: 0 0 14px rgba(168,85,247,0.25);
+      border-radius: 12px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 14px rgba(168,85,247,0.25);
+    }
+    .ad-card-item {
+      background: #09132b; border: 1px solid #1e3a6d; border-radius: 8px;
+      padding: 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; gap: 6px;
     }
   </style>
 </head>
@@ -236,6 +240,7 @@
     </div>
     <div class="top-actions">
       <button id="btnProBadge" class="btn-crown" onclick="openProModal()">👑 PRO</button>
+      <button class="btn-icon" onclick="openPlaylistModal()" title="Panel Principal de Pistas">🎛️</button>
       <button id="btnCalendar" class="btn-icon" onclick="openCalendarModal()" title="Publicidad y Calendario">📅</button>
       <button id="btnMonitor" class="btn-icon" onclick="toggleLocalMonitoring()" title="Monitoreo">🎧</button>
       <button class="btn-icon" onclick="openSettingsModal()" title="Ajustes">⚙</button>
@@ -267,8 +272,8 @@
   <!-- BANNER PUBLICIDAD EN CURSO -->
   <div class="ads-banner" id="adsBanner">
     <div style="display:flex; flex-direction:column;">
-      <span style="font-size:0.75rem; font-weight:900; color:#38bdf8;">📢 PUBLICIDAD / COMERCIAL AL AIRE</span>
-      <span style="font-size:0.65rem; color:#bae6fd;" id="adsBannerTitle">Emitiendo tanda programada...</span>
+      <span style="font-size:0.75rem; font-weight:900; color:#38bdf8;">📢 TANDA COMERCIAL AL AIRE</span>
+      <span style="font-size:0.65rem; color:#bae6fd;" id="adsBannerTitle">Emitiendo tanda...</span>
     </div>
     <button onclick="stopCurrentAd()" style="background:var(--c-red); border:none; color:#fff; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.68rem; cursor:pointer;">⏹ CORTAR</button>
   </div>
@@ -309,7 +314,7 @@
 
   <!-- BOTÓN PANEL PRINCIPAL DE PISTAS -->
   <button class="btn-panel-main" onclick="openPlaylistModal()">
-    📑 PANEL PRINCIPAL (VER TODAS LAS PISTAS Y ORGANIZAR)
+    🎛️ PANEL PRINCIPAL (TODAS LAS PISTAS: ORDENAR Y ELIMINAR)
   </button>
 
   <!-- MIC Y DUCKING -->
@@ -370,12 +375,12 @@
   <div class="modal-overlay" id="playlistModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div style="font-size:0.85rem; font-weight:900; color:var(--c-blue);">📑 PANEL PRINCIPAL DE PISTAS</div>
+        <div style="font-size:0.85rem; font-weight:900; color:var(--c-blue);">🎛️ PANEL PRINCIPAL DE PISTAS</div>
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closePlaylistModal()">✕</button>
       </div>
 
       <div style="font-size:0.68rem; color:var(--text-muted); margin-bottom:8px;">
-        Organiza las pistas de arriba hacia abajo con <b>▲</b> y <b>▼</b>. La #1 está al aire, la #2 es la siguiente y la #3 es la tercera en cola.
+        Organiza las pistas de arriba hacia abajo con <b>▲</b> y <b>▼</b>, o elimínalas con <b>🗑</b>.
       </div>
 
       <div class="playlist-scroll" id="playlistContainer">
@@ -386,72 +391,81 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL DE PUBLICIDAD / CALENDARIO MULTICOLOR (📅) ==================== -->
+  <!-- ==================== MODAL DE CALENDARIO / PUBLICIDAD (MÁXIMO 5 TANDAS PRO) ==================== -->
   <div class="modal-overlay" id="calendarModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:var(--c-purple);">📅 CALENDARIO & PUBLICIDAD INTELIGENTE</div>
+        <div style="font-size:0.9rem; font-weight:900; color:var(--c-purple);">📅 COMERCIALES (MÁXIMO 5 TANDAS)</div>
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeCalendarModal()">✕</button>
       </div>
 
       <div class="cal-card-box">
-        <div style="font-size:0.75rem; font-weight:900; color:#e9d5ff; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
-          <span style="font-size:1.1rem;">⚡</span> PROGRAMACIÓN SIN CORTES BRUSCOS
+        <div style="font-size:0.75rem; font-weight:900; color:#e9d5ff; margin-bottom:4px;">
+          👑 FUNCIÓN EXCLUSIVA PRO
         </div>
         <p style="font-size:0.68rem; color:#d8b4fe; line-height:1.4;">
-          La tanda comercial aguardará automáticamente a que <b>termine la canción actual</b> antes de salir al aire. Al terminar, la siguiente pista continuará de inmediato.
+          Guarda hasta <b>5 tandas comerciales</b> programadas. Cada tanda espera automáticamente a que termine la canción actual antes de salir al aire.
         </p>
       </div>
 
-      <!-- Carga de archivo para publicidad -->
-      <div class="form-group">
-        <label style="color:var(--c-blue);">📂 Archivo de Publicidad (Audio o Video)</label>
-        <div class="file-select-box" style="border-color:#0284c7;">
-          <span id="lblAdFileName" style="font-size:0.7rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">Sin archivo asignado</span>
-          <label class="btn-ctrl" style="padding:5px 10px; background:#0284c7; cursor:pointer; font-weight:900;">
-            SUBIR
-            <input type="file" accept="audio/*, video/*" style="display:none;" onchange="handleAdFileSelect(event)">
-          </label>
+      <!-- FORMULARIO PARA CREAR TANDA -->
+      <div id="adFormContainer" style="background:#091226; border:1px solid #1e3a6d; border-radius:10px; padding:10px; margin-bottom:10px;">
+        <div style="font-size:0.72rem; font-weight:900; color:var(--c-gold); margin-bottom:6px;">
+          ➕ AGREGAR NUEVA TANDA (<span id="adCountDisplay">0</span>/5)
         </div>
-      </div>
 
-      <!-- Tipo de Programación -->
-      <div class="form-group">
-        <label style="color:var(--c-yellow);">⏰ Modalidad de Salida</label>
-        <select id="adScheduleType" onchange="toggleScheduleInputs(this.value)">
-          <option value="hourly">Repetir todas las horas al minuto específico</option>
-          <option value="datetime">Fecha y hora exacta única (Calendario)</option>
-        </select>
-      </div>
-
-      <!-- Modo: Todas las horas -->
-      <div id="rowHourly">
         <div class="form-group">
-          <label style="color:var(--c-green);">Minuto de cada hora (0 a 59)</label>
-          <input type="number" id="adMinuteInterval" min="0" max="59" value="30" placeholder="Ej: 30 (Al minuto 30 de cada hora)">
+          <label style="color:var(--c-blue);">Nombre de la Tanda</label>
+          <input type="text" id="newAdName" placeholder="Ej: Comercial Bebidas">
         </div>
-      </div>
 
-      <!-- Modo: Fecha y Hora exacta -->
-      <div id="rowDateTime" style="display:none;">
         <div class="form-group">
-          <label style="color:var(--c-gold);">Seleccionar Fecha y Hora exacta</label>
-          <input type="datetime-local" id="adExactDateTime">
+          <label style="color:var(--c-yellow);">Archivo (Audio o Video)</label>
+          <div class="file-select-box" style="border-color:#0284c7;">
+            <span id="lblNewAdFileName" style="font-size:0.7rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px;">Sin archivo</span>
+            <label class="btn-ctrl" style="padding:4px 8px; background:#0284c7; cursor:pointer; font-weight:900;">
+              SUBIR
+              <input type="file" accept="audio/*, video/*" style="display:none;" onchange="handleNewAdFile(event)">
+            </label>
+          </div>
         </div>
+
+        <div class="form-group">
+          <label style="color:var(--c-green);">Modalidad de Emisión</label>
+          <select id="newAdType" onchange="toggleNewAdInputs(this.value)">
+            <option value="hourly">Todas las horas al minuto X</option>
+            <option value="datetime">Fecha y hora exacta única</option>
+          </select>
+        </div>
+
+        <div id="newAdRowHourly">
+          <div class="form-group">
+            <label style="color:var(--c-green);">Minuto de la hora (0 a 59)</label>
+            <input type="number" id="newAdMinute" min="0" max="59" value="30">
+          </div>
+        </div>
+
+        <div id="newAdRowDateTime" style="display:none;">
+          <div class="form-group">
+            <label style="color:var(--c-gold);">Fecha y hora exacta</label>
+            <input type="datetime-local" id="newAdDateTime">
+          </div>
+        </div>
+
+        <button class="btn-ctrl" style="width:100%; background:linear-gradient(135deg, #10b981, #059669); font-weight:900; padding:8px; margin-top:4px;" onclick="saveNewAdSlot()">
+          GUARDAR TANDA EN LA LISTA
+        </button>
       </div>
 
-      <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:8px;">
-        <input type="checkbox" id="chkAdActive" style="width:18px; height:18px; accent-color:var(--c-green);" checked>
-        <label for="chkAdActive" style="font-size:0.75rem; color:#fff; margin:0; cursor:pointer; font-weight:800;">Habilitar programador de cuñas</label>
+      <!-- LISTA DE TANDAS GUARDADAS (MÁXIMO 5) -->
+      <div style="font-size:0.72rem; font-weight:900; color:var(--c-blue); margin-bottom:6px;">
+        📋 TANDAS GUARDADAS Y ACTIVAS:
+      </div>
+      <div id="adSlotsListContainer">
+        <!-- Render dinámico de las tandas -->
       </div>
 
-      <div style="background:#030712; border:1px solid #3b82f6; border-radius:8px; padding:8px; margin:8px 0; font-size:0.68rem; color:#38bdf8; font-weight:700;" id="lblNextAdStatus">
-        Estado: Esperando configuración...
-      </div>
-
-      <button class="btn-main-stream" style="padding:10px; background:linear-gradient(135deg, #9333ea, #7e22ce);" onclick="saveAdSchedule()">
-        GUARDAR Y ACTIVAR PUBLICIDAD
-      </button>
+      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeCalendarModal()">CERRAR CALENDARIO</button>
     </div>
   </div>
 
@@ -466,7 +480,7 @@
       <div id="viewFreeUser">
         <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); border:1px solid #facc15; border-radius:10px; padding:10px; text-align:center; margin-bottom:10px;">
           <h3 style="color:#fde047; font-size:0.95rem;">EMISORASplus PRO</h3>
-          <p style="font-size:0.7rem; color:#cbd5e1; margin:4px 0;">Transmisión continua sin cortes • Sube videos y MP3 • Rayito • 4 Estaciones</p>
+          <p style="font-size:0.7rem; color:#cbd5e1; margin:4px 0;">Transmisión continua sin cortes • Sube videos y MP3 • Rayito • 5 Tandas de Comerciales • 4 Estaciones</p>
           <div style="font-size:1.1rem; font-weight:900; color:#4ade80; margin-top:4px;">$39.900 COP</div>
         </div>
 
@@ -529,7 +543,7 @@
         <input type="password" id="password" placeholder="Tu Stream Key">
       </div>
 
-      <!-- BOTÓN RESTABLECER EMISORA (JUSTO DEBAJO DE LA CONTRASEÑA) -->
+      <!-- BOTÓN RESTABLECER EMISORA (JUSTO DEBAJO DE CONTRASEÑA) -->
       <button class="btn-ctrl" style="width:100%; background:rgba(239, 68, 68, 0.15); border-color:var(--c-red); color:var(--c-red); margin:6px 0 12px 0; font-weight:800; padding:8px;" onclick="promptResetStation()">
         ⚠️ RESTABLECER EMISORA
       </button>
@@ -603,7 +617,7 @@
     let isMonitoring = false;
 
     // Lista estructurada de canciones
-    let playlist = []; // Objetos: { file, name, played: false, durationStr: '--:--' }
+    let playlist = [];
     let currentIndex = 0;
     let activeStingerAudio = null;
 
@@ -630,15 +644,11 @@
     let packetsSentCount = 0;
     let statsInterval = null;
 
-    // Publicidad programada
-    let adSchedule = {
-      active: true,
-      type: 'hourly',
-      minute: 30,
-      exactDateTime: ''
-    };
-    let adPendingTrigger = false;
+    // HASTA 5 TANDAS COMERCIALES (EXCLUSIVO PRO)
+    let adSlots = []; // Máximo 5 slots: { id, name, file, type, minute, datetime, triggered: false }
+    let temporaryAdFile = null;
     let adIntervalChecker = null;
+    let currentAdPlayingIndex = -1;
 
     const aMusic = document.getElementById('audioMusic');
     const aS1 = document.getElementById('audioStinger1');
@@ -657,23 +667,12 @@
         }
       });
 
-      const savedAd = localStorage.getItem('ep_ad_schedule');
-      if (savedAd) {
-        try {
-          adSchedule = JSON.parse(savedAd);
-          document.getElementById('adScheduleType').value = adSchedule.type;
-          document.getElementById('adMinuteInterval').value = adSchedule.minute || 30;
-          document.getElementById('adExactDateTime').value = adSchedule.exactDateTime || '';
-          document.getElementById('chkAdActive').checked = adSchedule.active;
-          toggleScheduleInputs(adSchedule.type);
-        } catch(e){}
-      }
-
       auth.onAuthStateChanged(user => {
         if (user) activarModoPro(user.email);
       });
 
       iniciarProgramadorPublicidad();
+      renderAdSlotsList();
     });
 
     function saveSettings() {
@@ -684,7 +683,6 @@
       log("Configuración guardada de forma permanente.");
     }
 
-    // CONFIRMACIÓN PREVIA PARA RESTABLECER
     function promptResetStation() {
       const confirmacion = confirm("¿Estás seguro de restablecer los datos de la emisora?\n\nPresiona ACEPTAR (Sí) para borrar usuario, anclaje y contraseña, o CANCELAR (No) para conservarlos.");
       if (confirmacion) {
@@ -724,7 +722,15 @@
     function closeSettingsModal() { saveSettings(); document.getElementById('settingsModal').style.display = 'none'; }
     function openProModal() { document.getElementById('proModal').style.display = 'flex'; }
     function closeProModal() { document.getElementById('proModal').style.display = 'none'; }
-    function openCalendarModal() { document.getElementById('calendarModal').style.display = 'flex'; }
+    function openCalendarModal() {
+      if (!isPro) {
+        alert("El programador de comerciales y calendario es una función exclusiva del Plan PRO.");
+        openProModal();
+        return;
+      }
+      renderAdSlotsList();
+      document.getElementById('calendarModal').style.display = 'flex';
+    }
     function closeCalendarModal() { document.getElementById('calendarModal').style.display = 'none'; }
     function openPlaylistModal() { renderPlaylistModal(); document.getElementById('playlistModal').style.display = 'flex'; }
     function closePlaylistModal() { document.getElementById('playlistModal').style.display = 'none'; }
@@ -771,7 +777,7 @@
     }
 
     // ==========================================
-    // GESTIÓN DE PISTAS SIN PAUSAR & REORDENAR
+    // GESTIÓN DE PISTAS SIN PAUSAR & REORDENAR / ELIMINAR
     // ==========================================
     function handleStrictFiles(e) {
       const raw = Array.from(e.target.files);
@@ -787,7 +793,6 @@
 
       const wasEmpty = playlist.length === 0;
 
-      // Se agregan al final sin cortar la reproducción en vivo
       allowed.forEach(file => {
         const item = {
           file: file,
@@ -796,7 +801,6 @@
           durationStr: '--:--'
         };
 
-        // Extraer duración
         const tempAudio = document.createElement('audio');
         tempAudio.src = URL.createObjectURL(file);
         tempAudio.onloadedmetadata = () => {
@@ -814,7 +818,6 @@
       updateTrackBoxes();
       log(`${allowed.length} archivo(s) agregado(s) a la lista sin pausar la emisión.`);
 
-      // Si no había nada sonando, arranca la primera
       if (wasEmpty && (isLive || !aMusic.src)) {
         playTrack(0);
       }
@@ -859,8 +862,9 @@
             </div>
           </div>
           <div class="track-item-actions">
-            <button class="btn-reorder" onclick="moveTrackUp(${idx})" title="Mover arriba">▲</button>
-            <button class="btn-reorder" onclick="moveTrackDown(${idx})" title="Mover abajo">▼</button>
+            <button class="btn-action-small" onclick="moveTrackUp(${idx})" title="Mover arriba">▲</button>
+            <button class="btn-action-small" onclick="moveTrackDown(${idx})" title="Mover abajo">▼</button>
+            <button class="btn-action-small btn-del" onclick="deleteTrack(${idx})" title="Eliminar pista">🗑</button>
           </div>
         `;
         container.appendChild(card);
@@ -873,7 +877,6 @@
       playlist[idx] = playlist[idx - 1];
       playlist[idx - 1] = temp;
 
-      // Mantener sincronizado el índice de la que está al aire
       if (currentIndex === idx) currentIndex--;
       else if (currentIndex === idx - 1) currentIndex++;
 
@@ -892,6 +895,20 @@
 
       updateTrackBoxes();
       renderPlaylistModal();
+    }
+
+    function deleteTrack(idx) {
+      if (idx === currentIndex && playlist.length > 1) {
+        if (!confirm("Esta pista está al aire ahora mismo. ¿Deseas pasar a la siguiente y eliminarla?")) return;
+        skipToNextTrack();
+      }
+      playlist.splice(idx, 1);
+      if (currentIndex >= playlist.length) {
+        currentIndex = Math.max(0, playlist.length - 1);
+      }
+      updateTrackBoxes();
+      renderPlaylistModal();
+      log("Pista eliminada de la lista.");
     }
 
     function updateTrackBoxes() {
@@ -915,7 +932,6 @@
       document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
 
       aMusic.onloadedmetadata = () => {
-        // Modo rayito
         if (lightningEnabled && aMusic.duration > 100 && aLight.src && isPro) {
           startStingerPlayback(aLight, "⚡ PISADOR RAYITO");
         }
@@ -938,7 +954,6 @@
       if (playlist.length === 0) return;
       if (checkAndPlayScheduledAd()) return;
 
-      // Marcar como ya sonó
       if (playlist[currentIndex]) {
         playlist[currentIndex].played = true;
       }
@@ -970,89 +985,157 @@
     };
 
     // ==========================================
-    // MÓDULO PUBLICIDAD Y CALENDARIO
+    // MÓDULO PUBLICIDAD (MÁXIMO 5 TANDAS PRO)
     // ==========================================
-    function toggleScheduleInputs(val) {
+    function toggleNewAdInputs(val) {
       if (val === 'hourly') {
-        document.getElementById('rowHourly').style.display = 'block';
-        document.getElementById('rowDateTime').style.display = 'none';
+        document.getElementById('newAdRowHourly').style.display = 'block';
+        document.getElementById('newAdRowDateTime').style.display = 'none';
       } else {
-        document.getElementById('rowHourly').style.display = 'none';
-        document.getElementById('rowDateTime').style.display = 'block';
+        document.getElementById('newAdRowHourly').style.display = 'none';
+        document.getElementById('newAdRowDateTime').style.display = 'block';
       }
     }
 
-    function handleAdFileSelect(e) {
+    function handleNewAdFile(e) {
       const f = e.target.files[0];
       if (!f) return;
-      aAds.src = URL.createObjectURL(f);
-      document.getElementById('lblAdFileName').innerText = f.name;
-      log(`Comercial cargado: ${f.name}`);
+      temporaryAdFile = f;
+      document.getElementById('lblNewAdFileName').innerText = f.name;
     }
 
-    function saveAdSchedule() {
-      adSchedule.active = document.getElementById('chkAdActive').checked;
-      adSchedule.type = document.getElementById('adScheduleType').value;
-      adSchedule.minute = parseInt(document.getElementById('adMinuteInterval').value) || 0;
-      adSchedule.exactDateTime = document.getElementById('adExactDateTime').value;
+    function saveNewAdSlot() {
+      if (!isPro) {
+        alert("Los comerciales son exclusivos para la versión PRO.");
+        return;
+      }
+      if (adSlots.length >= 5) {
+        alert("Límite alcanzado: solo puedes programar hasta un máximo de 5 tandas comerciales.");
+        return;
+      }
+      if (!temporaryAdFile) {
+        alert("Selecciona un archivo de audio o video para la tanda.");
+        return;
+      }
 
-      localStorage.setItem('ep_ad_schedule', JSON.stringify(adSchedule));
-      document.getElementById('lblNextAdStatus').innerText = adSchedule.active ? 
-        `Programador activo (${adSchedule.type === 'hourly' ? 'Al minuto ' + adSchedule.minute + ' de cada hora' : 'Fecha programada'})` : 
-        'Programador inactivo';
-      
-      closeCalendarModal();
-      log("Programación de comerciales guardada y activa.");
+      const name = document.getElementById('newAdName').value.trim() || `Tanda Comercial #${adSlots.length + 1}`;
+      const type = document.getElementById('newAdType').value;
+      const minute = parseInt(document.getElementById('newAdMinute').value) || 0;
+      const datetime = document.getElementById('newAdDateTime').value;
+
+      adSlots.push({
+        id: Date.now(),
+        name: name,
+        file: temporaryAdFile,
+        url: URL.createObjectURL(temporaryAdFile),
+        type: type,
+        minute: minute,
+        datetime: datetime,
+        triggered: false
+      });
+
+      // Limpiar formulario
+      temporaryAdFile = null;
+      document.getElementById('newAdName').value = '';
+      document.getElementById('lblNewAdFileName').innerText = 'Sin archivo';
+
+      renderAdSlotsList();
+      log(`Tanda comercial guardada (${adSlots.length}/5).`);
+    }
+
+    function renderAdSlotsList() {
+      const countEl = document.getElementById('adCountDisplay');
+      if (countEl) countEl.innerText = adSlots.length;
+
+      const container = document.getElementById('adSlotsListContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (adSlots.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted); font-size:0.7rem; text-align:center; padding:12px;">No tienes tandas de comerciales programadas.</div>';
+        return;
+      }
+
+      adSlots.forEach((slot, index) => {
+        const item = document.createElement('div');
+        item.className = 'ad-card-item';
+        const progDesc = slot.type === 'hourly' ? `Todas las horas al min ${slot.minute}` : `Fecha: ${slot.datetime || 'Única'}`;
+        item.innerHTML = `
+          <div style="flex:1; overflow:hidden;">
+            <div style="font-size:0.75rem; font-weight:800; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              ${index + 1}. ${slot.name}
+            </div>
+            <div style="font-size:0.62rem; color:var(--c-gold);">⏰ ${progDesc}</div>
+          </div>
+          <button class="btn-action-small btn-del" onclick="deleteAdSlot(${index})" title="Eliminar tanda">🗑</button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function deleteAdSlot(index) {
+      adSlots.splice(index, 1);
+      renderAdSlotsList();
+      log("Tanda comercial eliminada.");
     }
 
     function iniciarProgramadorPublicidad() {
       if (adIntervalChecker) clearInterval(adIntervalChecker);
       adIntervalChecker = setInterval(() => {
-        if (!adSchedule.active || !aAds.src) return;
+        if (!isPro || adSlots.length === 0) return;
 
         const now = new Date();
-        if (adSchedule.type === 'hourly') {
-          if (now.getMinutes() === adSchedule.minute && !adPendingTrigger) {
-            adPendingTrigger = true;
-            log(`📢 Horario de comerciales alcanzado (Minuto ${adSchedule.minute}). Esperando fin de canción...`);
+        adSlots.forEach((slot, idx) => {
+          if (slot.type === 'hourly') {
+            if (now.getMinutes() === slot.minute && !slot.triggered) {
+              slot.triggered = true;
+              currentAdPlayingIndex = idx;
+              log(`📢 Tanda "${slot.name}" programada lista para salir tras la canción.`);
+            } else if (now.getMinutes() !== slot.minute) {
+              slot.triggered = false; // Reset para la siguiente hora
+            }
+          } else if (slot.type === 'datetime' && slot.datetime) {
+            const target = new Date(slot.datetime);
+            if (now >= target && !slot.triggered) {
+              slot.triggered = true;
+              currentAdPlayingIndex = idx;
+              log(`📢 Tanda por fecha "${slot.name}" lista para salir tras la canción.`);
+            }
           }
-        } else if (adSchedule.type === 'datetime' && adSchedule.exactDateTime) {
-          const target = new Date(adSchedule.exactDateTime);
-          if (now >= target && !adPendingTrigger) {
-            adPendingTrigger = true;
-            log(`📢 Fecha programada de comerciales alcanzada. Esperando fin de canción...`);
-          }
-        }
+        });
       }, 15000);
     }
 
     function checkAndPlayScheduledAd() {
-      if (adPendingTrigger && aAds.src) {
-        adPendingTrigger = false;
-        playCommercialBreak();
+      if (currentAdPlayingIndex !== -1 && adSlots[currentAdPlayingIndex]) {
+        const slot = adSlots[currentAdPlayingIndex];
+        currentAdPlayingIndex = -1;
+        playCommercialBreak(slot);
         return true;
       }
       return false;
     }
 
-    function playCommercialBreak() {
-      log("📢 Iniciando tanda comercial programada...");
+    function playCommercialBreak(slot) {
+      log(`📢 Emitiendo al aire tanda comercial: "${slot.name}"...`);
       aMusic.pause();
       document.getElementById('adsBanner').style.display = 'flex';
+      document.getElementById('adsBannerTitle').innerText = slot.name;
+      aAds.src = slot.url;
       aAds.currentTime = 0;
-      aAds.play();
+      aAds.play().catch(e => console.log(e));
     }
 
     aAds.onended = () => {
       document.getElementById('adsBanner').style.display = 'none';
-      log("📢 Tanda comercial finalizada. Reanudando música...");
+      log("📢 Tanda comercial finalizada. Continuando emisión regular...");
       playNextTrack();
     };
 
     function stopCurrentAd() {
       aAds.pause();
       document.getElementById('adsBanner').style.display = 'none';
-      log("Comercial detenido manualmente. Continuando playlist...");
+      log("Comercial cortado manualmente. Reanudando música...");
       playNextTrack();
     }
 
