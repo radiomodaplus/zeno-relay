@@ -1,1890 +1,463 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>EMISORASplus isecas</title>
-  
-  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EMISORASplus isecas - En Vivo</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #050811; color: #f8fafc; height: 100vh; height: 100dvh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
-  <style>
-    :root {
-      --bg: #050811;
-      --card-bg: #0b1329;
-      --card-sub: #132247;
-      --border: #1e3a6d;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --c-green: #10b981;
-      --c-blue: #06b6d4;
-      --c-yellow: #facc15;
-      --c-gold: #fbbf24;
-      --c-purple: #c084fc;
-      --c-red: #ef4444;
-      --c-amber: #f97316;
-    }
+        .app-container { width: 100%; height: 100%; max-width: 480px; background: #0b1329; display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 0 30px rgba(0,0,0,0.9); border: 2px solid #1e3a6d; }
+        @media (min-width: 481px) { .app-container { height: 92vh; border-radius: 24px; } }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 8px; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+        .tv-header { background: linear-gradient(180deg, rgba(13,22,45,0.95) 0%, rgba(11,19,41,0.8) 100%); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1e3a6d; z-index: 10; backdrop-filter: blur(5px); }
+        .channel-brand { display: flex; align-items: center; gap: 8px; }
+        .channel-logo-img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #facc15; box-shadow: 0 0 8px rgba(250,204,21,0.6); background: #132247; }
+        .channel-title-box h1 { font-size: 0.9rem; color: #f8fafc; font-weight: 800; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+        
+        .live-tag { display: inline-flex; align-items: center; gap: 3px; font-size: 0.55rem; background: #ef4444; color: #fff; padding: 1px 5px; border-radius: 3px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; animation: pulse-live 1.5s infinite; }
+        @keyframes pulse-live { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-    /* RELOJ DIGITAL OFICIAL COLOMBIA */
-    .studio-clock-bar {
-      background: #02040a; border: 1px solid #1a2c4e; border-radius: 8px;
-      padding: 6px 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
-    }
-    .clock-time {
-      font-family: ui-monospace, monospace; font-size: 1.15rem; font-weight: 900; color: var(--c-blue);
-      text-shadow: 0 0 8px rgba(6, 182, 212, 0.6); letter-spacing: 1px;
-    }
-    .clock-date { font-size: 0.68rem; font-weight: 800; color: var(--c-gold); text-transform: uppercase; }
+        .btn-lightning { background: linear-gradient(135deg, #06b6d4, #0284c7); border: none; color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(6,182,212,0.5); transition: transform 0.2s; }
+        .btn-lightning:active { transform: scale(0.9); }
 
-    /* BARRA SUPERIOR */
-    .top-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      background: linear-gradient(90deg, #1e1b4b, #0f172a, #1e293b);
-      padding: 8px 12px; border-radius: 12px; border: 1px solid #4338ca; margin-bottom: 6px;
-    }
-    .app-title { font-size: 0.92rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 4px; }
-    .app-title span { color: var(--c-blue); text-shadow: 0 0 8px rgba(6,182,212,0.5); }
+        .player-viewport { flex: 1; background: #000; position: relative; display: flex; justify-content: center; align-items: center; }
+        /* Reproductores duales alternados para fundido cruzado (Crossfade) */
+        video, audio { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; }
+        #playerA { z-index: 2; }
+        #playerB { z-index: 1; opacity: 0; }
+        
+        .play-gate { position: absolute; inset: 0; background: radial-gradient(circle, rgba(13,22,45,0.95) 0%, rgba(5,8,17,0.98) 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; padding: 20px; text-align: center; }
+        .gate-logo { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #facc15; object-fit: cover; margin-bottom: 15px; box-shadow: 0 0 20px rgba(250,204,21,0.5); }
+        .btn-big-play { background: linear-gradient(135deg, #facc15, #ca8a04); color: #000; border: none; padding: 14px 35px; font-size: 1rem; font-weight: 900; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 20px rgba(250,204,21,0.5); text-transform: uppercase; letter-spacing: 1px; }
 
-    .top-actions { display: flex; align-items: center; gap: 6px; }
+        .ticker-container { background: #090e1f; color: #facc15; padding: 8px 0; border-top: 2px solid #1e3a6d; font-size: 0.8rem; overflow: hidden; white-space: nowrap; font-weight: 600; z-index: 5; }
+        .ticker-content { display: inline-block; white-space: nowrap; animation: scroll-ticker 30s linear infinite; }
+        @keyframes scroll-ticker { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-    .btn-quick-play-stream {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      border: 2px solid #f87171; color: #fff; width: 34px; height: 34px;
-      border-radius: 50%; font-size: 0.95rem; cursor: pointer; display: flex;
-      align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
-      transition: all 0.2s ease;
-    }
-    .btn-quick-play-stream:active { transform: scale(0.92); }
-    .btn-quick-play-stream.is-live {
-      background: #b91c1c; border-color: #fca5a5;
-      animation: pulseLive 1.2s infinite alternate ease-in-out;
-    }
-    @keyframes pulseLive {
-      0% { box-shadow: 0 0 4px #ef4444; }
-      100% { box-shadow: 0 0 14px #ef4444; }
-    }
+        .modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); }
+        .modal-box { background: #132247; padding: 25px; border-radius: 16px; width: 100%; max-width: 300px; text-align: center; border: 1px solid #1e3a6d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-box h3 { color: #facc15; margin-bottom: 12px; font-size: 1.1rem; }
+        .modal-box input { width: 100%; padding: 12px; text-align: center; font-size: 1.5rem; letter-spacing: 8px; background: #080d1a; border: 1px solid #1e3a6d; color: #fff; border-radius: 8px; margin-bottom: 15px; outline: none; }
+        .modal-actions { display: flex; gap: 10px; }
+        .modal-actions button { flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; }
+        .btn-modal-ok { background: #facc15; color: #000; }
+        .btn-modal-cancel { background: #1e3a6d; color: #fff; }
 
-    .btn-crown {
-      background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #6ee7b7; color: #fff;
-      padding: 6px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; cursor: pointer;
-      display: flex; align-items: center; gap: 4px;
-    }
+        /* PANEL ADMIN */
+        .admin-dashboard { position: absolute; inset: 0; background: #050811; z-index: 100; display: none; flex-direction: column; padding: 14px; overflow-y: auto; }
+        .admin-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #1e3a6d; padding-bottom: 10px; }
+        .admin-top-bar h2 { color: #facc15; font-size: 1rem; font-weight: 800; }
+        .btn-exit-admin { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
 
-    .btn-icon {
-      background: #1e293b; border: 1px solid #475569; color: #fff; width: 34px; height: 34px;
-      border-radius: 50%; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-    .btn-icon.monitor-active { background: #0284c7; border-color: #38bdf8; }
+        .sec-label { font-size: 0.75rem; color: #94a3b8; margin: 10px 0 4px 0; font-weight: bold; text-transform: uppercase; }
+        .ctrl-group { margin-bottom: 8px; }
+        .ctrl-group input, .ctrl-group textarea, .ctrl-group select { width: 100%; padding: 8px 10px; background: #132247; border: 1px solid #1e3a6d; color: #fff; border-radius: 6px; font-size: 0.8rem; }
 
-    /* MEDIDOR DE RED */
-    .net-box {
-      background: #090e1a; border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px;
-      margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.65rem; font-weight: 800;
-    }
-    .signal-bars { display: flex; align-items: flex-end; gap: 3px; height: 14px; }
-    .bar { width: 3px; background: #334155; border-radius: 1px; }
-    .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
-    .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
+        /* SECCIÓN MEZCLADORA Y MICRÓFONO */
+        .mixer-box { background: #132247; border: 1px solid #1e3a6d; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+        .mixer-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.8rem; }
+        .mic-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; background: #0b1329; padding: 6px 10px; border-radius: 6px; border: 1px solid #1e3a6d; }
+        .mic-toggle input { accent-color: #facc15; width: 16px; height: 16px; }
 
-    /* VÚMETRO MASTER CONTINUO */
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
-    .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
-    .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
-    .vu-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--c-green) 50%, var(--c-yellow) 80%, var(--c-red) 100%); transition: width 0.05s linear; }
+        .live-control-box { background: #132247; border: 1px solid #1e3a6d; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+        .status-text { font-size: 0.75rem; color: #cbd5e1; margin-bottom: 8px; }
+        .status-text span { color: #10b981; font-weight: bold; }
+        .media-btns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .btn-ctrl { padding: 8px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; border: none; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .btn-play-action { background: #10b981; }
+        .btn-pause-action { background: #d97706; }
+        .btn-next-action { background: #06b6d4; }
 
-    /* BANNERS */
-    .stinger-banner {
-      display: none; background: linear-gradient(135deg, #3b0764, #1e1b4b);
-      border: 2px solid var(--c-purple); border-radius: 8px; padding: 6px 10px;
-      margin-bottom: 6px; align-items: center; justify-content: space-between;
-    }
-    .ads-banner {
-      display: none; background: linear-gradient(135deg, #0c4a6e, #075985);
-      border: 2px solid var(--c-blue); border-radius: 8px; padding: 6px 10px;
-      margin-bottom: 6px; align-items: center; justify-content: space-between;
-    }
+        .playlist-box { background: #132247; border-radius: 8px; padding: 8px; max-height: 130px; overflow-y: auto; border: 1px solid #1e3a6d; margin-bottom: 8px; }
+        .track-row { display: flex; align-items: center; justify-content: space-between; background: #080d1a; padding: 6px 8px; border-radius: 6px; margin-bottom: 5px; font-size: 0.75rem; border: 1px solid #1e3a6d; gap: 6px; }
+        .track-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #e2e8f0; }
+        .track-btns { display: flex; gap: 3px; }
+        .track-btns button { background: #1e3a6d; color: #fff; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; }
+        .track-btns button:hover { background: #facc15; color: #000; }
+        .btn-remove { background: #7f1d1d !important; }
 
-    /* COLA DE 3 PISTAS */
-    .queue-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
-    .track-box {
-      border-radius: 8px; padding: 6px 10px; background: #070c1b; border-width: 2px; border-style: solid;
-      display: flex; flex-direction: column; justify-content: center; position: relative; transition: all 0.25s ease;
-    }
-    .track-box.current { border-color: var(--c-green); }
-    .track-box.next { border-color: var(--c-blue); }
-    .track-box.third { border-color: var(--c-yellow); }
-
-    .track-box.next.alert-imminent {
-      border-color: var(--c-red) !important;
-      background: #450a0a !important;
-      animation: alertPulse 0.7s infinite alternate ease-in-out !important;
-      box-shadow: 0 0 14px rgba(239, 68, 68, 0.6) !important;
-    }
-    @keyframes alertPulse {
-      0% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0.75; transform: scale(0.99); }
-    }
-
-    .track-tag-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-    .track-tag { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; }
-    .track-box.current .track-tag { color: var(--c-green); }
-    .track-box.next .track-tag { color: var(--c-blue); }
-    .track-box.third .track-tag { color: var(--c-yellow); }
-    
-    .countdown-pill {
-      font-size: 0.62rem; font-weight: 900; color: #bae6fd; background: #0c4a6e;
-      padding: 2px 6px; border-radius: 4px; border: 1px solid #0284c7;
-    }
-
-    .tag-action-icon {
-      font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center;
-    }
-    .tag-lightning { background: #854d0e; border: 1px solid #eab308; color: #fef08a; }
-    .tag-clock-btn { background: #1e1b4b; border: 1px solid #818cf8; color: #c7d2fe; margin-left: 4px; }
-    .tag-clock-btn.active { background: #4338ca; border-color: #a5b4fc; color: #fff; }
-
-    .track-row-air { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 2px; }
-    .track-name { font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; flex: 1; }
-    .track-time { font-size: 0.65rem; color: var(--text-muted); }
-
-    .air-nav-btn {
-      background: #162444; border: 1px solid var(--border); color: #fff;
-      width: 32px; height: 32px; border-radius: 6px; font-size: 0.85rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-
-    /* CONSOLA DIGITAL ONDAS Y LEDS */
-    .dj-rack-meter {
-      background: #02050e; border: 1px solid #1a2c4e; border-radius: 8px;
-      padding: 6px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px;
-    }
-    .rack-header {
-      display: flex; justify-content: space-between; align-items: center; font-size: 0.58rem; font-weight: 900; color: #38bdf8;
-    }
-    .rack-main-stage { display: flex; gap: 8px; align-items: center; height: 50px; }
-    .wave-canvas-box {
-      flex: 1.4; height: 100%; background: #010307; border: 1px solid #101c36; border-radius: 4px; overflow: hidden;
-    }
-    #djWaveCanvas { width: 100%; height: 100%; display: block; }
-
-    .parallel-led-box {
-      flex: 1; display: flex; gap: 8px; height: 100%; align-items: center; justify-content: center;
-    }
-    .meter-column-wrap { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; }
-    .meter-column { display: flex; flex-direction: column-reverse; gap: 1.5px; width: 100%; height: 40px; }
-    .meter-col-label { font-size: 0.5rem; font-weight: 900; color: var(--text-muted); text-align: center; }
-    
-    .led-block { height: 2px; width: 100%; border-radius: 1px; background: #0b1329; }
-    .led-block.active-green { background: #10b981; }
-    .led-block.active-yellow { background: #facc15; }
-    .led-block.active-red { background: #ef4444; }
-
-    /* BOTONES MIC Y PISADORES */
-    .mic-duck-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 6px; margin-bottom: 6px; }
-    .btn-broadcast {
-      padding: 10px; border: none; border-radius: 8px; font-weight: 900; font-size: 0.78rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
-    .btn-mic-on { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
-    .btn-mic-mute { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
-    
-    .btn-ducking {
-      background: #1e293b; border: 1px solid #475569; color: var(--text-muted);
-      border-radius: 8px; font-size: 0.68rem; font-weight: 800; display: flex;
-      flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
-    }
-    .btn-ducking.active { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; }
-
-    .stinger-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
-    .btn-stinger {
-      padding: 8px 4px; border-radius: 8px; font-size: 0.7rem; font-weight: 800;
-      border: 1px solid #475569; background: #1e293b; color: #fff; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-    }
-    .btn-stinger.p1 { border-color: var(--c-purple); background: #2e1065; }
-    .btn-stinger.p2 { border-color: var(--c-amber); background: #451a03; }
-    .btn-stinger.lightning { border-color: var(--c-yellow); background: #3b2d04; }
-    .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 900; }
-
-    .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 6px; margin-bottom: 6px; }
-    .btn-ctrl { padding: 9px 2px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-sub); color: #fff; font-size: 0.7rem; font-weight: 800; cursor: pointer; text-align: center; }
-
-    .file-loader { position: relative; overflow: hidden; margin-bottom: 6px; }
-    .file-loader input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
-    .btn-load-files {
-      width: 100%; padding: 10px; background: linear-gradient(90deg, #1d4ed8, #0284c7);
-      color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 0.72rem; text-align: center;
-    }
-
-    .btn-main-stream {
-      width: 100%; padding: 15px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #fff; border: 2px solid #60a5fa; border-radius: 10px; font-size: 1rem; font-weight: 900;
-      cursor: pointer; position: relative; z-index: 50; display: block; margin-top: 4px;
-    }
-    .btn-main-stream:active { transform: scale(0.98); }
-    .btn-main-stream.live { background: linear-gradient(135deg, #ef4444, #b91c1c); border-color: #f87171; }
-
-    .terminal-box {
-      background: #030712; border: 1px solid var(--border); border-radius: 6px; padding: 8px;
-      font-family: ui-monospace, monospace; font-size: 0.7rem; color: #38bdf8; height: 60px; overflow-y: auto; margin-top: 6px;
-    }
-
-    /* MODALES */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
-      display: none; align-items: center; justify-content: center; z-index: 1000; padding: 12px;
-    }
-    .modal-box {
-      background: #0c1427; border: 1px solid #3b82f6; border-radius: 14px;
-      width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto; padding: 14px;
-    }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-    
-    .form-group { margin-bottom: 8px; }
-    .form-group label { display: block; font-size: 0.68rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
-    .form-group input { width: 100%; padding: 8px; background: #030712; border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none; }
-    
-    .file-select-box {
-      background: #111a33; border: 1px dashed var(--border); border-radius: 8px;
-      padding: 6px 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
-    }
-
-    .playlist-scroll { display: flex; flex-direction: column; gap: 6px; max-height: 55vh; overflow-y: auto; padding-right: 4px; }
-    .track-item-card {
-      background: #101935; border: 1px solid #233560; border-radius: 8px;
-      padding: 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px;
-    }
-    .track-item-card.is-live { border-color: var(--c-green); background: #064e3b33; }
-    .track-item-card.is-next { border-color: var(--c-blue); background: #082f4933; }
-    .track-item-card.is-third { border-color: var(--c-yellow); background: #42200633; }
-    
-    .track-item-info { flex: 1; overflow: hidden; }
-    .track-item-title { font-size: 0.75rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .track-item-meta { display: flex; gap: 5px; align-items: center; font-size: 0.62rem; margin-top: 3px; flex-wrap: wrap; }
-    
-    .tag-played-red { background: var(--c-red); color: #fff; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
-    .tag-live { background: var(--c-green); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
-    .tag-next { background: var(--c-blue); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
-    .tag-third { background: var(--c-yellow); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
-
-    .track-item-actions { display: flex; gap: 4px; }
-    .btn-action-small {
-      background: #1e293b; border: 1px solid #475569; color: #fff;
-      width: 28px; height: 28px; border-radius: 6px; font-size: 0.75rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-    .btn-action-small:active { background: var(--c-blue); }
-    .btn-action-small.btn-del { border-color: var(--c-red); color: var(--c-red); }
-
-    .clock-slot-item {
-      background: #0d172e; border: 1px solid #1e3a6d; border-radius: 6px;
-      padding: 6px 8px; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;
-    }
-
-    .help-section {
-      background: #09132b; border: 1px solid #1e3a6d; border-radius: 8px; padding: 8px; margin-bottom: 8px;
-    }
-    .help-title { font-size: 0.8rem; font-weight: 900; color: var(--c-gold); margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
-    .help-desc { font-size: 0.68rem; color: #cbd5e1; line-height: 1.45; }
-    .help-desc b { color: #fff; }
-  </style>
+        .upload-row { display: flex; gap: 6px; margin-bottom: 8px; }
+        .upload-row input[type="text"] { flex: 1; padding: 7px; background: #132247; border: 1px solid #1e3a6d; color: #fff; border-radius: 6px; font-size: 0.75rem; }
+        .btn-action-blue { background: #06b6d4; color: white; border: none; padding: 0 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; }
+        
+        .admin-footer-btns { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-save-cfg { background: #10b981; color: white; flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .btn-cancel-cfg { background: #475569; color: white; flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    </style>
 </head>
 <body>
 
-  <!-- RELOJ DIGITAL OFICIAL COLOMBIA -->
-  <div class="studio-clock-bar">
-    <div>
-      <div style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">HORA COLOMBIA</div>
-      <div id="colombiaTimeDisplay" class="clock-time">--:--:--</div>
-    </div>
-    <div style="text-align:right;">
-      <div style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">FECHA CABINA</div>
-      <div id="colombiaDateDisplay" class="clock-date">-- / -- / ----</div>
-    </div>
-  </div>
-
-  <!-- BARRA SUPERIOR -->
-  <div class="top-bar">
-    <div class="app-title">
-      📻 <span>EMISORASplus isecas</span>
-    </div>
-    <div class="top-actions">
-      <!-- BOTÓN RÁPIDO PLAY ROJO -->
-      <button id="btnQuickPlay" class="btn-quick-play-stream" type="button" onclick="handleStreamButtonClick()" title="Emisión Inmediata">
-        ▶
-      </button>
-      <button class="btn-crown">👑 PRO</button>
-      <button class="btn-icon" onclick="openPlaylistModal()" title="Panel Principal">🎛️</button>
-      <button class="btn-icon" onclick="openCalendarModal()" title="Publicidad">📅</button>
-      <button class="btn-icon" onclick="openHelpModal()" title="Manual de Ayuda">❓</button>
-      <button id="btnMonitor" class="btn-icon" onclick="toggleLocalMonitoring()" title="Monitoreo">🎧</button>
-      <button class="btn-icon" onclick="openSettingsModal()" title="Ajustes">⚙</button>
-    </div>
-  </div>
-
-  <!-- MEDIDOR DE RED -->
-  <div class="net-box">
-    <div style="display:flex; align-items:center; gap:6px;">
-      <div id="netBars" class="signal-bars good">
-        <div class="bar b1"></div><div class="bar b2"></div><div class="bar b3"></div><div class="bar b4"></div>
-      </div>
-      <span id="netStatusText">ESTABLE (BLINDADO)</span>
-    </div>
-    <div style="color:var(--c-gold); font-size:0.6rem;">TIEMPO: ILIMITADO</div>
-  </div>
-
-  <!-- VÚMETRO MASTER -->
-  <div class="card">
-    <div class="vu-header">
-      <span>SALIDA AL AIRE (MASTER)</span>
-      <span id="vuPct">0%</span>
-    </div>
-    <div class="vu-container">
-      <div id="vuLevel" class="vu-bar"></div>
-    </div>
-  </div>
-
-  <!-- BANNERS -->
-  <div class="stinger-banner" id="stingerBanner">
-    <div style="display:flex; flex-direction:column;">
-      <span style="font-size:0.75rem; font-weight:900; color:#f0abfc;" id="bannerStingerName">🔊 PISADOR SONANDO</span>
-      <span style="font-size:0.65rem; color:#e9d5ff;" id="bannerStingerTime">0:00 / 0:00</span>
-    </div>
-    <button onclick="stopCurrentStinger()" style="background:var(--c-red); border:none; color:#fff; padding:5px 10px; border-radius:6px; font-weight:800; font-size:0.7rem; cursor:pointer;">⏹ DETENER</button>
-  </div>
-
-  <div class="ads-banner" id="adsBanner">
-    <div style="display:flex; flex-direction:column;">
-      <span style="font-size:0.75rem; font-weight:900; color:#38bdf8;">📢 TANDA COMERCIAL AL AIRE</span>
-      <span style="font-size:0.65rem; color:#bae6fd;" id="adsBannerTitle">Emitiendo tanda...</span>
-    </div>
-    <button onclick="stopCurrentAd()" style="background:var(--c-red); border:none; color:#fff; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.68rem; cursor:pointer;">⏹ CORTAR</button>
-  </div>
-
-  <!-- COLA DE 3 PISTAS -->
-  <div class="queue-grid">
-    <div class="track-box current">
-      <div class="track-tag-row">
-        <div class="track-tag">● 1. EN EL AIRE (ACTUAL)</div>
-        <div style="display:flex; align-items:center; gap:4px;">
-          <div id="airLightningBadge" style="display:none;" class="tag-action-icon tag-lightning" title="Aplica para Rayito">⚡</div>
-          <button id="airClockBtn" class="tag-action-icon tag-clock-btn" onclick="openClockModal()" title="Separador de Reloj">🕒</button>
-        </div>
-      </div>
-      <div class="track-row-air">
-        <button class="air-nav-btn" onclick="repeatCurrentTrack()">⏮</button>
-        <div style="flex:1; overflow:hidden;">
-          <div class="track-name" id="track1">Sin reproducción</div>
-          <div class="track-time" id="track1Time">0:00 / 0:00</div>
-        </div>
-        <button class="air-nav-btn" onclick="skipToNextTrack()">⏭</button>
-      </div>
-
-      <!-- CONSOLA DIGITAL ONDAS Y LEDS -->
-      <div class="dj-rack-meter">
-        <div class="rack-header">
-          <span>CONSOLE DIGITAL STEREO & WAVE</span>
-          <span id="rackDbDisplay">-∞ dB</span>
-        </div>
-        <div class="rack-main-stage">
-          <div class="wave-canvas-box">
-            <canvas id="djWaveCanvas" width="220" height="50"></canvas>
-          </div>
-          <div class="parallel-led-box">
-            <div class="meter-column-wrap">
-              <div class="meter-column" id="colLeftMeter"></div>
-              <div class="meter-col-label">L</div>
+    <div class="app-container">
+        <header class="tv-header">
+            <div class="channel-brand">
+                <img id="headerLogo" src="" alt="Logo" class="channel-logo-img">
+                <div class="channel-title-box">
+                    <h1 id="headerName">EMISORASplus isecas</h1>
+                    <div class="live-tag"><span>●</span> AL AIRE</div>
+                </div>
             </div>
-            <div class="meter-column-wrap">
-              <div class="meter-column" id="colRightMeter"></div>
-              <div class="meter-col-label">R</div>
+            <button class="btn-lightning" onclick="openPinModal()" title="Panel Secreto">⚡</button>
+        </header>
+
+        <div class="player-viewport">
+            <div class="play-gate" id="playGate">
+                <img id="gateLogo" src="" alt="Logo" class="gate-logo">
+                <h2 style="font-size: 1rem; margin-bottom: 12px; color: #facc15;" id="gateTitle">EMISORASplus isecas</h2>
+                <button class="btn-big-play" onclick="startChannelStream()">▶ INICIAR EMISIÓN</button>
             </div>
-          </div>
+            <!-- Reproductores para mezcla cruzada -->
+            <video id="playerA" playsinline></video>
+            <video id="playerB" playsinline></video>
         </div>
-      </div>
+
+        <div class="ticker-container">
+            <div class="ticker-content" id="headerTicker">Bienvenidos a EMISORASplus isecas. La mejor programación en vivo y en directo. 📻🎵</div>
+        </div>
     </div>
 
-    <div class="track-box next" id="trackBoxNext">
-      <div class="track-tag-row">
-        <div class="track-tag">▶ 2. SIGUIENTE EN COLA</div>
-        <div class="countdown-pill" id="nextCountdownDisplay">Faltan: --s</div>
-      </div>
-      <div class="track-name" id="track2">En espera...</div>
+    <!-- MODAL PIN -->
+    <div class="modal-overlay" id="pinModalOverlay">
+        <div class="modal-box">
+            <h3>Acceso Restringido</h3>
+            <input type="password" id="pinCodeInput" placeholder="••••" maxlength="4">
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closePinModal()">Cancelar</button>
+                <button class="btn-modal-ok" onclick="verifyAdminPin()">Entrar</button>
+            </div>
+        </div>
     </div>
 
-    <div class="track-box third">
-      <div class="track-tag">⏭ 3. EN ESPERA (TERCERA)</div>
-      <div class="track-name" id="track3">En espera...</div>
-    </div>
-  </div>
-
-  <button class="btn-ctrl" style="width:100%; padding:10px; background:linear-gradient(90deg, #6366f1, #8b5cf6); font-weight:900; margin-bottom:6px;" onclick="openPlaylistModal()">
-    🎛️ PANEL PRINCIPAL (VER TODAS LAS PISTAS Y ORGANIZAR)
-  </button>
-
-  <!-- MIC Y DUCKING -->
-  <div class="mic-duck-row">
-    <button id="btnMic" class="btn-broadcast btn-mic-on" onclick="toggleMic()">
-      🎤 MIC: AL AIRE
-    </button>
-    <button id="btnDucking" class="btn-ducking active" onclick="toggleDucking()">
-      <span>DUCKING AUTO</span>
-      <small id="duckStatus" style="font-size:0.6rem; color:#86efac;">ON (BAJA MÚSICA)</small>
-    </button>
-  </div>
-
-  <!-- PISADORES Y RAYITO -->
-  <div class="stinger-grid">
-    <button class="btn-stinger p1" onclick="triggerStinger(1)">
-      <span>🔊 PISADOR 1</span>
-      <small style="font-size:0.55rem; opacity:0.8;">DISPARAR</small>
-    </button>
-    <button id="btnP2" class="btn-stinger p2" onclick="triggerStinger(2)">
-      <span>🔊 PISADOR 2</span>
-      <small style="font-size:0.55rem;">DISPARAR</small>
-    </button>
-    <button id="btnLightning" class="btn-stinger lightning" onclick="toggleLightningMode()">
-      <span>⚡ RAYITO</span>
-      <small style="font-size:0.55rem;">AUTO (≥ 1 MIN)</small>
-    </button>
-  </div>
-
-  <!-- CONTROLES DE REPRODUCCIÓN -->
-  <div class="player-controls">
-    <button id="btnPlayMusic" class="btn-ctrl" onclick="togglePlayMusic()">▶ PLAY</button>
-    <button class="btn-ctrl btn-stop-music" onclick="stopMusicTrack()">⏹ STOP</button>
-    <button class="btn-ctrl" onclick="skipToNextTrack()">⏭ SIG</button>
-    <button id="btnMode" class="btn-ctrl" onclick="toggleMode()">CONTINUO</button>
-  </div>
-
-  <!-- CARGA DE ARCHIVOS -->
-  <div class="file-loader">
-    <div class="btn-load-files">📂 CARGAR MÚSICA (GUARDADO AUTOMÁTICO)</div>
-    <input type="file" id="fileTracks" multiple accept="audio/*, video/*" onchange="handleStrictFiles(event)">
-  </div>
-
-  <!-- BOTÓN INFERIOR DE TRANSMISIÓN -->
-  <button id="btnAction" class="btn-main-stream" type="button" onclick="handleStreamButtonClick()">
-    INICIAR TRANSMISIÓN EN VIVO
-  </button>
-
-  <div class="terminal-box" id="terminal">> Listo. Ingresa las credenciales y pulsa transmitir.</div>
-
-  <!-- ELEMENTOS DE AUDIO -->
-  <audio id="audioMusic" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioStinger1" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioStinger2" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioLightning" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioClockSlot" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioAds" style="display:none;" crossorigin="anonymous"></audio>
-
-  <!-- MODAL DE CALENDARIO / COMERCIALES (📅) -->
-  <div class="modal-overlay" id="calendarModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:var(--c-purple);">📅 COMERCIALES (MÁXIMO 5 TANDAS)</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeCalendarModal()">✕</button>
-      </div>
-
-      <div style="font-size:0.68rem; color:#cbd5e1; margin-bottom:8px; line-height:1.4;">
-        Guarda hasta <b>5 tandas comerciales</b>. Cada tanda espera automáticamente a que termine la canción actual antes de salir al aire.
-      </div>
-
-      <div id="adFormContainer" style="background:#091226; border:1px solid #1e3a6d; border-radius:10px; padding:10px; margin-bottom:10px;">
-        <div class="form-group">
-          <label style="color:var(--c-blue);">Nombre de la Tanda</label>
-          <input type="text" id="newAdName" placeholder="Ej: Comercial Patrocinador">
+    <!-- PANEL ADMIN CON MEZCLADORA Y MICRÓFONO -->
+    <div class="admin-dashboard" id="adminDashboardPanel">
+        <div class="admin-top-bar">
+            <h2>⚡ Panel Control Emisora</h2>
+            <button class="btn-exit-admin" onclick="closeAdminPanel()">Cerrar Sesión</button>
         </div>
 
-        <div class="form-group">
-          <label style="color:var(--c-yellow);">Archivo (Audio o Video)</label>
-          <div class="file-select-box">
-            <span id="lblNewAdFileName" style="font-size:0.7rem; color:#fff;">Sin archivo</span>
-            <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
-              SUBIR
-              <input type="file" accept="audio/*, video/*" style="display:none;" onchange="handleNewAdFile(event)">
-            </label>
-          </div>
+        <div class="sec-label">Configuración de Mezcladora & Audio</div>
+        <div class="mixer-box">
+            <div class="mixer-row">
+                <label>Micrófono al Aire:</label>
+                <label class="mic-toggle">
+                    <input type="checkbox" id="micEnabledToggle" onchange="toggleMicState()"> 
+                    <span id="micStateLabel" style="color:#ef4444; font-weight:bold;">APAGADO 🔴</span>
+                </label>
+            </div>
+            <div class="mixer-row" style="margin-bottom: 0;">
+                <label for="crossfadeSecs">Solapamiento / Crossfade (Segundos):</label>
+                <select id="crossfadeSecs" style="width: 70px; padding: 4px; background:#080d1a; color:#fff; border:1px solid #1e3a6d; border-radius:4px;">
+                    <option value="0">0 seg (Seco)</option>
+                    <option value="1">1 seg</option>
+                    <option value="2" selected>2 seg (Ideal)</option>
+                    <option value="3">3 seg</option>
+                    <option value="5">5 seg</option>
+                </select>
+            </div>
         </div>
 
-        <div class="form-group">
-          <label style="color:var(--c-green);">Minuto de la hora (0 a 59)</label>
-          <input type="number" id="newAdMinute" min="0" max="59" value="30">
+        <div class="live-control-box">
+            <div class="status-text">Estado: <span id="monitorStatus">Detenido / En espera</span></div>
+            <div class="media-btns-grid">
+                <button class="btn-ctrl btn-play-action" onclick="adminPlay()">▶ Reproducir</button>
+                <button class="btn-ctrl btn-pause-action" onclick="adminPause()">⏸ Pausar</button>
+                <button class="btn-ctrl btn-next-action" onclick="adminNext()">⏭ Siguiente</button>
+            </div>
         </div>
 
-        <button class="btn-ctrl" style="width:100%; background:var(--c-green); font-weight:900; padding:8px;" onclick="saveNewAdSlot()">
-          GUARDAR TANDA
-        </button>
-      </div>
-
-      <div id="adSlotsListContainer"></div>
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeCalendarModal()">CERRAR</button>
-    </div>
-  </div>
-
-  <!-- MODAL DE CARPETA RELOJ (🕒) -->
-  <div class="modal-overlay" id="clockModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:#818cf8;">🕒 CARPETA DE RELOJ (ENTRE CANCIONES)</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeClockModal()">✕</button>
-      </div>
-      <div style="font-size:0.68rem; color:#cbd5e1; margin-bottom:8px;">
-        Carga hasta 10 identificaciones. Sonará una cada vez que termine una canción antes de dar paso a la siguiente.
-      </div>
-      <div style="display:flex; align-items:center; justify-content:space-between; background:#091226; border:1px solid #1e3a6d; border-radius:8px; padding:8px; margin-bottom:8px;">
-        <span style="font-size:0.75rem; font-weight:800; color:#fff;">Estado:</span>
-        <button id="btnToggleClockActive" class="btn-ctrl" style="padding:6px 12px; font-weight:900;" onclick="toggleClockActiveState()">DESACTIVADO</button>
-      </div>
-      <div class="form-group">
-        <label>Subir Archivo (<span id="clockCountDisplay">0</span>/10)</label>
-        <div class="file-select-box">
-          <span id="lblClockTempName" style="font-size:0.7rem; color:#fff;">Sin archivo</span>
-          <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
-            ELEGIR
-            <input type="file" accept="audio/*, video/*" style="display:none;" onchange="handleClockFileSelect(event)">
-          </label>
+        <div class="ctrl-group">
+            <label>Nombre de la Emisora</label>
+            <input type="text" id="cfgName" value="EMISORASplus isecas">
         </div>
-        <button class="btn-ctrl" style="width:100%; background:var(--c-green); font-weight:900; margin-top:4px;" onclick="addClockSlot()">GUARDAR EN RELOJ</button>
-      </div>
-      <div id="clockSlotsContainer" style="max-height:30vh; overflow-y:auto;"></div>
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeClockModal()">CERRAR</button>
-    </div>
-  </div>
 
-  <!-- MODAL MANUAL DE AYUDA COMPLETO -->
-  <div class="modal-overlay" id="helpModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:var(--c-gold);">📖 MANUAL COMPLETO DE CABINA</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeHelpModal()">✕</button>
-      </div>
-
-      <div class="help-section">
-        <div class="help-title">📻 1. Transmisión y Emisión al Aire</div>
-        <div class="help-desc">
-          En <b>Ajustes ⚙</b> ingresas tus datos de servidor (Host, Puerto, Mount y Stream Key de Zeno Media o Icecast). Al presionar el botón <b>INICIAR TRANSMISIÓN EN VIVO</b> (o el botón rápido rojo <b>▶</b> de la barra superior), se codifica la mezcla en tiempo real en MP3 a 128 kbps. El sistema cuenta con <b>blindaje</b> y reconexión automática continua; solo se detiene si tocas voluntariamente <b>DETENER TRANSMISIÓN</b>.
+        <div class="ctrl-group">
+            <label>URL del Logo</label>
+            <input type="text" id="cfgLogo" placeholder="https://.../logo.png">
         </div>
-      </div>
 
-      <div class="help-section">
-        <div class="help-title">🎧 2. Monitoreo Local con Audífonos</div>
-        <div class="help-desc">
-          El botón <b>🎧</b> controla la salida de audio por los parlantes o audífonos de tu celular/computador. Cuando está <b>apagado</b>, el dispositivo permanece en silencio total para evitar acoples y ecos molestos con el micrófono. Al <b>activarlo</b>, podrás escuchar con fidelidad la mezcla exacta que sale al aire.
+        <div class="ctrl-group">
+            <label>Titulares (Cintillo)</label>
+            <textarea id="cfgTicker" rows="2"></textarea>
         </div>
-      </div>
 
-      <div class="help-section">
-        <div class="help-title">⚡ 3. Función Rayito (Auto-Pisador Inteligente)</div>
-        <div class="help-desc">
-          Al pulsar el botón <b>⚡ RAYITO</b>, el sistema evalúa la duración de cada pista al aire. <b>Si la canción dura menos de 1 minuto (60 segundos) no suena</b>. Si la pista dura <b>1 minuto o más</b>, el sistema dispara automáticamente el audio cargado como pisador sobre la canción con precisión matemática en el <b>segundo 0:03</b>.
-        </div>
-      </div>
-
-      <div class="help-section">
-        <div class="help-title">🕒 4. Carpeta de Reloj (Separadores entre Canciones)</div>
-        <div class="help-desc">
-          En la pista al aire se encuentra el botón <b>🕒</b>. Te permite cargar hasta <b>10 audios o videos</b> de identificaciones, separadores o la hora. Si la función está en <b>ACTIVADO</b>, cada vez que una canción termine, se emitirá un archivo de esta lista antes de que comience la siguiente pista de la cola.
-        </div>
-      </div>
-
-      <div class="help-section">
-        <div class="help-title">📅 5. Programador de Comerciales y Publicidad</div>
-        <div class="help-desc">
-          Tocando el icono <b>📅</b> en la barra superior puedes registrar hasta <b>5 tandas comerciales independientes</b>. Cada tanda te permite definir el minuto exacto de cada hora (por ejemplo, al minuto 30). El sistema espera de forma automática a que termine la canción que está al aire para soltar la cuña comercial sin cortar la música de golpe.
-        </div>
-      </div>
-
-      <div class="help-section">
-        <div class="help-title">🎙️ 6. Micrófono y Ducking Automático</div>
-        <div class="help-desc">
-          El botón <b>🎤 MIC</b> cuenta con una cadena de audio profesional: filtro paso alto (80 Hz) para anular ruidos de mesa y viento, realce de calidez en 250 Hz (+2.5 dB), brillo en 4.5 kHz (+3.5 dB) y un compresor de dinámica. Con <b>DUCKING AUTO</b> activado, la música baja automáticamente de volumen al hablar para que tu voz destaque con nitidez.
-        </div>
-      </div>
-
-      <div class="help-section">
-        <div class="help-title">🎛️ 7. Panel Principal y Memoria de Pistas</div>
-        <div class="help-desc">
-          Toca <b>🎛️</b> para ver la lista completa de temas. Puedes subir o bajar el orden con <b>▲</b> y <b>▼</b>, eliminar pistas con <b>🗑</b>, identificar en <b>ROJO</b> las que ya sonaron y ver con el icono <b>⚡</b> las que cumplen el tiempo para el Rayito. Además, todas las canciones se guardan en el almacenamiento del dispositivo (IndexedDB) para que no se borren al salir de la aplicación.
-        </div>
-      </div>
-
-      <div class="help-section">
-        <div class="help-title">⏱️ 8. Segundero y Alerta Roja en Cola</div>
-        <div class="help-desc">
-          El cuadro de la pista #2 muestra un cronómetro en cuenta regresiva que indica el tiempo que le falta a la canción actual. Cuando falten <b>8 segundos o menos</b>, todo el cuadro parpadeará en rojo para avisarte que el cambio de tema está a punto de ocurrir.
-        </div>
-      </div>
-
-      <button class="btn-main-stream" style="padding:10px; margin-top:6px;" onclick="closeHelpModal()">ENTENDIDO / CERRAR GUÍA</button>
-    </div>
-  </div>
-
-  <!-- MODAL PANEL PRINCIPAL (PISTAS) -->
-  <div class="modal-overlay" id="playlistModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.85rem; font-weight:900; color:var(--c-blue);">🎛️ PANEL PRINCIPAL DE PISTAS</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closePlaylistModal()">✕</button>
-      </div>
-      <div style="font-size:0.68rem; color:var(--text-muted); margin-bottom:8px;">
-        Pistas que ya sonaron en <b style="color:var(--c-red);">ROJO</b>. Pistas aptas para rayito (≥ 1 min) llevan <b style="color:var(--c-gold);">⚡</b>.
-      </div>
-      <div class="playlist-scroll" id="playlistContainer"></div>
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closePlaylistModal()">CERRAR PANEL</button>
-    </div>
-  </div>
-
-  <!-- MODAL DE AJUSTES -->
-  <div class="modal-overlay" id="settingsModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.85rem; font-weight:900; color:#38bdf8;">⚙ AJUSTES DE EMISORA</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeSettingsModal()">✕</button>
-      </div>
-
-      <div class="form-group">
-        <label>Servidor / Host (Zeno Media)</label>
-        <input type="text" id="host" value="link.zeno.fm">
-      </div>
-      <div style="display:flex; gap:6px;">
-        <div class="form-group" style="flex:1;"><label>Puerto</label><input type="number" id="port" value="80"></div>
-        <div class="form-group" style="flex:2;"><label>Punto Anclaje</label><input type="text" id="mount" value="/f04sfgq6138uv/source"></div>
-      </div>
-      <div class="form-group"><label>Usuario</label><input type="text" id="user" value="source"></div>
-      <div class="form-group">
-        <div style="display:flex; justify-content:space-between;">
-          <label>Contraseña (Stream Key)</label>
-          <span style="font-size:0.65rem; color:var(--c-blue); cursor:pointer;" onclick="togglePasswordVisibility()">👁 Ver / Ocultar</span>
-        </div>
-        <input type="password" id="password" placeholder="Pega tu contraseña de Zeno">
-      </div>
-
-      <div style="font-size:0.7rem; font-weight:900; color:var(--c-purple); margin:6px 0 4px 0;">🎙 CARGAR AUDIOS DE PISADORES</div>
-      <div class="file-select-box">
-        <span id="lblStinger1Name" style="font-size:0.68rem; color:#fff;">Pisador 1: No asignado</span>
-        <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
-          SUBIR P1
-          <input type="file" accept="audio/*" style="display:none;" onchange="handleStingerUpload(1, event)">
-        </label>
-      </div>
-      <div class="file-select-box">
-        <span id="lblStinger2Name" style="font-size:0.68rem; color:#fff;">Pisador 2: No asignado</span>
-        <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
-          SUBIR P2
-          <input type="file" accept="audio/*" style="display:none;" onchange="handleStingerUpload(2, event)">
-        </label>
-      </div>
-      <div class="file-select-box">
-        <span id="lblLightningName" style="font-size:0.68rem; color:#fff;">Pisador Rayito ⚡: No asignado</span>
-        <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">
-          SUBIR RAYITO
-          <input type="file" accept="audio/*" style="display:none;" onchange="handleStingerUpload(3, event)">
-        </label>
-      </div>
-
-      <div class="vol-row" style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
-        <span style="font-size:0.68rem; font-weight:800; color:var(--text-muted); width:75px;">🎤 Mic</span>
-        <input type="range" id="volMic" min="0" max="1.5" step="0.05" value="1.0" oninput="setMicVol(this.value)" style="flex:1;">
-        <span id="valMic" style="font-size:0.68rem; font-weight:800; width:35px; text-align:right;">100%</span>
-      </div>
-      <div class="vol-row" style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
-        <span style="font-size:0.68rem; font-weight:800; color:var(--text-muted); width:75px;">🎵 Música</span>
-        <input type="range" id="volMusic" min="0" max="1.0" step="0.05" value="0.75" oninput="setMusicVol(this.value)" style="flex:1;">
-        <span id="valMusic" style="font-size:0.68rem; font-weight:800; width:35px; text-align:right;">75%</span>
-      </div>
-
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeSettingsModal()">GUARDAR Y APLICAR</button>
-    </div>
-  </div>
-
-  <script>
-    const RELAY_URL = "wss://zeno-relay.onrender.com";
-
-    let isLive = false;
-    let micMuted = false;
-    let duckingEnabled = true;
-    let lightningEnabled = false;
-    let isShuffle = false;
-    let isMonitoring = false;
-
-    let rayitoIntroFired = false;
-    let keepAliveInterval = null;
-
-    let playlist = [];
-    let currentIndex = 0;
-    let activeStingerAudio = null;
-
-    // Web Audio Nodes
-    let audioContext = null;
-    let mediaStream = null;
-    let micSourceNode = null;
-    let micFilterNode = null;
-    let micEqWarmthNode = null;
-    let micEqAirNode = null;
-    let micCompressorNode = null;
-    let micGainNode = null;
-
-    let musicSourceNode = null;
-    let musicGainNode = null;
-    let musicAnalyser = null;
-    let masterMixerNode = null;
-    let monitorGainNode = null;
-    let processorNode = null;
-    let mp3Encoder = null;
-    let ws = null;
-
-    // Carpeta Reloj
-    let clockSlots = [];
-    let clockTempFile = null;
-    let clockFunctionActive = false;
-    let nextClockSlotIndex = 0;
-
-    // Comerciales
-    let adSlots = [];
-    let temporaryAdFile = null;
-    let adIntervalChecker = null;
-    let currentAdPlayingIndex = -1;
-
-    const aMusic = document.getElementById('audioMusic');
-    const aS1 = document.getElementById('audioStinger1');
-    const aS2 = document.getElementById('audioStinger2');
-    const aLight = document.getElementById('audioLightning');
-    const aClock = document.getElementById('audioClockSlot');
-    const aAds = document.getElementById('audioAds');
-
-    function log(msg) {
-      const term = document.getElementById('terminal');
-      if (term) {
-        term.innerHTML += `<br>> ${msg}`;
-        term.scrollTop = term.scrollHeight;
-      }
-    }
-
-    function handleStreamButtonClick() {
-      log("Comando recibido: alternando transmisión...");
-      toggleBroadcast();
-    }
-
-    // ==========================================
-    // RELOJ DIGITAL COLOMBIA EN TIEMPO REAL
-    // ==========================================
-    function updateColombiaStudioClock() {
-      try {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('es-CO', {
-          timeZone: 'America/Bogota',
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        });
-        const dateStr = now.toLocaleDateString('es-CO', {
-          timeZone: 'America/Bogota',
-          weekday: 'short',
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
-        });
-
-        const tEl = document.getElementById('colombiaTimeDisplay');
-        const dEl = document.getElementById('colombiaDateDisplay');
-        if (tEl) tEl.innerText = timeStr;
-        if (dEl) dEl.innerText = dateStr;
-      } catch(e){}
-    }
-    setInterval(updateColombiaStudioClock, 1000);
-    updateColombiaStudioClock();
-
-    // ==========================================
-    // VÚMETRO PARALELO
-    // ==========================================
-    const TOTAL_LEDS = 16;
-    function buildLedBlocks() {
-      const colL = document.getElementById('colLeftMeter');
-      const colR = document.getElementById('colRightMeter');
-      if (!colL || !colR) return;
-      colL.innerHTML = '';
-      colR.innerHTML = '';
-
-      for (let i = 0; i < TOTAL_LEDS; i++) {
-        let type = 'green';
-        if (i >= 13) type = 'red';
-        else if (i >= 9) type = 'yellow';
-
-        const bL = document.createElement('div');
-        bL.className = 'led-block';
-        bL.dataset.type = type;
-        bL.id = `ledL_${i}`;
-        colL.appendChild(bL);
-
-        const bR = document.createElement('div');
-        bR.className = 'led-block';
-        bR.dataset.type = type;
-        bR.id = `ledR_${i}`;
-        colR.appendChild(bR);
-      }
-    }
-
-    function updateParallelLedMeters(levelL, levelR) {
-      const countL = Math.round((levelL / 100) * TOTAL_LEDS);
-      const countR = Math.round((levelR / 100) * TOTAL_LEDS);
-
-      for (let i = 0; i < TOTAL_LEDS; i++) {
-        const bL = document.getElementById(`ledL_${i}`);
-        const bR = document.getElementById(`ledR_${i}`);
-        if (!bL || !bR) continue;
-
-        bL.className = i < countL ? `led-block active-${bL.dataset.type}` : 'led-block';
-        bR.className = i < countR ? `led-block active-${bR.dataset.type}` : 'led-block';
-      }
-
-      const dbDisplay = document.getElementById('rackDbDisplay');
-      if (dbDisplay) {
-        dbDisplay.innerText = levelL > 2 ? `${Math.round(-30 + (levelL * 0.3))} dB` : '-∞ dB';
-      }
-    }
-
-    // ==========================================
-    // PERSISTENCIA INDEXEDDB
-    // ==========================================
-    let dbInstance = null;
-
-    function initIndexedDB() {
-      return new Promise((resolve) => {
-        try {
-          const req = indexedDB.open("EmisorasPlusDB", 1);
-          req.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains("tracks")) {
-              db.createObjectStore("tracks", { keyPath: "id", autoIncrement: true });
-            }
-          };
-          req.onsuccess = (e) => {
-            dbInstance = e.target.result;
-            resolve(dbInstance);
-          };
-          req.onerror = () => resolve(null);
-        } catch(e) { resolve(null); }
-      });
-    }
-
-    async function saveTrackToDB(trackObj) {
-      if (!dbInstance) return;
-      try {
-        const tx = dbInstance.transaction("tracks", "readwrite");
-        tx.objectStore("tracks").add({
-          name: trackObj.name,
-          blob: trackObj.blob,
-          durationSec: trackObj.durationSec,
-          durationStr: trackObj.durationStr,
-          appliesLightning: trackObj.appliesLightning,
-          played: trackObj.played
-        });
-      } catch(e){}
-    }
-
-    async function loadTracksFromDB() {
-      if (!dbInstance) return;
-      try {
-        const tx = dbInstance.transaction("tracks", "readonly");
-        const req = tx.objectStore("tracks").getAll();
-        req.onsuccess = () => {
-          const savedTracks = req.result;
-          if (savedTracks && savedTracks.length > 0) {
-            playlist = savedTracks.map(t => ({
-              id: t.id,
-              blob: t.blob,
-              name: t.name,
-              played: t.played || false,
-              durationSec: t.durationSec || 0,
-              durationStr: t.durationStr || '--:--',
-              appliesLightning: t.appliesLightning || false
-            }));
-            updateTrackBoxes();
-            renderPlaylistModal();
-            log(`Restauradas ${playlist.length} pistas guardadas.`);
-            if (playlist.length > 0 && !aMusic.src) {
-              setupTrackSource(0);
-            }
-          }
-        };
-      } catch(e){}
-    }
-
-    // ==========================================
-    // AUDIO ENGINE Y ONDAS DJ
-    // ==========================================
-    function ensureAudioEngine() {
-      try {
-        if (!audioContext || audioContext.state === 'closed') {
-          audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioContext.state === 'suspended') {
-          audioContext.resume();
-        }
-
-        if (!masterMixerNode) {
-          masterMixerNode = audioContext.createGain();
-        }
-
-        if (!monitorGainNode) {
-          monitorGainNode = audioContext.createGain();
-          monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
-          masterMixerNode.connect(monitorGainNode);
-          monitorGainNode.connect(audioContext.destination);
-        }
-
-        if (!musicSourceNode) {
-          musicSourceNode = audioContext.createMediaElementSource(aMusic);
-          musicGainNode = audioContext.createGain();
-          musicGainNode.gain.value = parseFloat(document.getElementById('volMusic').value || 0.75);
-
-          musicAnalyser = audioContext.createAnalyser();
-          musicAnalyser.fftSize = 256;
-          musicAnalyser.smoothingTimeConstant = 0.75;
-
-          musicSourceNode.connect(musicGainNode);
-          musicGainNode.connect(musicAnalyser);
-          musicGainNode.connect(masterMixerNode);
-        }
-      } catch(e) {}
-    }
-
-    function startDjVisualLoop() {
-      const canvas = document.getElementById('djWaveCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const freqData = new Uint8Array(128);
-      const waveData = new Uint8Array(128);
-
-      function draw() {
-        requestAnimationFrame(draw);
-
-        if (!musicAnalyser || aMusic.paused) {
-          updateParallelLedMeters(0, 0);
-          ctx.fillStyle = '#010307';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.beginPath();
-          ctx.strokeStyle = '#1e3a6d';
-          ctx.lineWidth = 1;
-          ctx.moveTo(0, canvas.height / 2);
-          ctx.lineTo(canvas.width, canvas.height / 2);
-          ctx.stroke();
-          return;
-        }
-
-        musicAnalyser.getByteFrequencyData(freqData);
-        musicAnalyser.getByteTimeDomainData(waveData);
-
-        ctx.fillStyle = 'rgba(1, 3, 7, 0.4)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#06b6d4';
-        ctx.beginPath();
-
-        const sliceWidth = canvas.width / waveData.length;
-        let x = 0;
-
-        for (let i = 0; i < waveData.length; i++) {
-          const v = waveData[i] / 128.0;
-          const y = (v * canvas.height) / 2;
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-          x += sliceWidth;
-        }
-        ctx.stroke();
-
-        let sumL = 0, sumR = 0;
-        for (let i = 0; i < 64; i++) sumL += freqData[i];
-        for (let i = 64; i < 128; i++) sumR += freqData[i];
-
-        const avgL = (sumL / 64 / 255) * 100;
-        const avgR = (sumR / 64 / 255) * 100;
-        updateParallelLedMeters(Math.min(100, avgL * 1.3), Math.min(100, avgR * 1.3));
-      }
-      draw();
-    }
-
-    // ==========================================
-    // REPRODUCCIÓN Y PISTAS
-    // ==========================================
-    function setupTrackSource(idx) {
-      if (playlist.length === 0 || !playlist[idx]) return;
-      currentIndex = idx;
-      aMusic.src = URL.createObjectURL(playlist[currentIndex].blob);
-      aMusic.load();
-    }
-
-    function playTrack(idx) {
-      if (playlist.length === 0 || !playlist[idx]) return;
-      ensureAudioEngine();
-      currentIndex = idx;
-      rayitoIntroFired = false;
-      updateTrackBoxes();
-
-      aMusic.src = URL.createObjectURL(playlist[currentIndex].blob);
-      aMusic.load();
-      aMusic.play().catch(e => console.log(e));
-      document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
-    }
-
-    function togglePlayMusic() {
-      ensureAudioEngine();
-      const btn = document.getElementById('btnPlayMusic');
-      if (aMusic.paused) {
-        if (!aMusic.src && playlist.length > 0) playTrack(currentIndex);
-        else aMusic.play();
-        btn.innerText = '⏸ PAUSA';
-      } else {
-        aMusic.pause();
-        btn.innerText = '▶ PLAY';
-      }
-    }
-
-    function playNextTrack() {
-      if (playlist.length === 0) return;
-      if (checkAndPlayScheduledAd()) return;
-      if (playlist[currentIndex]) playlist[currentIndex].played = true;
-      currentIndex = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIndex + 1) % playlist.length;
-      playTrack(currentIndex);
-      if (document.getElementById('playlistModal').style.display === 'flex') {
-        renderPlaylistModal();
-      }
-    }
-
-    aMusic.onended = () => {
-      if (playlist[currentIndex]) playlist[currentIndex].played = true;
-      if (clockFunctionActive && clockSlots.length > 0) {
-        playClockSlotTransition();
-      } else if (!checkAndPlayScheduledAd()) {
-        playNextTrack();
-      }
-    };
-
-    function playClockSlotTransition() {
-      const slot = clockSlots[nextClockSlotIndex % clockSlots.length];
-      nextClockSlotIndex++;
-      log(`🕒 Separador de Reloj: "${slot.name}".`);
-      aClock.src = slot.url;
-      aClock.currentTime = 0;
-      aClock.play().catch(e => console.log(e));
-      aClock.onended = () => {
-        if (!checkAndPlayScheduledAd()) {
-          playNextTrack();
-        }
-      };
-    }
-
-    aMusic.ontimeupdate = () => {
-      if (!isNaN(aMusic.duration)) {
-        const cur = aMusic.currentTime;
-        const dur = aMusic.duration;
-
-        const cM = Math.floor(cur / 60);
-        const cS = Math.floor(cur % 60).toString().padStart(2, '0');
-        const dM = Math.floor(dur / 60);
-        const dS = Math.floor(dur % 60).toString().padStart(2, '0');
-        document.getElementById('track1Time').innerText = `${cM}:${cS} / ${dM}:${dS}`;
-
-        const remaining = Math.max(0, Math.floor(dur - cur));
-        const nextBox = document.getElementById('trackBoxNext');
-        const countDisplay = document.getElementById('nextCountdownDisplay');
-
-        if (playlist.length > 1) {
-          countDisplay.innerText = `Faltan: ${remaining}s`;
-          if (remaining <= 8 && remaining > 0) nextBox.classList.add('alert-imminent');
-          else nextBox.classList.remove('alert-imminent');
-        } else {
-          countDisplay.innerText = `Faltan: --s`;
-          nextBox.classList.remove('alert-imminent');
-        }
-
-        // Rayito al segundo 3 en pistas >= 1 min (60s)
-        if (lightningEnabled && aLight.src && dur >= 60) {
-          if (cur >= 3 && cur < 4 && !rayitoIntroFired) {
-            rayitoIntroFired = true;
-            log('⚡ Rayito lanzado automáticamente al segundo 0:03.');
-            startStingerPlayback(aLight, "⚡ RAYITO");
-          }
-        }
-      }
-    };
-
-    function updateTrackBoxes() {
-      if (playlist.length === 0) return;
-      const currentItem = playlist[currentIndex];
-      document.getElementById('track1').innerText = currentItem ? currentItem.name : 'Sin pista';
-
-      const airBadge = document.getElementById('airLightningBadge');
-      if (currentItem && currentItem.appliesLightning) airBadge.style.display = 'inline-flex';
-      else airBadge.style.display = 'none';
-
-      const nIdx = (currentIndex + 1) % playlist.length;
-      document.getElementById('track2').innerText = playlist.length > 1 ? playlist[nIdx].name : 'No hay más archivos';
-      const tIdx = (currentIndex + 2) % playlist.length;
-      document.getElementById('track3').innerText = playlist.length > 2 ? playlist[tIdx].name : 'No hay más archivos';
-    }
-
-    function repeatCurrentTrack() {
-      if (playlist.length === 0) return;
-      ensureAudioEngine();
-      aMusic.currentTime = 0;
-      aMusic.play();
-      rayitoIntroFired = false;
-    }
-
-    function skipToNextTrack() {
-      if (playlist.length === 0) return;
-      playNextTrack();
-    }
-
-    function stopMusicTrack() {
-      aMusic.pause();
-      aMusic.currentTime = 0;
-      document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
-      updateParallelLedMeters(0, 0);
-    }
-
-    // ==========================================
-    // TRANSMISIÓN ROBUSTA ZENO MEDIA
-    // ==========================================
-    async function toggleBroadcast() {
-      if (isLive) {
-        stopAll();
-      } else {
-        await startBroadcast();
-      }
-    }
-
-    async function startBroadcast() {
-      const host = document.getElementById('host').value.trim();
-      const port = document.getElementById('port').value.trim();
-      let mount = document.getElementById('mount').value.trim();
-      const user = document.getElementById('user').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!host || !port || !mount || !password) {
-        alert("Abre Ajustes ⚙ y escribe o pega tu Stream Key para transmitir.");
-        openSettingsModal();
-        return;
-      }
-
-      if (!mount.startsWith('/')) {
-        mount = '/' + mount;
-        document.getElementById('mount').value = mount;
-      }
-
-      localStorage.setItem('zeno_host', host);
-      localStorage.setItem('zeno_port', port);
-      localStorage.setItem('zeno_mount', mount);
-      localStorage.setItem('zeno_user', user);
-      localStorage.setItem('zeno_password', password);
-
-      log("Solicitando acceso al micrófono...");
-      try {
-        if (!mediaStream) {
-          mediaStream = await navigator.mediaDevices.getUserMedia({
-            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-          });
-        }
-        log('<span style="color:var(--c-green)">Micrófono activado con éxito.</span>');
-      } catch (err) {
-        log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
-        alert("Debes permitir el acceso al micrófono para transmitir.");
-        return;
-      }
-
-      log("Conectando con el relay y autenticando en Zeno Media...");
-
-      try {
-        ws = new WebSocket(RELAY_URL);
-        ws.binaryType = "arraybuffer";
-
-        ws.onopen = () => {
-          log("Enviando credenciales al relay...");
-          ws.send(JSON.stringify({
-            action: 'AUTH_ICECAST',
-            host: host,
-            port: port,
-            mount: mount,
-            user: user,
-            password: password
-          }));
-
-          if (keepAliveInterval) clearInterval(keepAliveInterval);
-          keepAliveInterval = setInterval(() => {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-              ws.send(JSON.stringify({ action: 'PING' }));
-            }
-          }, 8000);
-        };
-
-        ws.onmessage = async (event) => {
-          try {
-            const resp = JSON.parse(event.data);
-            if (resp.status === 'SUCCESS') {
-              log('<span style="color:var(--c-green); font-weight:bold;">¡Autenticado con éxito! AL AIRE.</span>');
-              await iniciarAudioEngine();
-            } else if (resp.status === 'ERROR') {
-              log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message} (${resp.code || ''})</span>`);
-              stopAll();
-              alert(`Error del servidor Icecast: ${resp.message}`);
-            }
-          } catch(e){}
-        };
-
-        ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">Microcorte de red. Intentando reconectar...</span>');
-        };
-
-        ws.onclose = () => {
-          if (isLive) {
-            log('<span style="color:var(--c-yellow)">Reanudando conexión con Zeno Media...</span>');
-            setTimeout(() => {
-              if (isLive) startBroadcast();
-            }, 2000);
-          }
-        };
-
-      } catch (err) {
-        log(`<span style="color:var(--c-red)">Error: ${err.message}</span>`);
-        stopAll();
-      }
-    }
-
-    async function iniciarAudioEngine() {
-      isLive = true;
-
-      const btn = document.getElementById('btnAction');
-      if (btn) {
-        btn.className = 'btn-main-stream live';
-        btn.innerText = 'DETENER TRANSMISIÓN';
-      }
-
-      const quickBtn = document.getElementById('btnQuickPlay');
-      if (quickBtn) {
-        quickBtn.innerText = '⏹';
-        quickBtn.classList.add('is-live');
-      }
-
-      ensureAudioEngine();
-      const sampleRate = audioContext.sampleRate;
-      log(`Audio activo: ${sampleRate}Hz`);
-
-      // Cadena de micrófono profesional cálido y nítido
-      if (!micSourceNode && mediaStream) {
-        micSourceNode = audioContext.createMediaStreamSource(mediaStream);
+        <div class="sec-label">Parrilla / Lista de Reproducción (Bucle Infinito)</div>
         
-        micFilterNode = audioContext.createBiquadFilter();
-        micFilterNode.type = 'highpass';
-        micFilterNode.frequency.value = 80;
+        <div class="upload-row">
+            <input type="text" id="newMediaUrl" placeholder="Pegar enlace directo (.mp4 o .mp3)">
+            <button class="btn-action-blue" onclick="addMediaUrl()">+ URL</button>
+        </div>
 
-        micEqWarmthNode = audioContext.createBiquadFilter();
-        micEqWarmthNode.type = 'peaking';
-        micEqWarmthNode.frequency.value = 250;
-        micEqWarmthNode.Q.value = 1.2;
-        micEqWarmthNode.gain.value = 2.5;
+        <div class="ctrl-group" style="margin-bottom: 8px;">
+            <label style="background:#132247; padding:6px; border-radius:6px; text-align:center; display:block; cursor:pointer; border:1px dashed #475569;">
+                📁 Cargar Audio/Video desde este Dispositivo
+                <input type="file" id="localFilePicker" accept="video/*,audio/*" style="display:none;" onchange="handleLocalFile(this)">
+            </label>
+        </div>
 
-        micEqAirNode = audioContext.createBiquadFilter();
-        micEqAirNode.type = 'highshelf';
-        micEqAirNode.frequency.value = 4500;
-        micEqAirNode.gain.value = 3.5;
+        <div class="playlist-box" id="playlistItemsContainer"></div>
 
-        micCompressorNode = audioContext.createDynamicsCompressor();
-        micCompressorNode.threshold.setValueAtTime(-18, audioContext.currentTime);
-        micCompressorNode.knee.setValueAtTime(8, audioContext.currentTime);
-        micCompressorNode.ratio.setValueAtTime(3.8, audioContext.currentTime);
-        micCompressorNode.attack.setValueAtTime(0.003, audioContext.currentTime);
-        micCompressorNode.release.setValueAtTime(0.12, audioContext.currentTime);
+        <div class="admin-footer-btns">
+            <button class="btn-cancel-cfg" onclick="closeAdminPanel()">Cancelar</button>
+            <button class="btn-save-cfg" onclick="saveAndApplyConfig()">Guardar y Aplicar</button>
+        </div>
+    </div>
 
-        micGainNode = audioContext.createGain();
-        micGainNode.gain.value = parseFloat(document.getElementById('volMic').value || 1.0);
+    <script>
+        const DEFAULT_LOGO = "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=150&auto=format&fit=crop&q=80";
+        const DEFAULT_PLAYLIST = [
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        ];
 
-        micSourceNode.connect(micFilterNode);
-        micFilterNode.connect(micEqWarmthNode);
-        micEqWarmthNode.connect(micEqAirNode);
-        micEqAirNode.connect(micCompressorNode);
-        micCompressorNode.connect(micGainNode);
-        micGainNode.connect(masterMixerNode);
-      }
-
-      try {
-        const clockNode = audioContext.createMediaElementSource(aClock);
-        clockNode.connect(masterMixerNode);
-      } catch(e){}
-
-      try {
-        const adsNode = audioContext.createMediaElementSource(aAds);
-        adsNode.connect(masterMixerNode);
-      } catch(e){}
-
-      try {
-        const stingerGainNode = audioContext.createGain();
-        stingerGainNode.gain.value = 0.95;
-        audioContext.createMediaElementSource(aS1).connect(stingerGainNode);
-        audioContext.createMediaElementSource(aS2).connect(stingerGainNode);
-        audioContext.createMediaElementSource(aLight).connect(stingerGainNode);
-        stingerGainNode.connect(masterMixerNode);
-      } catch(e){}
-
-      // Vúmetro Master
-      const analyser = audioContext.createAnalyser();
-      analyser.fftSize = 128;
-      masterMixerNode.connect(analyser);
-
-      const bLen = analyser.frequencyBinCount;
-      const dArr = new Uint8Array(bLen);
-      const vu = document.getElementById('vuLevel');
-      const vuPct = document.getElementById('vuPct');
-
-      function updateMasterMeter() {
-        if (!isLive) return;
-        analyser.getByteFrequencyData(dArr);
-        let sum = 0;
-        for (let i = 0; i < bLen; i++) sum += dArr[i];
-        let pct = Math.min(100, (sum / bLen / 128) * 100);
-        vu.style.width = pct + '%';
-        vuPct.innerText = `${Math.round(pct)}%`;
-        requestAnimationFrame(updateMasterMeter);
-      }
-      updateMasterMeter();
-
-      if (typeof lamejs !== 'undefined') {
-        mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
-      }
-
-      processorNode = audioContext.createScriptProcessor(4096, 1, 1);
-      processorNode.onaudioprocess = (e) => {
-        if (!isLive || !ws || ws.readyState !== WebSocket.OPEN || !mp3Encoder) return;
-
-        const inputData = e.inputBuffer.getChannelData(0);
-        const sampleBuffer = new Int16Array(inputData.length);
-        for (let i = 0; i < inputData.length; i++) {
-          let s = Math.max(-1, Math.min(1, inputData[i]));
-          sampleBuffer[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
-        }
-
-        const mp3Chunk = mp3Encoder.encodeBuffer(sampleBuffer);
-        if (mp3Chunk.length > 0) {
-          ws.send(mp3Chunk.buffer);
-        }
-      };
-
-      masterMixerNode.connect(processorNode);
-      processorNode.connect(audioContext.destination);
-
-      if (playlist.length > 0 && aMusic.paused) playTrack(currentIndex);
-    }
-
-    function stopAll() {
-      isLive = false;
-      if (keepAliveInterval) { clearInterval(keepAliveInterval); keepAliveInterval = null; }
-      
-      aMusic.pause();
-      aClock.pause();
-      aAds.pause();
-      stopCurrentStinger();
-
-      document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
-      updateParallelLedMeters(0, 0);
-
-      const nextBox = document.getElementById('trackBoxNext');
-      if (nextBox) nextBox.classList.remove('alert-imminent');
-
-      if (processorNode) { try { processorNode.disconnect(); } catch(e){} processorNode = null; }
-      if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
-      if (ws) { ws.close(); ws = null; }
-
-      const btn = document.getElementById('btnAction');
-      if (btn) {
-        btn.className = 'btn-main-stream';
-        btn.innerText = 'INICIAR TRANSMISIÓN EN VIVO';
-      }
-
-      const quickBtn = document.getElementById('btnQuickPlay');
-      if (quickBtn) {
-        quickBtn.innerText = '▶';
-        quickBtn.classList.remove('is-live');
-      }
-
-      document.getElementById('vuLevel').style.width = '0%';
-      document.getElementById('vuPct').innerText = '0%';
-      log("⏹ Transmisión detenida por el locutor.");
-    }
-
-    // ==========================================
-    // CONTROLES DE MICRÓFONO Y PISADORES
-    // ==========================================
-    function toggleMic() {
-      const btn = document.getElementById('btnMic');
-      const baseVol = parseFloat(document.getElementById('volMusic').value);
-
-      if (micMuted) {
-        micMuted = false;
-        btn.className = 'btn-broadcast btn-mic-on';
-        btn.innerText = '🎤 MIC: AL AIRE';
-        if (micGainNode && audioContext) micGainNode.gain.setValueAtTime(parseFloat(document.getElementById('volMic').value), audioContext.currentTime);
-        if (duckingEnabled && musicGainNode && audioContext) {
-          musicGainNode.gain.setTargetAtTime(baseVol * 0.20, audioContext.currentTime, 0.2);
-        }
-      } else {
-        micMuted = true;
-        btn.className = 'btn-broadcast btn-mic-mute';
-        btn.innerText = '🔇 MIC: MUTE';
-        if (micGainNode && audioContext) micGainNode.gain.setValueAtTime(0.0, audioContext.currentTime);
-        if (musicGainNode && audioContext) musicGainNode.gain.setTargetAtTime(baseVol, audioContext.currentTime, 0.3);
-      }
-    }
-
-    function toggleDucking() {
-      duckingEnabled = !duckingEnabled;
-      const btn = document.getElementById('btnDucking');
-      const status = document.getElementById('duckStatus');
-      btn.className = duckingEnabled ? 'btn-ducking active' : 'btn-ducking';
-      status.innerText = duckingEnabled ? 'ON (BAJA MÚSICA)' : 'OFF (FIJO)';
-      status.style.color = duckingEnabled ? '#86efac' : '#94a3b8';
-    }
-
-    function toggleLocalMonitoring() {
-      isMonitoring = !isMonitoring;
-      const btn = document.getElementById('btnMonitor');
-      btn.classList.toggle('monitor-active', isMonitoring);
-
-      if (monitorGainNode && audioContext) {
-        monitorGainNode.gain.setValueAtTime(isMonitoring ? 1.0 : 0.0, audioContext.currentTime);
-      }
-      log(isMonitoring ? '🎧 Monitoreo ENCENDIDO' : '🎧 Monitoreo APAGADO');
-    }
-
-    function triggerStinger(num) {
-      if (num === 1 && aS1.src) startStingerPlayback(aS1, "PISADOR 1");
-      if (num === 2 && aS2.src) startStingerPlayback(aS2, "PISADOR 2");
-    }
-
-    function startStingerPlayback(audioEl, name) {
-      stopCurrentStinger();
-      activeStingerAudio = audioEl;
-      audioEl.currentTime = 0;
-      audioEl.play().catch(e => console.log(e));
-
-      document.getElementById('bannerStingerName').innerText = `🔊 ${name} EN VIVO`;
-      document.getElementById('stingerBanner').style.display = 'flex';
-
-      audioEl.ontimeupdate = () => {
-        if (!isNaN(audioEl.duration)) {
-          const c = Math.floor(audioEl.currentTime);
-          const d = Math.floor(audioEl.duration);
-          document.getElementById('bannerStingerTime').innerText = `0:${c.toString().padStart(2,'0')} / 0:${d.toString().padStart(2,'0')}`;
-        }
-      };
-      audioEl.onended = () => { stopCurrentStinger(); };
-    }
-
-    function stopCurrentStinger() {
-      if (activeStingerAudio) {
-        activeStingerAudio.pause();
-        activeStingerAudio.currentTime = 0;
-        activeStingerAudio = null;
-      }
-      document.getElementById('stingerBanner').style.display = 'none';
-    }
-
-    function toggleLightningMode() {
-      lightningEnabled = !lightningEnabled;
-      const btn = document.getElementById('btnLightning');
-      btn.classList.toggle('active', lightningEnabled);
-      log(lightningEnabled ? '⚡ Rayito ACTIVO (≥ 1 min).' : '⚡ Rayito apagado.');
-    }
-
-    function toggleMode() {
-      isShuffle = !isShuffle;
-      document.getElementById('btnMode').innerText = isShuffle ? 'ALEATORIO' : 'CONTINUO';
-    }
-
-    function setMicVol(v) {
-      document.getElementById('valMic').innerText = `${Math.round(v * 100)}%`;
-      if (micGainNode && audioContext && !micMuted) micGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
-    }
-    function setMusicVol(v) {
-      document.getElementById('valMusic').innerText = `${Math.round(v * 100)}%`;
-      if (musicGainNode && audioContext) musicGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
-    }
-
-    function saveSettings() {
-      ['host', 'port', 'mount', 'user', 'password'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) localStorage.setItem(`zeno_${id}`, el.value.trim());
-      });
-    }
-
-    function handleStingerUpload(num, e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      const url = URL.createObjectURL(f);
-      if (num === 1) { aS1.src = url; document.getElementById('lblStinger1Name').innerText = `P1: ${f.name}`; }
-      if (num === 2) { aS2.src = url; document.getElementById('lblStinger2Name').innerText = `P2: ${f.name}`; }
-      if (num === 3) { aLight.src = url; document.getElementById('lblLightningName').innerText = `Rayito: ${f.name}`; }
-      log(`Pisador cargado: ${f.name}`);
-    }
-
-    function handleStrictFiles(e) {
-      const raw = Array.from(e.target.files);
-      if (raw.length === 0) return;
-
-      const wasEmpty = playlist.length === 0;
-
-      raw.forEach(file => {
-        const item = {
-          blob: file,
-          name: file.name,
-          played: false,
-          durationSec: 0,
-          durationStr: '--:--',
-          appliesLightning: false
+        let config = JSON.parse(localStorage.getItem('zeno_relay_radio_config')) || {
+            name: "EMISORASplus isecas",
+            logo: DEFAULT_LOGO,
+            ticker: "Bienvenidos a EMISORASplus isecas. La mejor programación en vivo y en directo. 📻🎵",
+            playlist: DEFAULT_PLAYLIST,
+            micActive: false,
+            crossfade: 2
         };
 
-        const tempAudio = document.createElement('audio');
-        tempAudio.src = URL.createObjectURL(file);
-        tempAudio.onloadedmetadata = () => {
-          const sec = Math.floor(tempAudio.duration);
-          item.durationSec = sec;
-          const m = Math.floor(sec / 60);
-          const s = (sec % 60).toString().padStart(2, '0');
-          item.durationStr = `${m}:${s}`;
-          item.appliesLightning = sec >= 60;
+        let currentPlayingIndex = 0;
+        let activePlayerTag = 'A';
 
-          saveTrackToDB(item);
-          if (document.getElementById('playlistModal').style.display === 'flex') {
-            renderPlaylistModal();
-          }
+        window.onload = function() {
+            applyChannelConfig();
         };
 
-        playlist.push(item);
-      });
+        function applyChannelConfig() {
+            document.getElementById('headerName').innerText = config.name;
+            document.getElementById('gateTitle').innerText = config.name;
+            document.getElementById('headerLogo').src = config.logo;
+            document.getElementById('gateLogo').src = config.logo;
+            document.getElementById('headerTicker').innerText = config.ticker;
 
-      updateTrackBoxes();
-      log(`${raw.length} pista(s) agregadas a memoria.`);
-      if (wasEmpty && (isLive || !aMusic.src)) playTrack(0);
-    }
-
-    function renderPlaylistModal() {
-      const container = document.getElementById('playlistContainer');
-      container.innerHTML = '';
-
-      if (playlist.length === 0) {
-        container.innerHTML = '<div style="color:var(--text-muted); font-size:0.75rem; text-align:center; padding:20px;">No hay canciones cargadas.</div>';
-        return;
-      }
-
-      playlist.forEach((item, idx) => {
-        const card = document.createElement('div');
-        let cardClass = 'track-item-card';
-        let badgeHtml = '';
-
-        if (idx === currentIndex) {
-          cardClass += ' is-live';
-          badgeHtml = '<span class="tag-live">AL AIRE (#1)</span>';
-        } else if (idx === (currentIndex + 1) % playlist.length && playlist.length > 1) {
-          cardClass += ' is-next';
-          badgeHtml = '<span class="tag-next">SIGUIENTE (#2)</span>';
-        } else if (idx === (currentIndex + 2) % playlist.length && playlist.length > 2) {
-          cardClass += ' is-third';
-          badgeHtml = '<span class="tag-third">TERCERA (#3)</span>';
+            document.getElementById('cfgName').value = config.name;
+            document.getElementById('cfgLogo').value = config.logo;
+            document.getElementById('cfgTicker').value = config.ticker;
+            document.getElementById('crossfadeSecs').value = config.crossfade;
+            
+            document.getElementById('micEnabledToggle').checked = config.micActive;
+            updateMicLabelUI();
+            applyMicAudioState();
+            renderPlaylistManager();
         }
 
-        if (item.played && idx !== currentIndex) {
-          badgeHtml += '<span class="tag-played-red">YA SONÓ</span>';
+        function toggleMicState() {
+            config.micActive = document.getElementById('micEnabledToggle').checked;
+            updateMicLabelUI();
+            applyMicAudioState();
         }
 
-        if (item.appliesLightning) {
-          badgeHtml += '<span class="lightning-icon-tag">⚡</span>';
+        function updateMicLabelUI() {
+            const lbl = document.getElementById('micStateLabel');
+            if (config.micActive) {
+                lbl.innerText = "ENCENDIDO 🟢";
+                lbl.style.color = "#10b981";
+            } else {
+                lbl.innerText = "APAGADO 🔴";
+                lbl.style.color = "#ef4444";
+            }
         }
 
-        card.className = cardClass;
-        card.innerHTML = `
-          <div class="track-item-info">
-            <div class="track-item-title">${idx + 1}. ${item.name}</div>
-            <div class="track-item-meta">
-              <span>⏱ ${item.durationStr}</span>
-              ${badgeHtml}
-            </div>
-          </div>
-          <div class="track-item-actions">
-            <button class="btn-action-small" onclick="moveTrackUp(${idx})">▲</button>
-            <button class="btn-action-small" onclick="moveTrackDown(${idx})">▼</button>
-            <button class="btn-action-small btn-del" onclick="deleteTrack(${idx})">🗑</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function moveTrackUp(idx) {
-      if (idx <= 0) return;
-      const t = playlist[idx]; playlist[idx] = playlist[idx - 1]; playlist[idx - 1] = t;
-      if (currentIndex === idx) currentIndex--;
-      else if (currentIndex === idx - 1) currentIndex++;
-      updateTrackBoxes(); renderPlaylistModal();
-    }
-
-    function moveTrackDown(idx) {
-      if (idx >= playlist.length - 1) return;
-      const t = playlist[idx]; playlist[idx] = playlist[idx + 1]; playlist[idx + 1] = t;
-      if (currentIndex === idx) currentIndex++;
-      else if (currentIndex === idx + 1) currentIndex--;
-      updateTrackBoxes(); renderPlaylistModal();
-    }
-
-    function deleteTrack(idx) {
-      if (idx === currentIndex && playlist.length > 1) skipToNextTrack();
-      playlist.splice(idx, 1);
-      if (currentIndex >= playlist.length) currentIndex = Math.max(0, playlist.length - 1);
-      updateTrackBoxes(); renderPlaylistModal();
-    }
-
-    // ==========================================
-    // MÓDULO PUBLICIDAD / COMERCIALES (📅)
-    // ==========================================
-    function handleNewAdFile(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      temporaryAdFile = f;
-      document.getElementById('lblNewAdFileName').innerText = f.name;
-    }
-
-    function saveNewAdSlot() {
-      if (adSlots.length >= 5) {
-        alert("Máximo 5 tandas comerciales permitidas.");
-        return;
-      }
-      if (!temporaryAdFile) {
-        alert("Selecciona un archivo de audio o video para la tanda.");
-        return;
-      }
-
-      adSlots.push({
-        id: Date.now(),
-        name: document.getElementById('newAdName').value.trim() || `Tanda #${adSlots.length + 1}`,
-        url: URL.createObjectURL(temporaryAdFile),
-        minute: parseInt(document.getElementById('newAdMinute').value) || 30,
-        triggered: false
-      });
-
-      temporaryAdFile = null;
-      document.getElementById('newAdName').value = '';
-      document.getElementById('lblNewAdFileName').innerText = "Sin archivo";
-      renderAdSlotsList();
-      log("Tanda comercial guardada correctamente.");
-    }
-
-    function renderAdSlotsList() {
-      const container = document.getElementById('adSlotsListContainer');
-      if (!container) return;
-      container.innerHTML = '';
-
-      if (adSlots.length === 0) {
-        container.innerHTML = '<div style="color:var(--text-muted); font-size:0.7rem; text-align:center; padding:10px;">No hay tandas comerciales registradas.</div>';
-        return;
-      }
-
-      adSlots.forEach((slot, idx) => {
-        const item = document.createElement('div');
-        item.style.display = 'flex';
-        item.style.justifyContent = 'space-between';
-        item.style.alignItems = 'center';
-        item.style.background = '#09132b';
-        item.style.padding = '6px';
-        item.style.marginBottom = '4px';
-        item.style.borderRadius = '6px';
-        item.innerHTML = `
-          <div style="font-size:0.72rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:240px;">
-            ${idx + 1}. ${slot.name} (Minuto ${slot.minute})
-          </div>
-          <button class="btn-action-small btn-del" onclick="deleteAdSlot(${idx})">🗑</button>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    function deleteAdSlot(idx) {
-      adSlots.splice(idx, 1);
-      renderAdSlotsList();
-    }
-
-    function iniciarProgramadorPublicidad() {
-      if (adIntervalChecker) clearInterval(adIntervalChecker);
-      adIntervalChecker = setInterval(() => {
-        if (adSlots.length === 0) return;
-        const now = new Date();
-        adSlots.forEach((slot, idx) => {
-          if (now.getMinutes() === slot.minute && !slot.triggered) {
-            slot.triggered = true;
-            currentAdPlayingIndex = idx;
-            log(`📢 Tanda "${slot.name}" lista para sonar al terminar la canción actual.`);
-          } else if (now.getMinutes() !== slot.minute) {
-            slot.triggered = false;
-          }
-        });
-      }, 15000);
-    }
-
-    function checkAndPlayScheduledAd() {
-      if (currentAdPlayingIndex !== -1 && adSlots[currentAdPlayingIndex]) {
-        const slot = adSlots[currentAdPlayingIndex];
-        currentAdPlayingIndex = -1;
-        playCommercialBreak(slot);
-        return true;
-      }
-      return false;
-    }
-
-    function playCommercialBreak(slot) {
-      log(`📢 Emitiendo al aire tanda comercial: "${slot.name}"...`);
-      aMusic.pause();
-      document.getElementById('adsBanner').style.display = 'flex';
-      document.getElementById('adsBannerTitle').innerText = slot.name;
-      aAds.src = slot.url;
-      aAds.currentTime = 0;
-      aAds.play().catch(e => console.log(e));
-    }
-
-    aAds.onended = () => {
-      document.getElementById('adsBanner').style.display = 'none';
-      log("📢 Tanda comercial finalizada. Continuando playlist...");
-      playNextTrack();
-    };
-
-    function stopCurrentAd() {
-      aAds.pause();
-      document.getElementById('adsBanner').style.display = 'none';
-      log("Comercial cortado manualmente. Reanudando música...");
-      playNextTrack();
-    }
-
-    // CARPETA RELOJ (🕒)
-    function openClockModal() { renderClockSlots(); document.getElementById('clockModal').style.display = 'flex'; }
-    function closeClockModal() { document.getElementById('clockModal').style.display = 'none'; }
-
-    function handleClockFileSelect(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      clockTempFile = f;
-      document.getElementById('lblClockTempName').innerText = f.name;
-    }
-
-    function addClockSlot() {
-      if (clockSlots.length >= 10) { alert("Máximo 10 archivos en Reloj."); return; }
-      if (!clockTempFile) { alert("Elige un archivo primero."); return; }
-
-      clockSlots.push({
-        id: Date.now(),
-        name: clockTempFile.name,
-        url: URL.createObjectURL(clockTempFile)
-      });
-
-      clockTempFile = null;
-      document.getElementById('lblClockTempName').innerText = "Sin archivo";
-      renderClockSlots();
-      log(`Archivo agregado a Reloj (${clockSlots.length}/10).`);
-    }
-
-    function renderClockSlots() {
-      const container = document.getElementById('clockSlotsContainer');
-      document.getElementById('clockCountDisplay').innerText = clockSlots.length;
-      container.innerHTML = '';
-
-      if (clockSlots.length === 0) {
-        container.innerHTML = '<div style="color:var(--text-muted); font-size:0.7rem; text-align:center; padding:10px;">Carpeta vacía.</div>';
-        return;
-      }
-
-      clockSlots.forEach((slot, idx) => {
-        const item = document.createElement('div');
-        item.className = 'clock-slot-item';
-        item.style.display = 'flex';
-        item.style.justifyContent = 'space-between';
-        item.style.background = '#09132b';
-        item.style.padding = '6px';
-        item.style.marginBottom = '4px';
-        item.style.borderRadius = '4px';
-        item.innerHTML = `
-          <div style="font-size:0.75rem; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:240px;">
-            ${idx + 1}. ${slot.name}
-          </div>
-          <button style="background:var(--c-red); border:none; color:#fff; border-radius:4px; padding:2px 8px; cursor:pointer;" onclick="deleteClockSlot(${idx})">🗑</button>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    function deleteClockSlot(idx) {
-      clockSlots.splice(idx, 1);
-      renderClockSlots();
-    }
-
-    function toggleClockActiveState() {
-      clockFunctionActive = !clockFunctionActive;
-      const btn = document.getElementById('btnToggleClockActive');
-      const airBtn = document.getElementById('airClockBtn');
-
-      if (clockFunctionActive) {
-        btn.innerText = "ACTIVADO";
-        btn.style.background = "var(--c-green)";
-        btn.style.color = "#000";
-        airBtn.classList.add('active');
-        log("🕒 Reloj ENTRE PISTAS activado.");
-      } else {
-        btn.innerText = "DESACTIVADO";
-        btn.style.background = "#334155";
-        btn.style.color = "#fff";
-        airBtn.classList.remove('active');
-        log("🕒 Reloj ENTRE PISTAS desactivado.");
-      }
-    }
-
-    function togglePasswordVisibility() {
-      const p = document.getElementById('password');
-      p.type = p.type === 'password' ? 'text' : 'password';
-    }
-
-    function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
-    function closeSettingsModal() {
-      localStorage.setItem('zeno_password', document.getElementById('password').value.trim());
-      document.getElementById('settingsModal').style.display = 'none';
-    }
-    function openCalendarModal() { renderAdSlotsList(); document.getElementById('calendarModal').style.display = 'flex'; }
-    function closeCalendarModal() { document.getElementById('calendarModal').style.display = 'none'; }
-    function openPlaylistModal() { renderPlaylistModal(); document.getElementById('playlistModal').style.display = 'flex'; }
-    function closePlaylistModal() { document.getElementById('playlistModal').style.display = 'none'; }
-    function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
-    function closeHelpModal() { document.getElementById('helpModal').style.display = 'none'; }
-
-    // ==========================================
-    // INICIALIZACIÓN
-    // ==========================================
-    window.addEventListener('DOMContentLoaded', async () => {
-      buildLedBlocks();
-      startDjVisualLoop();
-
-      ['host', 'port', 'mount', 'user', 'password'].forEach(id => {
-        const val = localStorage.getItem(`zeno_${id}`);
-        if (val !== null && val !== '') {
-          const el = document.getElementById(id);
-          if (el) el.value = val;
+        function applyMicAudioState() {
+            const playerA = document.getElementById('playerA');
+            const playerB = document.getElementById('playerB');
+            playerA.muted = !config.micActive;
+            playerB.muted = !config.micActive;
         }
-      });
 
-      iniciarProgramadorPublicidad();
+        function getActivePlayer() {
+            return document.getElementById(activePlayerTag === 'A' ? 'playerA' : 'playerB');
+        }
 
-      try {
-        await initIndexedDB();
-        await loadTracksFromDB();
-      } catch (err) {}
-    });
-  </script>
+        function startChannelStream() {
+            document.getElementById('playGate').style.display = 'none';
+            playTrackWithCrossfade(currentPlayingIndex);
+        }
+
+        function playTrackWithCrossfade(index) {
+            if (config.playlist.length === 0) return;
+
+            const currentVid = getActivePlayer();
+            const nextTag = activePlayerTag === 'A' ? 'B' : 'A';
+            const nextVid = document.getElementById(nextTag === 'A' ? 'playerA' : 'playerB');
+
+            nextVid.src = config.playlist[index];
+            applyMicAudioState();
+            
+            nextVid.play().then(() => {
+                const fadeTime = parseInt(config.crossfade) * 1000;
+
+                if (fadeTime > 0 && currentVid.src) {
+                    nextVid.style.zIndex = '2';
+                    currentVid.style.zIndex = '1';
+                    nextVid.style.opacity = '1';
+                    currentVid.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        currentVid.pause();
+                        currentVid.currentTime = 0;
+                    }, fadeTime);
+                } else {
+                    nextVid.style.zIndex = '2';
+                    currentVid.style.zIndex = '1';
+                    nextVid.style.opacity = '1';
+                    currentVid.style.opacity = '0';
+                    currentVid.pause();
+                }
+
+                activePlayerTag = nextTag;
+                currentPlayingIndex = index;
+                updateMonitor(`Al aire [Pista ${index + 1}]`);
+
+                nextVid.ontimeupdate = function() {
+                    if (fadeTime > 0 && nextVid.duration && (nextVid.duration - nextVid.currentTime <= config.crossfade)) {
+                        if (!nextVid.dataset.faded) {
+                            nextVid.dataset.faded = "true";
+                            let nextIndex = (currentPlayingIndex + 1) % config.playlist.length;
+                            playTrackWithCrossfade(nextIndex);
+                        }
+                    }
+                };
+
+                nextVid.onended = function() {
+                    delete nextVid.dataset.faded;
+                    if (fadeTime === 0) {
+                        let nextIndex = (currentPlayingIndex + 1) % config.playlist.length;
+                        playTrackWithCrossfade(nextIndex);
+                    }
+                };
+
+            }).catch(e => {
+                console.log("Esperando interacción:", e);
+            });
+        }
+
+        function adminPlay() {
+            document.getElementById('playGate').style.display = 'none';
+            const player = getActivePlayer();
+            if (player.paused) {
+                player.play();
+                updateMonitor("Reproducción reanudada");
+            } else {
+                playTrackWithCrossfade(currentPlayingIndex);
+            }
+        }
+
+        function adminPause() {
+            getActivePlayer().pause();
+            updateMonitor("Transmisión en pausa");
+        }
+
+        function adminNext() {
+            currentPlayingIndex = (currentPlayingIndex + 1) % config.playlist.length;
+            playTrackWithCrossfade(currentPlayingIndex);
+        }
+
+        function updateMonitor(text) {
+            const monitor = document.getElementById('monitorStatus');
+            if (monitor) monitor.innerText = text;
+        }
+
+        function openPinModal() {
+            document.getElementById('pinCodeInput').value = '';
+            document.getElementById('pinModalOverlay').style.display = 'flex';
+        }
+        function closePinModal() {
+            document.getElementById('pinModalOverlay').style.display = 'none';
+        }
+        function verifyAdminPin() {
+            const pin = document.getElementById('pinCodeInput').value;
+            if (pin === "1057") {
+                closePinModal();
+                document.getElementById('adminDashboardPanel').style.display = 'flex';
+            } else {
+                alert("PIN incorrecto");
+                document.getElementById('pinCodeInput').value = '';
+            }
+        }
+
+        function renderPlaylistManager() {
+            const container = document.getElementById('playlistItemsContainer');
+            container.innerHTML = '';
+            
+            if (config.playlist.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#64748b; padding:15px; font-size:0.75rem;">Sin pistas configuradas</div>';
+                return;
+            }
+
+            config.playlist.forEach((item, index) => {
+                let row = document.createElement('div');
+                row.className = 'track-row';
+                let displayName = item.startsWith('blob:') ? `[Archivo Local] Pista ${index + 1}` : item;
+
+                row.innerHTML = `
+                    <div class="track-name"><b>${index + 1}.</b> ${displayName}</div>
+                    <div class="track-btns">
+                        <button onclick="movePlayItem(${index}, -1)" title="Subir">↑</button>
+                        <button onclick="movePlayItem(${index}, 1)" title="Bajar">↓</button>
+                        <button class="btn-remove" onclick="removePlayItem(${index})" title="Eliminar">✕</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function addMediaUrl() {
+            const input = document.getElementById('newMediaUrl');
+            const url = input.value.trim();
+            if (url) {
+                config.playlist.push(url);
+                input.value = '';
+                renderPlaylistManager();
+            } else {
+                alert("Ingresa una URL válida.");
+            }
+        }
+
+        function handleLocalFile(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const localUrl = URL.createObjectURL(file);
+                config.playlist.push(localUrl);
+                renderPlaylistManager();
+                alert(`¡Archivo "${file.name}" cargado a la lista!`);
+            }
+        }
+
+        function movePlayItem(index, direction) {
+            const target = index + direction;
+            if (target >= 0 && target < config.playlist.length) {
+                const temp = config.playlist[index];
+                config.playlist[index] = config.playlist[target];
+                config.playlist[target] = temp;
+                renderPlaylistManager();
+            }
+        }
+
+        function removePlayItem(index) {
+            config.playlist.splice(index, 1);
+            renderPlaylistManager();
+        }
+
+        function saveAndApplyConfig() {
+            config.name = document.getElementById('cfgName').value;
+            config.logo = document.getElementById('cfgLogo').value || DEFAULT_LOGO;
+            config.ticker = document.getElementById('cfgTicker').value;
+            config.crossfade = parseInt(document.getElementById('crossfadeSecs').value);
+            config.micActive = document.getElementById('micEnabledToggle').checked;
+
+            localStorage.setItem('zeno_relay_radio_config', JSON.stringify(config));
+            applyChannelConfig();
+            document.getElementById('adminDashboardPanel').style.display = 'none';
+            alert("¡Configuración de estudio guardada con éxito!");
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminDashboardPanel').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
