@@ -88,7 +88,7 @@
     .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
     .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
 
-    /* VÚMETRO MASTER CONTINUO */
+    /* VÚMETRO MASTER */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
     .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
     .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
@@ -421,6 +421,7 @@
     </div>
   </div>
 
+  <!-- BOTÓN PANEL PRINCIPAL DE PISTAS -->
   <button class="btn-ctrl" style="width:100%; padding:10px; background:linear-gradient(90deg, #6366f1, #8b5cf6); font-weight:900; margin-bottom:6px;" onclick="openPlaylistModal()">
     🎛️ PANEL PRINCIPAL (VER TODAS LAS PISTAS Y ORGANIZAR)
   </button>
@@ -460,18 +461,22 @@
     <button id="btnMode" class="btn-ctrl" onclick="toggleMode()">CONTINUO</button>
   </div>
 
-  <!-- CARGA DE ARCHIVOS -->
-  <div class="file-loader">
-    <div class="btn-load-files">📂 CARGAR MÚSICA (GUARDADO AUTOMÁTICO)</div>
+  <!-- CARGA DE ARCHIVOS (LOCAL O NUBE CLOUDFLARE R2) -->
+  <div class="file-loader" style="margin-bottom:6px;">
+    <div class="btn-load-files">📂 CARGAR MÚSICA LOCAL</div>
     <input type="file" id="fileTracks" multiple accept="audio/*, video/*" onchange="handleStrictFiles(event)">
   </div>
+
+  <button class="btn-ctrl" style="width:100%; padding:10px; background:linear-gradient(90deg, #0284c7, #0369a1); font-weight:900; margin-bottom:6px;" onclick="openR2CloudModal()">
+    ☁️ AGREGAR DESDE CLOUDFLARE R2 (10 GB NUBE)
+  </button>
 
   <!-- BOTÓN INFERIOR DE TRANSMISIÓN -->
   <button id="btnAction" class="btn-main-stream" type="button" onclick="handleStreamButtonClick()">
     INICIAR TRANSMISIÓN EN VIVO
   </button>
 
-  <div class="terminal-box" id="terminal">> Listo. Ingresa las credenciales y pulsa transmitir.</div>
+  <div class="terminal-box" id="terminal">> Listo. Configura tus credenciales y transmisión.</div>
 
   <!-- ELEMENTOS DE AUDIO -->
   <audio id="audioMusic" style="display:none;" crossorigin="anonymous"></audio>
@@ -480,6 +485,36 @@
   <audio id="audioLightning" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioClockSlot" style="display:none;" crossorigin="anonymous"></audio>
   <audio id="audioAds" style="display:none;" crossorigin="anonymous"></audio>
+
+  <!-- MODAL PARA AGREGAR DESDE CLOUDFLARE R2 (☁️) -->
+  <div class="modal-overlay" id="r2CloudModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div style="font-size:0.9rem; font-weight:900; color:var(--c-blue);">☁️ AGREGAR PISTAS DESDE CLOUDFLARE R2</div>
+        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeR2CloudModal()">✕</button>
+      </div>
+
+      <div style="font-size:0.68rem; color:#cbd5e1; margin-bottom:10px; line-height:1.4;">
+        Pega el enlace web de tus 10 GB en Cloudflare R2 y añade canciones a la cabina sin gastar memoria de tu teléfono.
+      </div>
+
+      <div class="form-group">
+        <label style="color:var(--c-blue);">Nombre o Título de la Pista</label>
+        <input type="text" id="r2TrackName" placeholder="Ej: Canción Principal Estación">
+      </div>
+
+      <div class="form-group">
+        <label style="color:var(--c-yellow);">Enlace directo R2 (.mp3 o video)</label>
+        <input type="text" id="r2TrackUrl" placeholder="https://pub-d5a4e9a...r2.dev/cancion.mp3">
+      </div>
+
+      <button class="btn-ctrl" style="width:100%; background:var(--c-green); font-weight:900; padding:10px; margin-top:6px;" onclick="addTrackFromR2Cloud()">
+        AGREGAR PISTA DE LA NUBE A LA COLA
+      </button>
+
+      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeR2CloudModal()">CERRAR</button>
+    </div>
+  </div>
 
   <!-- MODAL DE CALENDARIO / COMERCIALES (📅) -->
   <div class="modal-overlay" id="calendarModal">
@@ -571,51 +606,44 @@
       </div>
 
       <div class="help-section">
-        <div class="help-title">🎧 2. Monitoreo Local con Audífonos</div>
+        <div class="help-title">☁️ 2. Almacenamiento Cloudflare R2 (10 GB Nube)</div>
+        <div class="help-desc">
+          Usa el botón <b>☁️ AGREGAR DESDE CLOUDFLARE R2</b> para registrar las canciones alojadas en tu nube gratuita de 10 GB. Se reproducirán al aire consumiendo datos de internet en lugar de ocupar memoria interna en tu celular.
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-title">🎧 3. Monitoreo Local con Audífonos</div>
         <div class="help-desc">
           El botón <b>🎧</b> controla la salida de audio por los parlantes o audífonos de tu celular/computador. Cuando está <b>apagado</b>, el dispositivo permanece en silencio total para evitar acoples y ecos molestos con el micrófono. Al <b>activarlo</b>, podrás escuchar con fidelidad la mezcla exacta que sale al aire.
         </div>
       </div>
 
       <div class="help-section">
-        <div class="help-title">⚡ 3. Función Rayito (Auto-Pisador Inteligente)</div>
+        <div class="help-title">⚡ 4. Función Rayito (Auto-Pisador Inteligente)</div>
         <div class="help-desc">
           Al pulsar el botón <b>⚡ RAYITO</b>, el sistema evalúa la duración de cada pista al aire. <b>Si la canción dura menos de 1 minuto (60 segundos) no suena</b>. Si la pista dura <b>1 minuto o más</b>, el sistema dispara automáticamente el audio cargado como pisador sobre la canción con precisión matemática en el <b>segundo 0:03</b>.
         </div>
       </div>
 
       <div class="help-section">
-        <div class="help-title">🕒 4. Carpeta de Reloj (Separadores entre Canciones)</div>
+        <div class="help-title">🕒 5. Carpeta de Reloj (Separadores entre Canciones)</div>
         <div class="help-desc">
           En la pista al aire se encuentra el botón <b>🕒</b>. Te permite cargar hasta <b>10 audios o videos</b> de identificaciones, separadores o la hora. Si la función está en <b>ACTIVADO</b>, cada vez que una canción termine, se emitirá un archivo de esta lista antes de que comience la siguiente pista de la cola.
         </div>
       </div>
 
       <div class="help-section">
-        <div class="help-title">📅 5. Programador de Comerciales y Publicidad</div>
+        <div class="help-title">📅 6. Programador de Comerciales y Publicidad</div>
         <div class="help-desc">
           Tocando el icono <b>📅</b> en la barra superior puedes registrar hasta <b>5 tandas comerciales independientes</b>. Cada tanda te permite definir el minuto exacto de cada hora (por ejemplo, al minuto 30). El sistema espera de forma automática a que termine la canción que está al aire para soltar la cuña comercial sin cortar la música de golpe.
         </div>
       </div>
 
       <div class="help-section">
-        <div class="help-title">🎙️ 6. Micrófono y Ducking Automático</div>
+        <div class="help-title">🎙️ 7. Micrófono y Ducking Automático</div>
         <div class="help-desc">
           El botón <b>🎤 MIC</b> cuenta con una cadena de audio profesional: filtro paso alto (80 Hz) para anular ruidos de mesa y viento, realce de calidez en 250 Hz (+2.5 dB), brillo en 4.5 kHz (+3.5 dB) y un compresor de dinámica. Con <b>DUCKING AUTO</b> activado, la música baja automáticamente de volumen al hablar para que tu voz destaque con nitidez.
-        </div>
-      </div>
-
-      <div class="help-section">
-        <div class="help-title">🎛️ 7. Panel Principal y Memoria de Pistas</div>
-        <div class="help-desc">
-          Toca <b>🎛️</b> para ver la lista completa de temas. Puedes subir o bajar el orden con <b>▲</b> y <b>▼</b>, eliminar pistas con <b>🗑</b>, identificar en <b>ROJO</b> las que ya sonaron y ver con el icono <b>⚡</b> las que cumplen el tiempo para el Rayito. Además, todas las canciones se guardan en el almacenamiento del dispositivo (IndexedDB) para que no se borren al salir de la aplicación.
-        </div>
-      </div>
-
-      <div class="help-section">
-        <div class="help-title">⏱️ 8. Segundero y Alerta Roja en Cola</div>
-        <div class="help-desc">
-          El cuadro de la pista #2 muestra un cronómetro en cuenta regresiva que indica el tiempo que le falta a la canción actual. Cuando falten <b>8 segundos o menos</b>, todo el cuadro parpadeará en rojo para avisarte que el cambio de tema está a punto de ocurrir.
         </div>
       </div>
 
@@ -770,6 +798,44 @@
     }
 
     // ==========================================
+    // AGREGAR PISTAS DESDE CLOUDFLARE R2 (NUBE)
+    // ==========================================
+    function openR2CloudModal() { document.getElementById('r2CloudModal').style.display = 'flex'; }
+    function closeR2CloudModal() { document.getElementById('r2CloudModal').style.display = 'none'; }
+
+    function addTrackFromR2Cloud() {
+      const name = document.getElementById('r2TrackName').value.trim();
+      const url = document.getElementById('r2TrackUrl').value.trim();
+
+      if (!name || !url) {
+        alert("Escribe el nombre de la pista y pega el enlace web de Cloudflare R2.");
+        return;
+      }
+
+      const item = {
+        blob: url, // Almacena el enlace remoto directo
+        name: name,
+        played: false,
+        durationSec: 180, // Estimado por defecto
+        durationStr: '3:00',
+        appliesLightning: true,
+        isRemote: true
+      };
+
+      playlist.push(item);
+      updateTrackBoxes();
+      log(`☁️ Pista en la nube agregada: ${name}`);
+
+      document.getElementById('r2TrackName').value = '';
+      document.getElementById('r2TrackUrl').value = '';
+      closeR2CloudModal();
+
+      if (playlist.length === 1 && (isLive || !aMusic.src)) {
+        playTrack(0);
+      }
+    }
+
+    // ==========================================
     // RELOJ DIGITAL COLOMBIA EN TIEMPO REAL
     // ==========================================
     function updateColombiaStudioClock() {
@@ -873,7 +939,7 @@
     }
 
     async function saveTrackToDB(trackObj) {
-      if (!dbInstance) return;
+      if (!dbInstance || trackObj.isRemote) return;
       try {
         const tx = dbInstance.transaction("tracks", "readwrite");
         tx.objectStore("tracks").add({
@@ -1015,7 +1081,8 @@
     function setupTrackSource(idx) {
       if (playlist.length === 0 || !playlist[idx]) return;
       currentIndex = idx;
-      aMusic.src = URL.createObjectURL(playlist[currentIndex].blob);
+      const item = playlist[currentIndex];
+      aMusic.src = item.isRemote ? item.blob : URL.createObjectURL(item.blob);
       aMusic.load();
     }
 
@@ -1026,7 +1093,8 @@
       rayitoIntroFired = false;
       updateTrackBoxes();
 
-      aMusic.src = URL.createObjectURL(playlist[currentIndex].blob);
+      const item = playlist[currentIndex];
+      aMusic.src = item.isRemote ? item.blob : URL.createObjectURL(item.blob);
       aMusic.load();
       aMusic.play().catch(e => console.log(e));
       document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
@@ -1150,7 +1218,7 @@
     }
 
     // ==========================================
-    // TRANSMISIÓN ROBUSTA ZENO MEDIA
+    // TRANSMISIÓN ROBUSTA (ORIGINAL RESTAURADA)
     // ==========================================
     async function toggleBroadcast() {
       if (isLive) {
@@ -1168,7 +1236,7 @@
       const password = document.getElementById('password').value.trim();
 
       if (!host || !port || !mount || !password) {
-        alert("Abre Ajustes ⚙ y escribe o pega tu Stream Key para transmitir.");
+        alert("Abre Ajustes ⚙ y escribe o pega tu contraseña de Zeno Media.");
         openSettingsModal();
         return;
       }
@@ -1193,8 +1261,8 @@
         }
         log('<span style="color:var(--c-green)">Micrófono activado con éxito.</span>');
       } catch (err) {
-        log(`<span style="color:var(--c-red)">Error micrófono: ${err.name} - ${err.message}</span>`);
-        alert("Debes permitir el acceso al micrófono para transmitir.");
+        log(`<span style="color:var(--c-red)">Error de micrófono: ${err.name} - ${err.message}</span>`);
+        alert("No se pudo acceder al micrófono. Concede el permiso para continuar.");
         return;
       }
 
@@ -1230,15 +1298,15 @@
               log('<span style="color:var(--c-green); font-weight:bold;">¡Autenticado con éxito! AL AIRE.</span>');
               await iniciarAudioEngine();
             } else if (resp.status === 'ERROR') {
-              log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message} (${resp.code || ''})</span>`);
+              log(`<span style="color:var(--c-red); font-weight:bold;">Error Icecast: ${resp.message}</span>`);
               stopAll();
-              alert(`Error del servidor Icecast: ${resp.message}`);
+              alert(`Error del servidor: ${resp.message}`);
             }
           } catch(e){}
         };
 
         ws.onerror = () => {
-          log('<span style="color:var(--c-yellow)">Microcorte de red. Intentando reconectar...</span>');
+          log('<span style="color:var(--c-yellow)">Microcorte. Intentando reconectar...</span>');
         };
 
         ws.onclose = () => {
@@ -1544,7 +1612,8 @@
           played: false,
           durationSec: 0,
           durationStr: '--:--',
-          appliesLightning: false
+          appliesLightning: false,
+          isRemote: false
         };
 
         const tempAudio = document.createElement('audio');
@@ -1853,7 +1922,7 @@
 
     function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
     function closeSettingsModal() {
-      localStorage.setItem('zeno_password', document.getElementById('password').value.trim());
+      saveSettings();
       document.getElementById('settingsModal').style.display = 'none';
     }
     function openCalendarModal() { renderAdSlotsList(); document.getElementById('calendarModal').style.display = 'flex'; }
