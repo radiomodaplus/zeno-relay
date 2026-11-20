@@ -2,1592 +2,814 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>EMISORASplus isecas - Consola Pro</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BUTT Web Real-Time — Diseño Claro & Niveles</title>
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
-
   <style>
     :root {
-      --bg: #050811;
-      --card-bg: #0b1329;
-      --card-sub: #132247;
-      --border: #1e3a6d;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --c-green: #10b981;
-      --c-blue: #06b6d4;
-      --c-yellow: #facc15;
-      --c-gold: #fbbf24;
-      --c-purple: #c084fc;
-      --c-red: #ef4444;
-      --c-amber: #f97316;
+      --bg: #eef2f7;
+      --panel: #ffffff;
+      --box: #f8fafc;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --muted: #475569;
+      --green: #059669;
+      --cyan: #0284c7;
+      --red: #dc2626;
+      --amber: #d97706;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding: 14px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .butt-app {
+      width: 100%;
+      max-width: 740px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+    .top-status {
+      background: var(--box);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-title { font-size: 0.7rem; color: var(--muted); font-weight: 800; text-transform: uppercase; }
+    .status-endpoint { font-family: ui-monospace, monospace; font-size: 0.85rem; color: var(--cyan); font-weight: 700; word-break: break-all; }
+    .badge {
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 900;
+      background: #e2e8f0;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .badge.live {
+      background: #fee2e2;
+      color: var(--red);
+      border: 1px solid #fca5a5;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .metric-card {
+      background: var(--box);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+      text-align: center;
+    }
+    .metric-card small { display: block; font-size: 0.62rem; color: var(--muted); font-weight: 800; }
+    .metric-card strong { font-family: ui-monospace, monospace; font-size: 0.92rem; color: var(--text); }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 620px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--box);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card h3 { font-size: 0.74rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.4px; }
+    label { display: block; font-size: 0.68rem; color: var(--muted); font-weight: 700; margin-bottom: 3px; }
+    input, select {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: var(--text);
+      font-size: 0.82rem;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: var(--cyan); }
+    .row-inline { display: flex; gap: 6px; }
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: 800;
+      font-size: 0.78rem;
+      cursor: pointer;
+      color: #fff;
+      background: #334155;
+    }
+    button:hover { filter: brightness(1.06); }
+    .btn-pc { background: #0284c7; }
+    .btn-pc.active { background: #059669; }
+    .btn-stream {
+      width: 100%;
+      padding: 14px;
+      font-size: 0.95rem;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      border-radius: 10px;
+    }
+    .btn-stream.live {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 8px; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
-
-    /* DISEÑO ADAPTADO PARA COMPUTADOR SIN ALTERAR MÓVIL */
-    @media (min-width: 768px) {
-      body {
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 14px 18px;
-      }
-      .queue-grid {
-        display: grid !important;
-        grid-template-columns: 1.4fr 1fr 1fr;
-        gap: 8px !important;
-      }
-      .desktop-action-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-      }
+    /* NIVELES DE EMISORA TIPO CONSOLA */
+    .levels-panel {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .levels-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--muted);
+    }
+    .levels-header strong {
+      font-family: ui-monospace, monospace;
+      color: var(--text);
+    }
+    .meter-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .meter-tag {
+      width: 22px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: var(--muted);
+      text-align: center;
+    }
+    .vu-wrap {
+      flex: 1;
+      height: 14px;
+      background: #e2e8f0;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      overflow: hidden;
+    }
+    .vu-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10b981 62%, #f59e0b 84%, #ef4444 100%);
+      transition: width 0.05s linear;
+    }
+    .meter-pct {
+      width: 44px;
+      text-align: right;
+      font-family: ui-monospace, monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .scope-canvas {
+      width: 100%;
+      height: 54px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      display: block;
     }
 
-    .studio-clock-bar {
-      background: #02040a; border: 1px solid #1a2c4e; border-radius: 8px;
-      padding: 6px 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
+    .log-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.72rem;
+      color: #0f172a;
+      height: 88px;
+      overflow-y: auto;
     }
-    .clock-time {
-      font-family: ui-monospace, monospace; font-size: 1.15rem; font-weight: 900; color: var(--c-blue);
-      text-shadow: 0 0 8px rgba(6, 182, 212, 0.6); letter-spacing: 1px;
-    }
-    .clock-date { font-size: 0.68rem; font-weight: 800; color: var(--c-gold); text-transform: uppercase; }
-
-    .top-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      background: linear-gradient(90deg, #1e1b4b, #0f172a, #1e293b);
-      padding: 8px 12px; border-radius: 12px; border: 1px solid #4338ca; margin-bottom: 6px;
-    }
-    .app-title { font-size: 0.92rem; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 4px; }
-    .app-title span { color: var(--c-blue); text-shadow: 0 0 8px rgba(6,182,212,0.5); }
-
-    .top-actions { display: flex; align-items: center; gap: 6px; }
-
-    .btn-quick-play-stream {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      border: 2px solid #f87171; color: #fff; width: 34px; height: 34px;
-      border-radius: 50%; font-size: 0.95rem; cursor: pointer; display: flex;
-      align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
-      transition: all 0.2s ease;
-    }
-    .btn-quick-play-stream:active { transform: scale(0.92); }
-    .btn-quick-play-stream.is-live {
-      background: #b91c1c; border-color: #fca5a5;
-      animation: pulseLive 1.2s infinite alternate ease-in-out;
-    }
-    @keyframes pulseLive {
-      0% { box-shadow: 0 0 4px #ef4444; }
-      100% { box-shadow: 0 0 14px #ef4444; }
-    }
-
-    .btn-crown {
-      background: linear-gradient(135deg, #10b981, #059669); border: 1px solid #6ee7b7; color: #fff;
-      padding: 6px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 900; cursor: pointer;
-      display: flex; align-items: center; gap: 4px;
-    }
-
-    .btn-icon {
-      background: #1e293b; border: 1px solid #475569; color: #fff; width: 34px; height: 34px;
-      border-radius: 50%; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-    .btn-icon.monitor-active { background: #0284c7; border-color: #38bdf8; }
-
-    .net-box {
-      background: #090e1a; border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px;
-      margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 0.65rem; font-weight: 800;
-    }
-    .signal-bars { display: flex; align-items: flex-end; gap: 3px; height: 14px; }
-    .bar { width: 3px; background: #334155; border-radius: 1px; }
-    .b1 { height: 25%; } .b2 { height: 50%; } .b3 { height: 75%; } .b4 { height: 100%; }
-    .signal-bars.good .b1, .signal-bars.good .b2, .signal-bars.good .b3, .signal-bars.good .b4 { background: var(--c-green); }
-
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; margin-bottom: 6px; }
-    .vu-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); margin-bottom: 3px; }
-    .vu-container { height: 10px; background: #030712; border-radius: 5px; overflow: hidden; border: 1px solid #1f2937; }
-    .vu-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--c-green) 50%, var(--c-yellow) 80%, var(--c-red) 100%); transition: width 0.05s linear; }
-
-    .stinger-banner {
-      display: none; background: linear-gradient(135deg, #3b0764, #1e1b4b);
-      border: 2px solid var(--c-purple); border-radius: 8px; padding: 6px 10px;
-      margin-bottom: 6px; align-items: center; justify-content: space-between;
-    }
-    .ads-banner {
-      display: none; background: linear-gradient(135deg, #0c4a6e, #075985);
-      border: 2px solid var(--c-blue); border-radius: 8px; padding: 6px 10px;
-      margin-bottom: 6px; align-items: center; justify-content: space-between;
-    }
-
-    .queue-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
-    .track-box {
-      border-radius: 8px; padding: 6px 10px; background: #070c1b; border-width: 2px; border-style: solid;
-      display: flex; flex-direction: column; justify-content: center; position: relative; transition: all 0.25s ease;
-    }
-    .track-box.current { border-color: var(--c-green); }
-    .track-box.next { border-color: var(--c-blue); }
-    .track-box.third { border-color: var(--c-yellow); }
-
-    .track-box.next.alert-imminent {
-      border-color: var(--c-red) !important;
-      background: #450a0a !important;
-      animation: alertPulse 0.7s infinite alternate ease-in-out !important;
-      box-shadow: 0 0 14px rgba(239, 68, 68, 0.6) !important;
-    }
-    @keyframes alertPulse {
-      0% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0.75; transform: scale(0.99); }
-    }
-
-    .track-tag-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-    .track-tag { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; }
-    .track-box.current .track-tag { color: var(--c-green); }
-    .track-box.next .track-tag { color: var(--c-blue); }
-    .track-box.third .track-tag { color: var(--c-yellow); }
-    
-    .countdown-pill {
-      font-size: 0.62rem; font-weight: 900; color: #bae6fd; background: #0c4a6e;
-      padding: 2px 6px; border-radius: 4px; border: 1px solid #0284c7;
-    }
-
-    .tag-action-icon {
-      font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center;
-    }
-    .tag-lightning { background: #854d0e; border: 1px solid #eab308; color: #fef08a; }
-    .tag-clock-btn { background: #1e1b4b; border: 1px solid #818cf8; color: #c7d2fe; margin-left: 4px; }
-    .tag-clock-btn.active { background: #4338ca; border-color: #a5b4fc; color: #fff; }
-
-    .track-row-air { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 2px; }
-    .track-name { font-size: 0.78rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; flex: 1; }
-    .track-time { font-size: 0.65rem; color: var(--text-muted); }
-
-    .air-nav-btn {
-      background: #162444; border: 1px solid var(--border); color: #fff;
-      width: 32px; height: 32px; border-radius: 6px; font-size: 0.85rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-
-    .dj-rack-meter {
-      background: #02050e; border: 1px solid #1a2c4e; border-radius: 8px;
-      padding: 6px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px;
-    }
-    .rack-header {
-      display: flex; justify-content: space-between; align-items: center; font-size: 0.58rem; font-weight: 900; color: #38bdf8;
-    }
-    .rack-main-stage { display: flex; gap: 8px; align-items: center; height: 50px; }
-    .wave-canvas-box {
-      flex: 1.4; height: 100%; background: #010307; border: 1px solid #101c36; border-radius: 4px; overflow: hidden;
-    }
-    #djWaveCanvas { width: 100%; height: 100%; display: block; }
-
-    .parallel-led-box {
-      flex: 1; display: flex; gap: 8px; height: 100%; align-items: center; justify-content: center;
-    }
-    .meter-column-wrap { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; }
-    .meter-column { display: flex; flex-direction: column-reverse; gap: 1.5px; width: 100%; height: 40px; }
-    .meter-col-label { font-size: 0.5rem; font-weight: 900; color: var(--text-muted); text-align: center; }
-    
-    .led-block { height: 2px; width: 100%; border-radius: 1px; background: #0b1329; }
-    .led-block.active-green { background: #10b981; }
-    .led-block.active-yellow { background: #facc15; }
-    .led-block.active-red { background: #ef4444; }
-
-    .mic-duck-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 6px; margin-bottom: 6px; }
-    .btn-broadcast {
-      padding: 10px; border: none; border-radius: 8px; font-weight: 900; font-size: 0.78rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
-    .btn-mic-on { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
-    .btn-mic-mute { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
-    
-    .btn-ducking {
-      background: #1e293b; border: 1px solid #475569; color: var(--text-muted);
-      border-radius: 8px; font-size: 0.68rem; font-weight: 800; display: flex;
-      flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
-    }
-    .btn-ducking.active { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; }
-
-    .stinger-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
-    .btn-stinger {
-      padding: 8px 4px; border-radius: 8px; font-size: 0.7rem; font-weight: 800;
-      border: 1px solid #475569; background: #1e293b; color: #fff; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-    }
-    .btn-stinger.p1 { border-color: var(--c-purple); background: #2e1065; }
-    .btn-stinger.p2 { border-color: var(--c-amber); background: #451a03; }
-    .btn-stinger.lightning { border-color: var(--c-yellow); background: #3b2d04; }
-    .btn-stinger.lightning.active { background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 900; }
-
-    .player-controls { display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 6px; margin-bottom: 6px; }
-    .btn-ctrl { padding: 9px 2px; border-radius: 6px; border: 1px solid var(--border); background: var(--card-sub); color: #fff; font-size: 0.7rem; font-weight: 800; cursor: pointer; text-align: center; }
-
-    .file-loader { position: relative; overflow: hidden; margin-bottom: 6px; }
-    .file-loader input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
-    .btn-load-files {
-      width: 100%; padding: 10px; background: linear-gradient(90deg, #1d4ed8, #0284c7);
-      color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 0.72rem; text-align: center; cursor: pointer;
-    }
-
-    .btn-main-stream {
-      width: 100%; padding: 15px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #fff; border: 2px solid #60a5fa; border-radius: 10px; font-size: 1rem; font-weight: 900;
-      cursor: pointer; position: relative; z-index: 50; display: block; margin-top: 4px;
-    }
-    .btn-main-stream:active { transform: scale(0.98); }
-    .btn-main-stream.live { background: linear-gradient(135deg, #ef4444, #b91c1c); border-color: #f87171; }
-
-    .terminal-box {
-      background: #030712; border: 1px solid var(--border); border-radius: 6px; padding: 8px;
-      font-family: ui-monospace, monospace; font-size: 0.7rem; color: #38bdf8; height: 60px; overflow-y: auto; margin-top: 6px;
-    }
-
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
-      display: none; align-items: center; justify-content: center; z-index: 1000; padding: 12px;
-    }
-    .modal-box {
-      background: #0c1427; border: 1px solid #3b82f6; border-radius: 14px;
-      width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto; padding: 14px;
-    }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-    
-    .form-group { margin-bottom: 8px; }
-    .form-group label { display: block; font-size: 0.68rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
-    .form-group input, .form-group select { width: 100%; padding: 8px; background: #030712; border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none; }
-    
-    .file-select-box {
-      background: #111a33; border: 1px dashed var(--border); border-radius: 8px;
-      padding: 6px 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
-    }
-
-    .playlist-scroll { display: flex; flex-direction: column; gap: 6px; max-height: 55vh; overflow-y: auto; padding-right: 4px; }
-    .track-item-card {
-      background: #101935; border: 1px solid #233560; border-radius: 8px;
-      padding: 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px;
-    }
-    .track-item-card.is-live { border-color: var(--c-green); background: #064e3b33; }
-    .track-item-card.is-next { border-color: var(--c-blue); background: #082f4933; }
-    .track-item-card.is-third { border-color: var(--c-yellow); background: #42200633; }
-    
-    .track-item-info { flex: 1; overflow: hidden; }
-    .track-item-title { font-size: 0.75rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .track-item-meta { display: flex; gap: 5px; align-items: center; font-size: 0.62rem; margin-top: 3px; flex-wrap: wrap; }
-    
-    .tag-played-red { background: var(--c-red); color: #fff; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
-    .tag-live { background: var(--c-green); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
-    .tag-next { background: var(--c-blue); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
-    .tag-third { background: var(--c-yellow); color: #000; padding: 1px 6px; border-radius: 4px; font-weight: 900; }
-
-    .track-item-actions { display: flex; gap: 4px; }
-    .btn-action-small {
-      background: #1e293b; border: 1px solid #475569; color: #fff;
-      width: 28px; height: 28px; border-radius: 6px; font-size: 0.75rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-    .btn-action-small:active { background: var(--c-blue); }
-    .btn-action-small.btn-del { border-color: var(--c-red); color: var(--c-red); }
-
-    .clock-slot-item {
-      background: #0d172e; border: 1px solid #1e3a6d; border-radius: 6px;
-      padding: 6px 8px; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;
-    }
-
-    .help-section {
-      background: #09132b; border: 1px solid #1e3a6d; border-radius: 8px; padding: 8px; margin-bottom: 8px;
-    }
-    .help-title { font-size: 0.8rem; font-weight: 900; color: var(--c-gold); margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
-    .help-desc { font-size: 0.68rem; color: #cbd5e1; line-height: 1.45; }
-    .help-desc b { color: #fff; }
+    .vol-line { display: flex; align-items: center; gap: 8px; }
+    .vol-line span { font-size: 0.7rem; width: 42px; text-align: right; font-family: ui-monospace, monospace; color: var(--text); }
   </style>
 </head>
 <body>
-
-  <!-- RELOJ DIGITAL OFICIAL COLOMBIA -->
-  <div class="studio-clock-bar">
-    <div>
-      <div style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">HORA COLOMBIA</div>
-      <div id="colombiaTimeDisplay" class="clock-time">--:--:--</div>
-    </div>
-    <div style="text-align:right;">
-      <div style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">FECHA CABINA</div>
-      <div id="colombiaDateDisplay" class="clock-date">-- / -- / ----</div>
-    </div>
-  </div>
-
-  <!-- BARRA SUPERIOR -->
-  <div class="top-bar">
-    <div class="app-title">
-      📻 <span>EMISORASplus isecas</span>
-    </div>
-    <div class="top-actions">
-      <button id="btnQuickPlay" class="btn-quick-play-stream" type="button" onclick="handleStreamButtonClick()" title="Emisión Inmediata">
-        ▶
-      </button>
-      <button class="btn-crown">👑 PRO</button>
-      <button class="btn-icon" onclick="openPlaylistModal()" title="Panel Principal">🎛️</button>
-      <button class="btn-icon" onclick="openCalendarModal()" title="Publicidad">📅</button>
-      <button class="btn-icon" onclick="openHelpModal()" title="Manual de Ayuda">❓</button>
-      <button id="btnMonitor" class="btn-icon" onclick="toggleLocalMonitoring()" title="Monitoreo">🎧</button>
-      <button class="btn-icon" onclick="openSettingsModal()" title="Ajustes">⚙</button>
-    </div>
-  </div>
-
-  <!-- MEDIDOR DE RED -->
-  <div class="net-box">
-    <div style="display:flex; align-items:center; gap:6px;">
-      <div id="netBars" class="signal-bars good">
-        <div class="bar b1"></div><div class="bar b2"></div><div class="bar b3"></div><div class="bar b4"></div>
+  <div class="butt-app">
+    <div class="top-status">
+      <div>
+        <div class="status-title">BUTT STREAM — ICECAST / ZENO</div>
+        <div class="status-endpoint" id="endpointLabel">link.zeno.fm:80/xksclgx3mfcuv</div>
       </div>
-      <span id="netStatusText">ESTABLE (BLINDADO)</span>
+      <span class="badge" id="liveBadge">IDLE / OFF</span>
     </div>
-    <div style="color:var(--c-gold); font-size:0.6rem;">TIEMPO: ILIMITADO</div>
-  </div>
 
-  <!-- VÚMETRO MASTER -->
-  <div class="card">
-    <div class="vu-header">
-      <span>SALIDA AL AIRE (MASTER)</span>
-      <span id="vuPct">0%</span>
-    </div>
-    <div class="vu-container">
-      <div id="vuLevel" class="vu-bar"></div>
-    </div>
-  </div>
-
-  <!-- BANNERS -->
-  <div class="stinger-banner" id="stingerBanner">
-    <div style="display:flex; flex-direction:column;">
-      <span style="font-size:0.75rem; font-weight:900; color:#f0abfc;" id="bannerStingerName">🔊 PISADOR SONANDO</span>
-      <span style="font-size:0.65rem; color:#e9d5ff;" id="bannerStingerTime">0:00 / 0:00</span>
-    </div>
-    <button onclick="stopCurrentStinger()" style="background:var(--c-red); border:none; color:#fff; padding:5px 10px; border-radius:6px; font-weight:800; font-size:0.7rem; cursor:pointer;">⏹ DETENER</button>
-  </div>
-
-  <div class="ads-banner" id="adsBanner">
-    <div style="display:flex; flex-direction:column;">
-      <span style="font-size:0.75rem; font-weight:900; color:#38bdf8;">📢 TANDA COMERCIAL AL AIRE</span>
-      <span style="font-size:0.65rem; color:#bae6fd;" id="adsBannerTitle">Emitiendo tanda...</span>
-    </div>
-    <button onclick="stopCurrentAd()" style="background:var(--c-red); border:none; color:#fff; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.68rem; cursor:pointer;">⏹ CORTAR</button>
-  </div>
-
-  <!-- COLA DE 3 PISTAS -->
-  <div class="queue-grid">
-    <div class="track-box current">
-      <div class="track-tag-row">
-        <div class="track-tag">● 1. EN EL AIRE (ACTUAL)</div>
-        <div style="display:flex; align-items:center; gap:4px;">
-          <div id="airLightningBadge" style="display:none;" class="tag-action-icon tag-lightning" title="Aplica para Rayito">⚡</div>
-          <button id="airClockBtn" class="tag-action-icon tag-clock-btn" onclick="openClockModal()" title="Separador de Reloj">🕒</button>
-        </div>
+    <div class="metrics">
+      <div class="metric-card">
+        <small>TIEMPO AL AIRE</small>
+        <strong id="timerText">00:00:00</strong>
       </div>
-      <div class="track-row-air">
-        <button class="air-nav-btn" onclick="repeatCurrentTrack()">⏮</button>
-        <div style="flex:1; overflow:hidden;">
-          <div class="track-name" id="track1">Sin reproducción</div>
-          <div class="track-time" id="track1Time">0:00 / 0:00</div>
-        </div>
-        <button class="air-nav-btn" onclick="skipToNextTrack()">⏭</button>
+      <div class="metric-card">
+        <small>DATOS ENVIADOS</small>
+        <strong id="bytesText">0.0 KB</strong>
       </div>
+      <div class="metric-card">
+        <small>FORMATO</small>
+        <strong id="codecText">MP3 128k</strong>
+      </div>
+    </div>
 
-      <div class="dj-rack-meter">
-        <div class="rack-header">
-          <span>CONSOLE DIGITAL STEREO & WAVE</span>
-          <span id="rackDbDisplay">-∞ dB</span>
+    <div class="grid-2">
+      <div class="card">
+        <h3>1. Servidor (Icecast)</h3>
+        <div>
+          <label>Dirección / Host</label>
+          <input type="text" id="host" value="link.zeno.fm" oninput="saveCfg()">
         </div>
-        <div class="rack-main-stage">
-          <div class="wave-canvas-box">
-            <canvas id="djWaveCanvas" width="220" height="50"></canvas>
+        <div class="row-inline">
+          <div style="flex:1;">
+            <label>Puerto</label>
+            <input type="number" id="port" value="80" oninput="saveCfg()">
           </div>
-          <div class="parallel-led-box">
-            <div class="meter-column-wrap">
-              <div class="meter-column" id="colLeftMeter"></div>
-              <div class="meter-col-label">L</div>
-            </div>
-            <div class="meter-column-wrap">
-              <div class="meter-column" id="colRightMeter"></div>
-              <div class="meter-col-label">R</div>
-            </div>
+          <div style="flex:2;">
+            <label>Punto de montaje</label>
+            <input type="text" id="mount" value="/xksclgx3mfcuv" oninput="saveCfg()">
+          </div>
+        </div>
+        <div class="row-inline">
+          <div style="flex:1;">
+            <label>Usuario</label>
+            <input type="text" id="user" value="source" oninput="saveCfg()">
+          </div>
+          <div style="flex:1;">
+            <label>Bitrate</label>
+            <select id="bitrate" onchange="saveCfg()">
+              <option value="96">96 kbps</option>
+              <option value="128" selected>128 kbps</option>
+              <option value="192">192 kbps</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label>Contraseña</label>
+          <input type="password" id="password" value="9xhKMMT4" placeholder="Contraseña de fuente" oninput="saveCfg()">
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2. Consola 2×1 y Audio del PC</h3>
+        <div>
+          <label>Entrada Consola / Cable 2×1 / Line-In</label>
+          <div class="row-inline">
+            <select id="inputDevice" onchange="switchConsoleInput()"></select>
+            <button type="button" onclick="loadDevices()" title="Detectar entradas">↻</button>
+          </div>
+        </div>
+        <div>
+          <label>Ganancia Consola / Entrada</label>
+          <div class="vol-line">
+            <input type="range" id="consoleGainSlider" min="0" max="2" step="0.05" value="1" oninput="updateGains()">
+            <span id="consoleGainVal">100%</span>
+          </div>
+        </div>
+        <div>
+          <label>Audio que suena en el PC (Pestaña / Sistema)</label>
+          <div class="row-inline">
+            <button type="button" class="btn-pc" id="btnCapturePc" onclick="togglePcSystemAudio()" style="flex:1;">
+              💻 Capturar Audio del PC
+            </button>
+          </div>
+        </div>
+        <div>
+          <label>Ganancia Audio del PC</label>
+          <div class="vol-line">
+            <input type="range" id="pcGainSlider" min="0" max="1.5" step="0.05" value="0.85" oninput="updateGains()">
+            <span id="pcGainVal">85%</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="track-box next" id="trackBoxNext">
-      <div class="track-tag-row">
-        <div class="track-tag">▶ 2. SIGUIENTE EN COLA</div>
-        <div class="countdown-pill" id="nextCountdownDisplay">Faltan: --s</div>
+    <div class="card" style="padding:10px 12px;">
+      <div class="row-inline">
+        <input type="text" id="songTitle" placeholder="Título actual en vivo" value="Radio Moda - En Vivo">
+        <button type="button" class="btn-pc" onclick="sendMetadata()">📡 Enviar Título</button>
       </div>
-      <div class="track-name" id="track2">En espera...</div>
     </div>
 
-    <div class="track-box third">
-      <div class="track-tag">⏭ 3. EN ESPERA (TERCERA)</div>
-      <div class="track-name" id="track3">En espera...</div>
+    <!-- NIVELES DE EMISORA AL RECIBIR SONIDO -->
+    <div class="levels-panel">
+      <div class="levels-header">
+        <span>NIVELES DE EMISORA (CONSOLA + PC)</span>
+        <strong id="dbReadout">-∞ dB</strong>
+      </div>
+      <div class="meter-row">
+        <span class="meter-tag">L</span>
+        <div class="vu-wrap"><div class="vu-fill" id="vuLeft"></div></div>
+        <span class="meter-pct" id="pctLeft">0%</span>
+      </div>
+      <div class="meter-row">
+        <span class="meter-tag">R</span>
+        <div class="vu-wrap"><div class="vu-fill" id="vuRight"></div></div>
+        <span class="meter-pct" id="pctRight">0%</span>
+      </div>
+      <canvas id="waveCanvas" class="scope-canvas" width="680" height="54"></canvas>
     </div>
-  </div>
 
-  <button class="btn-ctrl" style="width:100%; padding:10px; background:linear-gradient(90deg, #6366f1, #8b5cf6); font-weight:900; margin-bottom:6px;" onclick="openPlaylistModal()">
-    🎛️ PANEL PRINCIPAL (VER TODAS LAS PISTAS Y ORGANIZAR)
-  </button>
-
-  <!-- MIC Y DUCKING -->
-  <div class="mic-duck-row">
-    <button id="btnMic" class="btn-broadcast btn-mic-mute" onclick="toggleMic()">
-      🔇 MIC: MUTE
+    <button type="button" class="btn-stream" id="btnStream" onclick="toggleStream()">
+      ▶ CONECTAR Y TRANSMITIR
     </button>
-    <button id="btnDucking" class="btn-ducking active" onclick="toggleDucking()">
-      <span>DUCKING AUTO</span>
-      <small id="duckStatus" style="font-size:0.6rem; color:#86efac;">ON (BAJA MÚSICA)</small>
-    </button>
-  </div>
 
-  <!-- PISADORES Y RAYITO -->
-  <div class="stinger-grid">
-    <button class="btn-stinger p1" onclick="triggerStinger(1)">
-      <span>🔊 PISADOR 1</span>
-      <small style="font-size:0.55rem; opacity:0.8;">DISPARAR</small>
-    </button>
-    <button id="btnP2" class="btn-stinger p2" onclick="triggerStinger(2)">
-      <span>🔊 PISADOR 2</span>
-      <small style="font-size:0.55rem;">DISPARAR</small>
-    </button>
-    <button id="btnLightning" class="btn-stinger lightning" onclick="toggleLightningMode()">
-      <span>⚡ RAYITO</span>
-      <small style="font-size:0.55rem;">AUTO (≥ 1 MIN)</small>
-    </button>
-  </div>
-
-  <div class="player-controls">
-    <button id="btnPlayMusic" class="btn-ctrl" onclick="togglePlayMusic()">▶ PLAY</button>
-    <button class="btn-ctrl btn-stop-music" onclick="stopMusicTrack()">⏹ STOP</button>
-    <button class="btn-ctrl" onclick="skipToNextTrack()">⏭ SIG</button>
-    <button id="btnMode" class="btn-ctrl" onclick="toggleMode()">CONTINUO</button>
-  </div>
-
-  <div class="desktop-action-row">
-    <div class="file-loader" style="margin-bottom:6px;">
-      <div class="btn-load-files">📂 CARGAR MÚSICA LOCAL</div>
-      <input type="file" id="fileTracks" multiple accept="audio/*, video/*" onchange="handleStrictFiles(event)">
-    </div>
-
-    <div class="file-loader" style="margin-bottom:6px;">
-      <div class="btn-load-files" style="background:linear-gradient(90deg, #7c3aed, #4f46e5);">📁 CARGAR CARPETAS (1×1 ALEATORIO)</div>
-      <input type="file" id="folderTracks" webkitdirectory directory multiple accept="audio/*, video/*" onchange="handleFolderUpload(event)">
-    </div>
-  </div>
-
-  <button class="btn-ctrl" style="width:100%; padding:10px; background:linear-gradient(90deg, #0284c7, #0369a1); font-weight:900; margin-bottom:6px;" onclick="openR2CloudModal()">
-    ☁️ AGREGAR DESDE CLOUDFLARE R2 (10 GB NUBE)
-  </button>
-
-  <button id="btnAction" class="btn-main-stream" type="button" onclick="handleStreamButtonClick()">
-    INICIAR TRANSMISIÓN EN VIVO
-  </button>
-
-  <div class="terminal-box" id="terminal">> Listo. Consola configurada con fundido cruzado (Crossfade) automático.</div>
-
-  <!-- REPRODUCTORES DUALES PARA CROSSFADE (MEZCLA DE RADIO) -->
-  <audio id="audioMusicA" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioMusicB" style="display:none;" crossorigin="anonymous"></audio>
-
-  <audio id="audioStinger1" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioStinger2" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioLightning" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioClockSlot" style="display:none;" crossorigin="anonymous"></audio>
-  <audio id="audioAds" style="display:none;" crossorigin="anonymous"></audio>
-
-  <!-- MODAL R2 -->
-  <div class="modal-overlay" id="r2CloudModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:var(--c-blue);">☁️ AGREGAR PISTAS DESDE CLOUDFLARE R2</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeR2CloudModal()">✕</button>
-      </div>
-      <div class="form-group"><label>Nombre</label><input type="text" id="r2TrackName" placeholder="Canción"></div>
-      <div class="form-group"><label>URL Directa R2</label><input type="text" id="r2TrackUrl" placeholder="https://...r2.dev/file.mp3"></div>
-      <button class="btn-ctrl" style="width:100%; background:var(--c-green); font-weight:900; padding:10px;" onclick="addTrackFromR2Cloud()">AGREGAR</button>
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeR2CloudModal()">CERRAR</button>
-    </div>
-  </div>
-
-  <!-- MODAL CALENDARIO -->
-  <div class="modal-overlay" id="calendarModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:var(--c-purple);">📅 COMERCIALES</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeCalendarModal()">✕</button>
-      </div>
-      <div class="form-group"><label>Nombre</label><input type="text" id="newAdName" placeholder="Tanda"></div>
-      <div class="form-group">
-        <label>Archivo</label>
-        <div class="file-select-box">
-          <span id="lblNewAdFileName" style="font-size:0.7rem; color:#fff;">Sin archivo</span>
-          <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">SUBIR<input type="file" accept="audio/*, video/*" style="display:none;" onchange="handleNewAdFile(event)"></label>
-        </div>
-      </div>
-      <div class="form-group"><label>Minuto (0-59)</label><input type="number" id="newAdMinute" min="0" max="59" value="30"></div>
-      <button class="btn-ctrl" style="width:100%; background:var(--c-green); font-weight:900; padding:8px;" onclick="saveNewAdSlot()">GUARDAR</button>
-      <div id="adSlotsListContainer" style="margin-top:8px;"></div>
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeCalendarModal()">CERRAR</button>
-    </div>
-  </div>
-
-  <!-- MODAL RELOJ -->
-  <div class="modal-overlay" id="clockModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:#818cf8;">🕒 RELOJ ENTRE CANCIONES</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeClockModal()">✕</button>
-      </div>
-      <div style="display:flex; align-items:center; justify-content:space-between; background:#091226; border:1px solid #1e3a6d; border-radius:8px; padding:8px; margin-bottom:8px;">
-        <span style="font-size:0.75rem; font-weight:800; color:#fff;">Estado:</span>
-        <button id="btnToggleClockActive" class="btn-ctrl" style="padding:6px 12px; font-weight:900;" onclick="toggleClockActiveState()">DESACTIVADO</button>
-      </div>
-      <div class="form-group">
-        <label>Subir Archivo (<span id="clockCountDisplay">0</span>/10)</label>
-        <div class="file-select-box">
-          <span id="lblClockTempName" style="font-size:0.7rem; color:#fff;">Sin archivo</span>
-          <label class="btn-ctrl" style="padding:4px 8px; cursor:pointer;">ELEGIR<input type="file" accept="audio/*, video/*" style="display:none;" onchange="handleClockFileSelect(event)"></label>
-        </div>
-        <button class="btn-ctrl" style="width:100%; background:var(--c-green); font-weight:900; margin-top:4px;" onclick="addClockSlot()">GUARDAR</button>
-      </div>
-      <div id="clockSlotsContainer" style="max-height:30vh; overflow-y:auto;"></div>
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeClockModal()">CERRAR</button>
-    </div>
-  </div>
-
-  <!-- MODAL AYUDA -->
-  <div class="modal-overlay" id="helpModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.9rem; font-weight:900; color:var(--c-gold);">📖 GUÍA RÁPIDA</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeHelpModal()">✕</button>
-      </div>
-      <div class="help-section">
-        <div class="help-title">📻 Mezcla Cruzada (Crossfade)</div>
-        <div class="help-desc">Cuando a una canción le quedan 2 segundos para terminar, la siguiente entra fundiéndose suavemente en vivo sin silencios.</div>
-      </div>
-      <button class="btn-main-stream" style="padding:10px; margin-top:6px;" onclick="closeHelpModal()">CERRAR</button>
-    </div>
-  </div>
-
-  <!-- MODAL PLAYLIST -->
-  <div class="modal-overlay" id="playlistModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.85rem; font-weight:900; color:var(--c-blue);">🎛️ PANEL PRINCIPAL</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closePlaylistModal()">✕</button>
-      </div>
-      <div class="playlist-scroll" id="playlistContainer"></div>
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closePlaylistModal()">CERRAR</button>
-    </div>
-  </div>
-
-  <!-- MODAL AJUSTES -->
-  <div class="modal-overlay" id="settingsModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div style="font-size:0.85rem; font-weight:900; color:#38bdf8;">⚙ AJUSTES ZENO MEDIA & CONSOLA</div>
-        <button class="btn-icon" style="width:26px; height:26px;" onclick="closeSettingsModal()">✕</button>
-      </div>
-      <div class="form-group"><label>Host</label><input type="text" id="host" value="link.zeno.fm"></div>
-      <div style="display:flex; gap:6px;">
-        <div class="form-group" style="flex:1;"><label>Puerto</label><input type="number" id="port" value="80"></div>
-        <div class="form-group" style="flex:2;"><label>Mount</label><input type="text" id="mount" value="/f04sfgq6138uv/source"></div>
-      </div>
-      <div class="form-group"><label>Usuario</label><input type="text" id="user" value="source"></div>
-      <div class="form-group"><label>Contraseña</label><input type="password" id="password"></div>
-
-      <div style="font-size:0.7rem; font-weight:900; color:var(--c-blue); margin:8px 0 4px 0;">🎛️ CONSOLA EXTERNA / TARJETA DE SONIDO PC (2×1)</div>
-      <div class="form-group">
-        <label>Entrada Audio / Consola / Micrófono</label>
-        <select id="audioInputDevice" onchange="handleAudioDeviceChange()">
-          <option value="">Dispositivo por defecto del sistema</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Salida Audio / Monitoreo / Consola</label>
-        <select id="audioOutputDevice" onchange="handleAudioOutputDeviceChange()">
-          <option value="">Salida por defecto del sistema</option>
-        </select>
-      </div>
-      <button class="btn-ctrl" style="width:100%; margin-bottom:8px;" onclick="refreshAudioDevices()">🔄 DETECTAR CONSOLA / INTERFAZ AUDIO</button>
-
-      <div class="vol-row" style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
-        <span style="font-size:0.68rem; font-weight:800; color:var(--text-muted); width:75px;">🎤 Mic</span>
-        <input type="range" id="volMic" min="0" max="1.5" step="0.05" value="1.0" oninput="setMicVol(this.value)" style="flex:1;">
-        <span id="valMic" style="font-size:0.68rem; font-weight:800; width:35px; text-align:right;">100%</span>
-      </div>
-      <div class="vol-row" style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
-        <span style="font-size:0.68rem; font-weight:800; color:var(--text-muted); width:75px;">🎵 Música</span>
-        <input type="range" id="volMusic" min="0" max="1.0" step="0.05" value="0.75" oninput="setMusicVol(this.value)" style="flex:1;">
-        <span id="valMusic" style="font-size:0.68rem; font-weight:800; width:35px; text-align:right;">75%</span>
-      </div>
-      <button class="btn-main-stream" style="padding:10px; margin-top:10px;" onclick="closeSettingsModal()">GUARDAR</button>
-    </div>
+    <div class="log-box" id="logBox">&gt; Datos de Zeno actualizados. Listo para iniciar.</div>
   </div>
 
   <script>
     const RELAY_URL = "wss://zeno-relay.onrender.com";
 
+    const DEFAULT_CFG = {
+      host: "link.zeno.fm",
+      port: "80",
+      mount: "/xksclgx3mfcuv",
+      user: "source",
+      password: "9xhKMMT4",
+      bitrate: "128"
+    };
+
     let isLive = false;
-    let micMuted = true;
-    let duckingEnabled = true;
-    let lightningEnabled = false;
-    let isShuffle = false;
-    let isMonitoring = false;
-
-    let rayitoIntroFired = false;
-    let keepAliveInterval = null;
-
-    let playlist = [];
-    let currentIndex = 0;
-    let activeStingerAudio = null;
-
-    // Web Audio Nodes & Dual Players para Crossfade
-    let audioContext = null;
-    let mediaStream = null;
-    let micSourceNode = null;
-    let micFilterNode = null;
-    let micEqWarmthNode = null;
-    let micEqAirNode = null;
-    let micCompressorNode = null;
-    let micGainNode = null;
-
-    let playerA, playerB, sourceA, sourceB, gainNodeA, gainNodeB;
-    let activeDeck = 'A'; // 'A' o 'B'
-    let isCrossfading = false;
-
-    let musicAnalyser = null;
-    let masterMixerNode = null;
-    let monitorGainNode = null;
-    let processorNode = null;
-    let mp3Encoder = null;
     let ws = null;
+    let pingTimer = null;
+    let authRetryTimer = null;
+    let reconnectTimer = null;
+    let timerInterval = null;
+    let startTs = 0;
+    let bytesSent = 0;
 
-    let clockSlots = [];
-    let clockTempFile = null;
-    let clockFunctionActive = false;
-    let nextClockSlotIndex = 0;
+    let audioCtx = null;
+    let masterGain = null;
+    let consoleGain = null;
+    let pcGain = null;
+    let splitter = null;
+    let analyserL = null;
+    let analyserR = null;
+    let waveAnalyser = null;
+    let processor = null;
+    let mp3Encoder = null;
+    let levelAnimId = null;
 
-    let adSlots = [];
-    let temporaryAdFile = null;
-    let adIntervalChecker = null;
-    let currentAdPlayingIndex = -1;
+    let consoleStream = null;
+    let consoleSource = null;
 
-    const aS1 = document.getElementById('audioStinger1');
-    const aS2 = document.getElementById('audioStinger2');
-    const aLight = document.getElementById('audioLightning');
-    const aClock = document.getElementById('audioClockSlot');
-    const aAds = document.getElementById('audioAds');
+    let pcCaptureStream = null;
+    let pcCaptureSource = null;
 
-    function log(msg) {
-      const term = document.getElementById('terminal');
-      if (term) {
-        term.innerHTML += `<br>> ${msg}`;
-        term.scrollTop = term.scrollHeight;
-      }
+    function writeLog(msg) {
+      const box = document.getElementById('logBox');
+      box.innerHTML += `<br>&gt; ${msg}`;
+      box.scrollTop = box.scrollHeight;
     }
 
-    function handleStreamButtonClick() {
-      toggleBroadcast();
-    }
-
-    // ==========================================
-    // CARGA DE CARPETAS (1 × 1 SIN REPETIR)
-    // ==========================================
-    function handleFolderUpload(e) {
-      const files = Array.from(e.target.files || []).filter(f => f.type.startsWith('audio/') || f.type.startsWith('video/'));
-      if (files.length === 0) return;
-
-      const folderMap = new Map();
-      files.forEach(file => {
-        const parts = (file.webkitRelativePath || '').split('/');
-        const folderName = parts.length > 1 ? parts[0] : 'Carpeta';
-        if (!folderMap.has(folderName)) folderMap.set(folderName, []);
-        folderMap.get(folderName).push(file);
+    function saveCfg() {
+      ['host', 'port', 'mount', 'user', 'password', 'bitrate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) localStorage.setItem('butt_v3_' + id, el.value);
       });
+      const host = document.getElementById('host').value.trim() || DEFAULT_CFG.host;
+      const port = document.getElementById('port').value.trim() || DEFAULT_CFG.port;
+      let mount = document.getElementById('mount').value.trim() || DEFAULT_CFG.mount;
+      if (!mount.startsWith('/')) mount = '/' + mount;
+      const br = document.getElementById('bitrate').value;
 
-      const wasEmpty = playlist.length === 0;
-
-      folderMap.forEach((folderFiles, folderName) => {
-        const pool = [...folderFiles];
-        const pickRandomNonRepeating = () => {
-          if (pool.length === 0) {
-            pool.push(...folderFiles);
-          }
-          const randIdx = Math.floor(Math.random() * pool.length);
-          const chosen = pool.splice(randIdx, 1)[0];
-          return chosen;
-        };
-
-        const firstTrack = pickRandomNonRepeating();
-        const item = {
-          blob: firstTrack,
-          name: folderName, // Solo muestra el nombre de la carpeta
-          folderName: folderName,
-          folderPool: pool,
-          folderAllFiles: folderFiles,
-          pickNextFromFolder: pickRandomNonRepeating,
-          played: false,
-          durationSec: 0,
-          durationStr: '--:--',
-          appliesLightning: false,
-          isRemote: false,
-          isFolderSlot: true
-        };
-
-        const tempAudio = document.createElement('audio');
-        tempAudio.src = URL.createObjectURL(firstTrack);
-        tempAudio.onloadedmetadata = () => {
-          const sec = Math.floor(tempAudio.duration);
-          item.durationSec = sec;
-          const m = Math.floor(sec / 60), s = (sec % 60).toString().padStart(2, '0');
-          item.durationStr = `${m}:${s}`;
-          item.appliesLightning = sec >= 60;
-          if (document.getElementById('playlistModal').style.display === 'flex') renderPlaylistModal();
-        };
-
-        playlist.push(item);
-      });
-
-      updateTrackBoxes();
-      log(`📁 ${folderMap.size} carpeta(s) cargadas (1×1 aleatorio sin repetir).`);
-      e.target.value = '';
-      if (wasEmpty && (!getActivePlayer() || !getActivePlayer().src)) playTrack(0);
+      document.getElementById('endpointLabel').textContent = `${host}:${port}${mount}`;
+      document.getElementById('codecText').textContent = `MP3 ${br}k`;
     }
 
-    function resolveTrackSource(item) {
-      if (item.isRemote) return item.blob;
-      if (item.isFolderSlot && typeof item.pickNextFromFolder === 'function') {
-        const nextFile = item.pickNextFromFolder();
-        item.blob = nextFile;
-        return URL.createObjectURL(nextFile);
-      }
-      return URL.createObjectURL(item.blob);
+    function updateGains() {
+      const cVal = parseFloat(document.getElementById('consoleGainSlider').value || 1);
+      const pVal = parseFloat(document.getElementById('pcGainSlider').value || 0.85);
+      document.getElementById('consoleGainVal').textContent = `${Math.round(cVal * 100)}%`;
+      document.getElementById('pcGainVal').textContent = `${Math.round(pVal * 100)}%`;
+      if (consoleGain && audioCtx) consoleGain.gain.setTargetAtTime(cVal, audioCtx.currentTime, 0.05);
+      if (pcGain && audioCtx) pcGain.gain.setTargetAtTime(pVal, audioCtx.currentTime, 0.05);
     }
 
-    // ==========================================
-    // CONSOLA EXTERNA / DISPOSITIVOS DE AUDIO PC
-    // ==========================================
-    async function refreshAudioDevices() {
+    async function loadDevices() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
       try {
-        // Solicita permiso breve para desbloquear etiquetas de dispositivos de consola/tarjeta
-        const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        tempStream.getTracks().forEach(t => t.stop());
-
         const devices = await navigator.mediaDevices.enumerateDevices();
-        const inputSelect = document.getElementById('audioInputDevice');
-        const outputSelect = document.getElementById('audioOutputDevice');
-
-        const savedInput = localStorage.getItem('zeno_audio_input') || '';
-        const savedOutput = localStorage.getItem('zeno_audio_output') || '';
-
-        inputSelect.innerHTML = '<option value="">Entrada por defecto del sistema</option>';
-        outputSelect.innerHTML = '<option value="">Salida por defecto del sistema</option>';
-
-        devices.forEach(dev => {
+        const sel = document.getElementById('inputDevice');
+        const saved = localStorage.getItem('butt_v3_input_dev') || '';
+        sel.innerHTML = '<option value="">Entrada por defecto del sistema</option>';
+        devices.filter(d => d.kind === 'audioinput').forEach(d => {
           const opt = document.createElement('option');
-          opt.value = dev.deviceId;
-          opt.text = dev.label || `${dev.kind} (${dev.deviceId.slice(0, 6)})`;
-          if (dev.kind === 'audioinput') {
-            if (dev.deviceId === savedInput) opt.selected = true;
-            inputSelect.appendChild(opt);
-          } else if (dev.kind === 'audiooutput') {
-            if (dev.deviceId === savedOutput) opt.selected = true;
-            outputSelect.appendChild(opt);
-          }
+          opt.value = d.deviceId;
+          opt.text = d.label || `Entrada (${d.deviceId.slice(0, 6)})`;
+          if (d.deviceId === saved) opt.selected = true;
+          sel.appendChild(opt);
         });
-        log("🎛️ Dispositivos de audio / consola detectados.");
-      } catch (e) {
-        log("🎛️ Usa el selector o concede permiso de audio para ver dispositivos.");
-      }
+      } catch (e) {}
     }
 
-    async function handleAudioDeviceChange() {
-      const devId = document.getElementById('audioInputDevice').value;
-      localStorage.setItem('zeno_audio_input', devId);
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(t => t.stop());
-        mediaStream = null;
+    async function attachConsoleInput() {
+      const devId = document.getElementById('inputDevice').value;
+      localStorage.setItem('butt_v3_input_dev', devId);
+      if (consoleStream) {
+        consoleStream.getTracks().forEach(t => t.stop());
+        consoleStream = null;
       }
-      if (micSourceNode) {
-        try { micSourceNode.disconnect(); } catch(e){}
-        micSourceNode = null;
+      if (consoleSource) {
+        try { consoleSource.disconnect(); } catch (e) {}
+        consoleSource = null;
       }
-      if (isLive) {
-        try {
-          const constraints = {
-            audio: devId
-              ? { deviceId: { exact: devId }, echoCancellation: false, noiseSuppression: false, autoGainControl: false }
-              : { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-          };
-          mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-          if (audioContext && masterMixerNode) {
-            micSourceNode = audioContext.createMediaStreamSource(mediaStream);
-            micSourceNode.connect(micFilterNode);
-            log("🎛️ Entrada de consola / micrófono actualizada al aire.");
-          }
-        } catch(e){}
-      }
-    }
-
-    async function handleAudioOutputDeviceChange() {
-      const sinkId = document.getElementById('audioOutputDevice').value;
-      localStorage.setItem('zeno_audio_output', sinkId);
-      const targets = [playerA, playerB, aS1, aS2, aLight, aClock, aAds];
-      for (const el of targets) {
-        if (el && typeof el.setSinkId === 'function') {
-          try { await el.setSinkId(sinkId); } catch(e){}
-        }
-      }
-      if (audioContext && typeof audioContext.setSinkId === 'function') {
-        try { await audioContext.setSinkId(sinkId); } catch(e){}
-      }
-      log("🎛️ Salida de audio hacia consola / tarjeta actualizada.");
-    }
-
-    function openR2CloudModal() { document.getElementById('r2CloudModal').style.display = 'flex'; }
-    function closeR2CloudModal() { document.getElementById('r2CloudModal').style.display = 'none'; }
-
-    function addTrackFromR2Cloud() {
-      const name = document.getElementById('r2TrackName').value.trim();
-      const url = document.getElementById('r2TrackUrl').value.trim();
-      if (!name || !url) return alert("Completa los campos.");
-
-      playlist.push({ blob: url, name: name, played: false, durationSec: 180, durationStr: '3:00', appliesLightning: true, isRemote: true });
-      updateTrackBoxes();
-      log(`☁️ Nube: ${name}`);
-      document.getElementById('r2TrackName').value = '';
-      document.getElementById('r2TrackUrl').value = '';
-      closeR2CloudModal();
-      if (playlist.length === 1 && !getActivePlayer().src) playTrack(0);
-    }
-
-    function updateColombiaStudioClock() {
       try {
-        const now = new Date();
-        document.getElementById('colombiaTimeDisplay').innerText = now.toLocaleTimeString('es-CO', { timeZone: 'America/Bogota', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        document.getElementById('colombiaDateDisplay').innerText = now.toLocaleDateString('es-CO', { timeZone: 'America/Bogota', weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
-      } catch(e){}
-    }
-    setInterval(updateColombiaStudioClock, 1000);
-    updateColombiaStudioClock();
-
-    const TOTAL_LEDS = 16;
-    function buildLedBlocks() {
-      const colL = document.getElementById('colLeftMeter');
-      const colR = document.getElementById('colRightMeter');
-      if (!colL || !colR) return;
-      colL.innerHTML = ''; colR.innerHTML = '';
-      for (let i = 0; i < TOTAL_LEDS; i++) {
-        let type = i >= 13 ? 'red' : (i >= 9 ? 'yellow' : 'green');
-        const bL = document.createElement('div'); bL.className = 'led-block'; bL.dataset.type = type; bL.id = `ledL_${i}`; colL.appendChild(bL);
-        const bR = document.createElement('div'); bR.className = 'led-block'; bR.dataset.type = type; bR.id = `ledR_${i}`; colR.appendChild(bR);
-      }
-    }
-
-    function updateParallelLedMeters(levelL, levelR) {
-      const countL = Math.round((levelL / 100) * TOTAL_LEDS);
-      const countR = Math.round((levelR / 100) * TOTAL_LEDS);
-      for (let i = 0; i < TOTAL_LEDS; i++) {
-        const bL = document.getElementById(`ledL_${i}`);
-        const bR = document.getElementById(`ledR_${i}`);
-        if (bL) bL.className = i < countL ? `led-block active-${bL.dataset.type}` : 'led-block';
-        if (bR) bR.className = i < countR ? `led-block active-${bR.dataset.type}` : 'led-block';
-      }
-      const dbDisplay = document.getElementById('rackDbDisplay');
-      if (dbDisplay) dbDisplay.innerText = levelL > 2 ? `${Math.round(-30 + (levelL * 0.3))} dB` : '-∞ dB';
-    }
-
-    let dbInstance = null;
-    function initIndexedDB() {
-      return new Promise((resolve) => {
-        try {
-          const req = indexedDB.open("EmisorasPlusDB", 2);
-          req.onupgradeneeded = (e) => { const db = e.target.result; if (!db.objectStoreNames.contains("tracks")) db.createObjectStore("tracks", { keyPath: "id", autoIncrement: true }); };
-          req.onsuccess = (e) => { dbInstance = e.target.result; resolve(dbInstance); };
-          req.onerror = () => resolve(null);
-        } catch(e) { resolve(null); }
-      });
-    }
-
-    async function saveTrackToDB(tObj) {
-      if (!dbInstance || tObj.isRemote || tObj.isFolderSlot) return;
-      try {
-        const tx = dbInstance.transaction("tracks", "readwrite");
-        tx.objectStore("tracks").add({ name: tObj.name, blob: tObj.blob, durationSec: tObj.durationSec, durationStr: tObj.durationStr, appliesLightning: tObj.appliesLightning, played: tObj.played });
-      } catch(e){}
-    }
-
-    async function loadTracksFromDB() {
-      if (!dbInstance) return;
-      try {
-        const tx = dbInstance.transaction("tracks", "readonly");
-        const req = tx.objectStore("tracks").getAll();
-        req.onsuccess = () => {
-          const saved = req.result;
-          if (saved && saved.length > 0) {
-            playlist = saved.map(t => ({ id: t.id, blob: t.blob, name: t.name, played: t.played || false, durationSec: t.durationSec || 0, durationStr: t.durationStr || '--:--', appliesLightning: t.appliesLightning || false }));
-            updateTrackBoxes();
-            renderPlaylistModal();
-            if (playlist.length > 0 && !getActivePlayer().src) setupTrackSource(0);
-          }
+        const constraints = {
+          audio: devId
+            ? { deviceId: { exact: devId }, echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+            : { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
         };
-      } catch(e){}
-    }
-
-    // ==========================================
-    // MOTOR DE AUDIO PROFESIONAL Y DOBLE DECK (CROSSFADE)
-    // ==========================================
-    function ensureAudioEngine() {
-      try {
-        if (!audioContext || audioContext.state === 'closed') {
-          audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioContext.state === 'suspended') audioContext.resume();
-
-        if (!masterMixerNode) {
-          masterMixerNode = audioContext.createGain();
-        }
-
-        if (!monitorGainNode) {
-          monitorGainNode = audioContext.createGain();
-          monitorGainNode.gain.value = isMonitoring ? 1.0 : 0.0;
-          masterMixerNode.connect(monitorGainNode);
-          monitorGainNode.connect(audioContext.destination);
-        }
-
-        if (!playerA) {
-          playerA = document.getElementById('audioMusicA');
-          playerB = document.getElementById('audioMusicB');
-
-          sourceA = audioContext.createMediaElementSource(playerA);
-          sourceB = audioContext.createMediaElementSource(playerB);
-
-          gainNodeA = audioContext.createGain();
-          gainNodeB = audioContext.createGain();
-
-          const baseMusicVol = parseFloat(document.getElementById('volMusic').value || 0.75);
-          gainNodeA.gain.value = baseMusicVol;
-          gainNodeB.gain.value = 0.0;
-
-          musicAnalyser = audioContext.createAnalyser();
-          musicAnalyser.fftSize = 256;
-          musicAnalyser.smoothingTimeConstant = 0.75;
-
-          sourceA.connect(gainNodeA);
-          sourceB.connect(gainNodeB);
-
-          gainNodeA.connect(musicAnalyser);
-          gainNodeB.connect(musicAnalyser);
-
-          musicAnalyser.connect(masterMixerNode);
-          handleAudioOutputDeviceChange();
-        }
-      } catch(e) {}
-    }
-
-    function getActivePlayer() { return activeDeck === 'A' ? playerA : playerB; }
-    function getActiveGain() { return activeDeck === 'A' ? gainNodeA : gainNodeB; }
-    function getInactivePlayer() { return activeDeck === 'A' ? playerB : playerA; }
-    function getInactiveGain() { return activeDeck === 'A' ? gainNodeB : gainNodeA; }
-
-    function startDjVisualLoop() {
-      const canvas = document.getElementById('djWaveCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const freqData = new Uint8Array(128);
-      const waveData = new Uint8Array(128);
-
-      function draw() {
-        requestAnimationFrame(draw);
-        const curPlayer = getActivePlayer();
-
-        if (!musicAnalyser || !curPlayer || curPlayer.paused) {
-          updateParallelLedMeters(0, 0);
-          ctx.fillStyle = '#010307';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.beginPath(); ctx.strokeStyle = '#1e3a6d'; ctx.lineWidth = 1;
-          ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2); ctx.stroke();
-          return;
-        }
-
-        musicAnalyser.getByteFrequencyData(freqData);
-        musicAnalyser.getByteTimeDomainData(waveData);
-
-        ctx.fillStyle = 'rgba(1, 3, 7, 0.4)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.lineWidth = 2; ctx.strokeStyle = '#06b6d4'; ctx.beginPath();
-
-        const sliceWidth = canvas.width / waveData.length;
-        let x = 0;
-        for (let i = 0; i < waveData.length; i++) {
-          const v = waveData[i] / 128.0;
-          const y = (v * canvas.height) / 2;
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-          x += sliceWidth;
-        }
-        ctx.stroke();
-
-        let sumL = 0, sumR = 0;
-        for (let i = 0; i < 64; i++) sumL += freqData[i];
-        for (let i = 64; i < 128; i++) sumR += freqData[i];
-        const avgL = (sumL / 64 / 255) * 100;
-        const avgR = (sumR / 64 / 255) * 100;
-        updateParallelLedMeters(Math.min(100, avgL * 1.3), Math.min(100, avgR * 1.3));
+        consoleStream = await navigator.mediaDevices.getUserMedia(constraints);
+        ensureAudioGraph();
+        consoleSource = audioCtx.createMediaStreamSource(consoleStream);
+        consoleSource.connect(consoleGain);
+        startLevelsLoop();
+        writeLog('Consola / entrada 2×1 conectada.');
+      } catch (err) {
+        writeLog('Sin entrada física activa (continúa sin bloqueo).');
       }
-      draw();
     }
 
-    function setupTrackSource(idx) {
-      if (playlist.length === 0 || !playlist[idx]) return;
-      currentIndex = idx;
-      const item = playlist[currentIndex];
-      const p = getActivePlayer();
-      p.src = item.isRemote ? item.blob : URL.createObjectURL(item.blob);
-      p.load();
+    async function switchConsoleInput() {
+      await attachConsoleInput();
     }
 
-    function playTrack(idx) {
-      if (playlist.length === 0 || !playlist[idx]) return;
-      ensureAudioEngine();
-      currentIndex = idx;
-      rayitoIntroFired = false;
-      isCrossfading = false;
-      updateTrackBoxes();
-
-      const item = playlist[currentIndex];
-      const p = getActivePlayer();
-      const g = getActiveGain();
-      const musicVol = parseFloat(document.getElementById('volMusic').value || 0.75);
-
-      g.gain.setValueAtTime(musicVol, audioContext.currentTime);
-      p.src = resolveTrackSource(item);
-      p.load();
-      p.play().catch(e => console.log(e));
-      document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
-    }
-
-    // ==========================================
-    // SISTEMA DE MEZCLA EN VIVO (CROSSFADE 2 SEGUNDOS)
-    // ==========================================
-    function triggerCrossfadeToNext() {
-      if (playlist.length <= 1 || isCrossfading) {
-        playNextTrackDirect();
+    async function togglePcSystemAudio() {
+      const btn = document.getElementById('btnCapturePc');
+      if (pcCaptureStream) {
+        pcCaptureStream.getTracks().forEach(t => t.stop());
+        pcCaptureStream = null;
+        if (pcCaptureSource) {
+          try { pcCaptureSource.disconnect(); } catch (e) {}
+          pcCaptureSource = null;
+        }
+        btn.classList.remove('active');
+        btn.textContent = '💻 Capturar Audio del PC';
+        writeLog('Captura de audio del PC detenida.');
         return;
       }
 
-      isCrossfading = true;
-      if (playlist[currentIndex]) playlist[currentIndex].played = true;
-      
-      const nextIdx = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIndex + 1) % playlist.length;
-      currentIndex = nextIdx;
-      updateTrackBoxes();
-
-      const nextItem = playlist[currentIndex];
-      const outgoingPlayer = getActivePlayer();
-      const outgoingGain = getActiveGain();
-
-      // Cambiar al deck inactivo
-      activeDeck = activeDeck === 'A' ? 'B' : 'A';
-      const incomingPlayer = getActivePlayer();
-      const incomingGain = getActiveGain();
-
-      const musicVol = parseFloat(document.getElementById('volMusic').value || 0.75);
-      const now = audioContext.currentTime;
-
-      incomingPlayer.src = resolveTrackSource(nextItem);
-      incomingPlayer.load();
-      incomingGain.gain.setValueAtTime(0.0, now);
-      incomingPlayer.play().then(() => {
-        incomingGain.gain.setTargetAtTime(musicVol, now, 0.6);
-        outgoingGain.gain.setTargetAtTime(0.0, now, 0.6);
-
-        setTimeout(() => {
-          outgoingPlayer.pause();
-          outgoingPlayer.currentTime = 0;
-          isCrossfading = false;
-        }, 2200);
-
-        rayitoIntroFired = false;
-        if (document.getElementById('playlistModal').style.display === 'flex') renderPlaylistModal();
-      }).catch(e => {
-        isCrossfading = false;
-      });
-    }
-
-    function playNextTrackDirect() {
-      if (playlist.length === 0) return;
-      if (checkAndPlayScheduledAd()) return;
-      if (playlist[currentIndex]) playlist[currentIndex].played = true;
-      currentIndex = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIndex + 1) % playlist.length;
-      playTrack(currentIndex);
-      if (document.getElementById('playlistModal').style.display === 'flex') renderPlaylistModal();
-    }
-
-    function togglePlayMusic() {
-      ensureAudioEngine();
-      const p = getActivePlayer();
-      const btn = document.getElementById('btnPlayMusic');
-      if (p.paused) {
-        if (!p.src && playlist.length > 0) playTrack(currentIndex);
-        else p.play();
-        btn.innerText = '⏸ PAUSA';
-      } else {
-        p.pause();
-        btn.innerText = '▶ PLAY';
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        writeLog('Tu navegador no soporta captura de audio de PC.');
+        return;
       }
-    }
 
-    function skipToNextTrack() {
-      if (playlist.length === 0) return;
-      triggerCrossfadeToNext();
-    }
-
-    function repeatCurrentTrack() {
-      if (playlist.length === 0) return;
-      ensureAudioEngine();
-      const p = getActivePlayer();
-      p.currentTime = 0;
-      p.play();
-      rayitoIntroFired = false;
-    }
-
-    function stopMusicTrack() {
-      if (playerA) { playerA.pause(); playerA.currentTime = 0; }
-      if (playerB) { playerB.pause(); playerB.currentTime = 0; }
-      document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
-      updateParallelLedMeters(0, 0);
-    }
-
-    setInterval(() => {
-      const p = getActivePlayer();
-      if (!p || p.paused || isNaN(p.duration) || isNaN(p.currentTime)) return;
-
-      const timeLeft = p.duration - p.currentTime;
-      if (timeLeft <= 2.0 && timeLeft > 0 && !isCrossfading && playlist.length > 1) {
-        if (clockFunctionActive && clockSlots.length > 0) {
-          // Si hay reloj activo, se maneja al terminar por completo
-        } else if (!checkAndPlayScheduledAd()) {
-          triggerCrossfadingAutomatic();
+      try {
+        pcCaptureStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+        });
+        const audioTracks = pcCaptureStream.getAudioTracks();
+        if (!audioTracks.length) {
+          writeLog('No se compartió audio del PC. Marca "Compartir audio".');
+          pcCaptureStream.getTracks().forEach(t => t.stop());
+          pcCaptureStream = null;
+          return;
         }
+
+        ensureAudioGraph();
+        pcCaptureSource = audioCtx.createMediaStreamSource(new MediaStream(audioTracks));
+        pcCaptureSource.connect(pcGain);
+        startLevelsLoop();
+
+        audioTracks[0].onended = () => {
+          pcCaptureStream = null;
+          btn.classList.remove('active');
+          btn.textContent = '💻 Capturar Audio del PC';
+          writeLog('Audio del PC desconectado.');
+        };
+
+        btn.classList.add('active');
+        btn.textContent = '✅ Audio del PC Activo';
+        writeLog('Audio del PC enrutado al master.');
+      } catch (e) {
+        writeLog('Captura de audio del PC cancelada.');
       }
-    }, 250);
-
-    let autoCrossfadeTriggered = false;
-    function triggerCrossfadingAutomatic() {
-      if (autoCrossfadeTriggered || isCrossfading) return;
-      autoCrossfadeTriggered = true;
-      triggerCrossfadeToNext();
-      setTimeout(() => { autoCrossfadeTriggered = false; }, 4000);
     }
 
-    // ==========================================
-    // TRANSMISIÓN ESTABLE Y PURA (ZENO RELAY)
-    // ==========================================
-    async function toggleBroadcast() {
-      if (isLive) stopAll();
-      else await startBroadcast();
+    function ensureAudioGraph() {
+      if (!audioCtx || audioCtx.state === 'closed') {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      if (!masterGain) {
+        masterGain = audioCtx.createGain();
+        consoleGain = audioCtx.createGain();
+        pcGain = audioCtx.createGain();
+
+        splitter = audioCtx.createChannelSplitter(2);
+        analyserL = audioCtx.createAnalyser();
+        analyserR = audioCtx.createAnalyser();
+        waveAnalyser = audioCtx.createAnalyser();
+
+        analyserL.fftSize = 128;
+        analyserR.fftSize = 128;
+        waveAnalyser.fftSize = 256;
+
+        consoleGain.gain.value = parseFloat(document.getElementById('consoleGainSlider').value || 1);
+        pcGain.gain.value = parseFloat(document.getElementById('pcGainSlider').value || 0.85);
+
+        consoleGain.connect(masterGain);
+        pcGain.connect(masterGain);
+
+        masterGain.connect(splitter);
+        splitter.connect(analyserL, 0);
+        splitter.connect(analyserR, 1);
+        masterGain.connect(waveAnalyser);
+      }
     }
 
-    async function startBroadcast() {
+    function hasActiveSoundSource() {
+      const hasConsole = consoleStream && consoleStream.getAudioTracks().some(t => t.readyState === 'live' && t.enabled);
+      const hasPc = pcCaptureStream && pcCaptureStream.getAudioTracks().some(t => t.readyState === 'live' && t.enabled);
+      return Boolean(isLive || hasConsole || hasPc);
+    }
+
+    function getPeakPercent(analyserNode, buf) {
+      analyserNode.getByteTimeDomainData(buf);
+      let peak = 0;
+      for (let i = 0; i < buf.length; i++) {
+        const v = Math.abs((buf[i] - 128) / 128);
+        if (v > peak) peak = v;
+      }
+      return Math.min(100, Math.round(peak * 140));
+    }
+
+    function startLevelsLoop() {
+      if (levelAnimId) return;
+      const vuL = document.getElementById('vuLeft');
+      const vuR = document.getElementById('vuRight');
+      const pctL = document.getElementById('pctLeft');
+      const pctR = document.getElementById('pctRight');
+      const dbEl = document.getElementById('dbReadout');
+      const canvas = document.getElementById('waveCanvas');
+      const ctx = canvas.getContext('2d');
+
+      const bufL = new Uint8Array(analyserL.fftSize);
+      const bufR = new Uint8Array(analyserR.fftSize);
+      const waveBuf = new Uint8Array(waveAnalyser.fftSize);
+
+      function tick() {
+        if (!hasActiveSoundSource()) {
+          vuL.style.width = '0%';
+          vuR.style.width = '0%';
+          pctL.textContent = '0%';
+          pctR.textContent = '0%';
+          dbEl.textContent = '-∞ dB';
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.strokeStyle = '#cbd5e1';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(0, canvas.height / 2);
+          ctx.lineTo(canvas.width, canvas.height / 2);
+          ctx.stroke();
+          levelAnimId = null;
+          return;
+        }
+
+        const lPct = getPeakPercent(analyserL, bufL);
+        const rPct = getPeakPercent(analyserR, bufR);
+        const maxPct = Math.max(lPct, rPct);
+
+        vuL.style.width = lPct + '%';
+        vuR.style.width = rPct + '%';
+        pctL.textContent = lPct + '%';
+        pctR.textContent = rPct + '%';
+        dbEl.textContent = maxPct > 1
+          ? `${Math.max(-60, Math.round(20 * Math.log10(maxPct / 100)))} dB`
+          : '-∞ dB';
+
+        waveAnalyser.getByteTimeDomainData(waveBuf);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#0284c7';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        const step = canvas.width / waveBuf.length;
+        for (let i = 0; i < waveBuf.length; i++) {
+          const y = (waveBuf[i] / 255) * canvas.height;
+          if (i === 0) ctx.moveTo(0, y);
+          else ctx.lineTo(i * step, y);
+        }
+        ctx.stroke();
+
+        levelAnimId = requestAnimationFrame(tick);
+      }
+
+      levelAnimId = requestAnimationFrame(tick);
+    }
+
+    function startStats() {
+      startTs = Date.now();
+      bytesSent = 0;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!isLive) return;
+        const sec = Math.floor((Date.now() - startTs) / 1000);
+        const h = String(Math.floor(sec / 3600)).padStart(2, '0');
+        const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
+        const s = String(sec % 60).padStart(2, '0');
+        document.getElementById('timerText').textContent = `${h}:${m}:${s}`;
+        document.getElementById('bytesText').textContent = bytesSent > 1048576
+          ? `${(bytesSent / 1048576).toFixed(2)} MB`
+          : `${(bytesSent / 1024).toFixed(1)} KB`;
+      }, 1000);
+    }
+
+    function sendMetadata() {
+      const title = document.getElementById('songTitle').value.trim();
+      if (!title || !ws || ws.readyState !== WebSocket.OPEN) return;
+      ws.send(JSON.stringify({ action: 'UPDATE_METADATA', title, song: title }));
+      writeLog(`Título enviado: ${title}`);
+    }
+
+    function openSocket(host, port, mount, user, password, bitrate) {
+      if (ws) {
+        try { ws.close(); } catch (e) {}
+        ws = null;
+      }
+      writeLog(`Conectando a ${host}:${port}${mount}...`);
+      ws = new WebSocket(RELAY_URL);
+      ws.binaryType = 'arraybuffer';
+
+      ws.onopen = () => {
+        ws.send(JSON.stringify({
+          action: 'AUTH_ICECAST',
+          host, port, mount, user, password, bitrate,
+          contentType: 'audio/mpeg'
+        }));
+        clearInterval(pingTimer);
+        pingTimer = setInterval(() => {
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ action: 'PING' }));
+          }
+        }, 8000);
+      };
+
+      ws.onmessage = (ev) => {
+        try {
+          const data = JSON.parse(ev.data);
+          if (data.status === 'SUCCESS') {
+            clearTimeout(authRetryTimer);
+            beginAudioEncoding(bitrate);
+          } else if (data.status === 'ERROR') {
+            writeLog(`Aviso servidor: ${data.message}. Reintentando en 4s...`);
+            clearTimeout(authRetryTimer);
+            authRetryTimer = setTimeout(() => {
+              if (isLive && ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                  action: 'AUTH_ICECAST',
+                  host, port, mount, user, password, bitrate,
+                  contentType: 'audio/mpeg'
+                }));
+              }
+            }, 4000);
+          }
+        } catch (e) {}
+      };
+
+      ws.onerror = () => {
+        writeLog('Aviso de red; manteniendo audio activo...');
+      };
+
+      ws.onclose = () => {
+        clearInterval(pingTimer);
+        clearTimeout(authRetryTimer);
+        if (isLive) {
+          writeLog('Conexión interrumpida. Reconectando en tiempo real...');
+          clearTimeout(reconnectTimer);
+          reconnectTimer = setTimeout(() => {
+            if (isLive) openSocket(host, port, mount, user, password, bitrate);
+          }, 2500);
+        }
+      };
+    }
+
+    async function toggleStream() {
+      if (isLive) return stopStream();
+
       const host = document.getElementById('host').value.trim();
       const port = document.getElementById('port').value.trim();
       let mount = document.getElementById('mount').value.trim();
-      const user = document.getElementById('user').value.trim();
+      const user = document.getElementById('user').value.trim() || 'source';
       const password = document.getElementById('password').value.trim();
+      const bitrate = parseInt(document.getElementById('bitrate').value, 10) || 128;
 
       if (!host || !port || !mount || !password) {
-        alert("Ajustes ⚙: Escribe o pega tu contraseña de Zeno.");
-        openSettingsModal();
+        alert('Completa Host, Puerto, Punto de montaje y Contraseña.');
         return;
       }
       if (!mount.startsWith('/')) mount = '/' + mount;
 
-      const selectedInputId = document.getElementById('audioInputDevice').value;
-      log("Solicitando permiso de audio / consola...");
-      try {
-        if (!mediaStream) {
-          const constraints = {
-            audio: selectedInputId
-              ? { deviceId: { exact: selectedInputId }, echoCancellation: false, noiseSuppression: false, autoGainControl: false }
-              : { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-          };
-          mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        }
-        log('<span style="color:var(--c-green)">Entrada de audio autorizada. Inicia en MUTE.</span>');
-      } catch (err) {
-        alert("No se pudo acceder al micrófono o consola.");
-        return;
-      }
+      isLive = true;
+      document.getElementById('liveBadge').textContent = 'LIVE / ON AIR';
+      document.getElementById('liveBadge').classList.add('live');
+      const btn = document.getElementById('btnStream');
+      btn.textContent = '⏹ DETENER TRANSMISIÓN';
+      btn.classList.add('live');
 
-      log("Conectando con Zeno Media...");
-      try {
-        ws = new WebSocket(RELAY_URL);
-        ws.binaryType = "arraybuffer";
-
-        ws.onopen = () => {
-          ws.send(JSON.stringify({ action: 'AUTH_ICECAST', host, port, mount, user, password }));
-          if (keepAliveInterval) clearInterval(keepAliveInterval);
-          keepAliveInterval = setInterval(() => { if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ action: 'PING' })); }, 8000);
-        };
-
-        ws.onmessage = async (event) => {
-          try {
-            const resp = JSON.parse(event.data);
-            if (resp.status === 'SUCCESS') {
-              log('<span style="color:var(--c-green); font-weight:bold;">¡AL AIRE! Transmisión estable.</span>');
-              await iniciarAudioEngine();
-            } else if (resp.status === 'ERROR') {
-              stopAll();
-              alert(`Error Icecast: ${resp.message}`);
-            }
-          } catch(e){}
-        };
-
-        ws.onerror = () => { log('<span style="color:var(--c-yellow)">Microcorte. Reconectando...</span>'); };
-        ws.onclose = () => {
-          if (isLive) setTimeout(() => { if (isLive) startBroadcast(); }, 2000);
-        };
-      } catch (err) { stopAll(); }
+      ensureAudioGraph();
+      await attachConsoleInput();
+      await loadDevices();
+      startStats();
+      startLevelsLoop();
+      openSocket(host, port, mount, user, password, bitrate);
     }
 
-    async function iniciarAudioEngine() {
-      isLive = true;
-      document.getElementById('btnAction').className = 'btn-main-stream live';
-      document.getElementById('btnAction').innerText = 'DETENER TRANSMISIÓN';
-      const q = document.getElementById('btnQuickPlay');
-      if (q) { q.innerText = '⏹'; q.classList.add('is-live'); }
+    function beginAudioEncoding(bitrate) {
+      if (processor) {
+        try { processor.disconnect(); } catch (e) {}
+        processor = null;
+      }
+      sendMetadata();
 
-      ensureAudioEngine();
-      const sampleRate = audioContext.sampleRate;
-
-      if (!micSourceNode && mediaStream) {
-        micSourceNode = audioContext.createMediaStreamSource(mediaStream);
-        micFilterNode = audioContext.createBiquadFilter(); micFilterNode.type = 'highpass'; micFilterNode.frequency.value = 80;
-        micEqWarmthNode = audioContext.createBiquadFilter(); micEqWarmthNode.type = 'peaking'; micEqWarmthNode.frequency.value = 250; micEqWarmthNode.Q.value = 1.2; micEqWarmthNode.gain.value = 2.5;
-        micEqAirNode = audioContext.createBiquadFilter(); micEqAirNode.type = 'highshelf'; micEqAirNode.frequency.value = 4500; micEqAirNode.gain.value = 3.5;
-        micCompressorNode = audioContext.createDynamicsCompressor();
-        micCompressorNode.threshold.setValueAtTime(-18, audioContext.currentTime);
-        micCompressorNode.ratio.setValueAtTime(3.8, audioContext.currentTime);
-
-        micGainNode = audioContext.createGain();
-        micGainNode.gain.value = micMuted ? 0.0 : parseFloat(document.getElementById('volMic').value || 1.0);
-
-        micSourceNode.connect(micFilterNode);
-        micFilterNode.connect(micEqWarmthNode);
-        micEqWarmthNode.connect(micEqAirNode);
-        micEqAirNode.connect(micCompressorNode);
-        micCompressorNode.connect(micGainNode);
-        micGainNode.connect(masterMixerNode);
+      if (typeof lamejs !== 'undefined') {
+        mp3Encoder = new lamejs.Mp3Encoder(1, audioCtx.sampleRate, bitrate);
       }
 
-      try { audioContext.createMediaElementSource(aClock).connect(masterMixerNode); } catch(e){}
-      try { audioContext.createMediaElementSource(aAds).connect(masterMixerNode); } catch(e){}
-      try {
-        const sg = audioContext.createGain(); sg.gain.value = 0.95;
-        audioContext.createMediaElementSource(aS1).connect(sg);
-        audioContext.createMediaElementSource(aS2).connect(sg);
-        audioContext.createMediaElementSource(aLight).connect(sg);
-        sg.connect(masterMixerNode);
-      } catch(e){}
-
-      const analyser = audioContext.createAnalyser(); analyser.fftSize = 128;
-      masterMixerNode.connect(analyser);
-
-      const bLen = analyser.frequencyBinCount;
-      const dArr = new Uint8Array(bLen);
-      const vu = document.getElementById('vuLevel'), vuPct = document.getElementById('vuPct');
-      function updateMasterMeter() {
-        if (!isLive) return;
-        analyser.getByteFrequencyData(dArr);
-        let sum = 0; for (let i = 0; i < bLen; i++) sum += dArr[i];
-        let pct = Math.min(100, (sum / bLen / 128) * 100);
-        vu.style.width = pct + '%'; vuPct.innerText = `${Math.round(pct)}%`;
-        requestAnimationFrame(updateMasterMeter);
-      }
-      updateMasterMeter();
-
-      if (typeof lamejs !== 'undefined') mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
-
-      processorNode = audioContext.createScriptProcessor(4096, 1, 1);
-      processorNode.onaudioprocess = (e) => {
+      processor = audioCtx.createScriptProcessor(4096, 1, 1);
+      processor.onaudioprocess = (e) => {
         if (!isLive || !ws || ws.readyState !== WebSocket.OPEN || !mp3Encoder) return;
-        const inputData = e.inputBuffer.getChannelData(0);
-        const sampleBuffer = new Int16Array(inputData.length);
-        for (let i = 0; i < inputData.length; i++) {
-          let s = Math.max(-1, Math.min(1, inputData[i]));
-          sampleBuffer[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        const ch = e.inputBuffer.getChannelData(0);
+        const pcm = new Int16Array(ch.length);
+        for (let i = 0; i < ch.length; i++) {
+          const s = Math.max(-1, Math.min(1, ch[i]));
+          pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
         }
-        const mp3Chunk = mp3Encoder.encodeBuffer(sampleBuffer);
-        if (mp3Chunk.length > 0) ws.send(mp3Chunk.buffer);
+        const mp3 = mp3Encoder.encodeBuffer(pcm);
+        if (mp3.length > 0) {
+          ws.send(mp3.buffer);
+          bytesSent += mp3.length;
+        }
       };
 
-      masterMixerNode.connect(processorNode);
-      processorNode.connect(audioContext.destination);
+      masterGain.connect(processor);
+      const muteOut = audioCtx.createGain();
+      muteOut.gain.value = 0;
+      processor.connect(muteOut);
+      muteOut.connect(audioCtx.destination);
 
-      if (playlist.length > 0 && getActivePlayer().paused) playTrack(currentIndex);
+      writeLog('¡Al aire! Transmitiendo en tiempo real.');
     }
 
-    function stopAll() {
+    function stopStream() {
       isLive = false;
-      if (keepAliveInterval) { clearInterval(keepAliveInterval); keepAliveInterval = null; }
-      if (playerA) playerA.pause();
-      if (playerB) playerB.pause();
-      aClock.pause(); aAds.pause(); stopCurrentStinger();
-
-      document.getElementById('btnPlayMusic').innerText = '▶ PLAY';
-      updateParallelLedMeters(0, 0);
-
-      if (processorNode) { try { processorNode.disconnect(); } catch(e){} processorNode = null; }
-      if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
-      if (ws) { ws.close(); ws = null; }
-
-      document.getElementById('btnAction').className = 'btn-main-stream';
-      document.getElementById('btnAction').innerText = 'INICIAR TRANSMISIÓN EN VIVO';
-      const q = document.getElementById('btnQuickPlay');
-      if (q) { q.innerText = '▶'; q.classList.remove('is-live'); }
-
-      document.getElementById('vuLevel').style.width = '0%';
-      document.getElementById('vuPct').innerText = '0%';
-      log("⏹ Transmisión detenida.");
-    }
-
-    function toggleMic() {
-      const btn = document.getElementById('btnMic');
-      const baseVol = parseFloat(document.getElementById('volMusic').value || 0.75);
-
-      if (micMuted) {
-        micMuted = false;
-        btn.className = 'btn-broadcast btn-mic-on';
-        btn.innerText = '🎤 MIC: AL AIRE';
-        if (micGainNode && audioContext) micGainNode.gain.setValueAtTime(parseFloat(document.getElementById('volMic').value || 1.0), audioContext.currentTime);
-        if (duckingEnabled && gainNodeA && gainNodeB && audioContext) {
-          gainNodeA.gain.setTargetAtTime(baseVol * 0.20, audioContext.currentTime, 0.2);
-          gainNodeB.gain.setTargetAtTime(baseVol * 0.20, audioContext.currentTime, 0.2);
-        }
-        log("🎤 Micrófono abierto.");
-      } else {
-        micMuted = true;
-        btn.className = 'btn-broadcast btn-mic-mute';
-        btn.innerText = '🔇 MIC: MUTE';
-        if (micGainNode && audioContext) micGainNode.gain.setValueAtTime(0.0, audioContext.currentTime);
-        if (gainNodeA && gainNodeB && audioContext) {
-          gainNodeA.gain.setTargetAtTime(baseVol, audioContext.currentTime, 0.3);
-          gainNodeB.gain.setTargetAtTime(baseVol, audioContext.currentTime, 0.3);
-        }
-        log("🔇 Micrófono cerrado (Mute).");
+      clearInterval(pingTimer);
+      clearTimeout(authRetryTimer);
+      clearTimeout(reconnectTimer);
+      clearInterval(timerInterval);
+      if (processor) {
+        try { processor.disconnect(); } catch (e) {}
+        processor = null;
       }
-    }
-
-    function toggleDucking() {
-      duckingEnabled = !duckingEnabled;
-      const btn = document.getElementById('btnDucking');
-      const status = document.getElementById('duckStatus');
-      btn.className = duckingEnabled ? 'btn-ducking active' : 'btn-ducking';
-      status.innerText = duckingEnabled ? 'ON (BAJA MÚSICA)' : 'OFF (FIJO)';
-      status.style.color = duckingEnabled ? '#86efac' : '#94a3b8';
-    }
-
-    function toggleLocalMonitoring() {
-      isMonitoring = !isMonitoring;
-      document.getElementById('btnMonitor').classList.toggle('monitor-active', isMonitoring);
-      if (monitorGainNode && audioContext) monitorGainNode.gain.setValueAtTime(isMonitoring ? 1.0 : 0.0, audioContext.currentTime);
-    }
-
-    function triggerStinger(num) {
-      if (num === 1 && aS1.src) startStingerPlayback(aS1, "PISADOR 1");
-      if (num === 2 && aS2.src) startStingerPlayback(aS2, "PISADOR 2");
-    }
-
-    function startStingerPlayback(audioEl, name) {
-      stopCurrentStinger();
-      activeStingerAudio = audioEl;
-      audioEl.currentTime = 0; audioEl.play().catch(e => console.log(e));
-      document.getElementById('bannerStingerName').innerText = `🔊 ${name} EN VIVO`;
-      document.getElementById('stingerBanner').style.display = 'flex';
-      audioEl.onended = () => { stopCurrentStinger(); };
-    }
-
-    function stopCurrentStinger() {
-      if (activeStingerAudio) { activeStingerAudio.pause(); activeStingerAudio.currentTime = 0; activeStingerAudio = null; }
-      document.getElementById('stingerBanner').style.display = 'none';
-    }
-
-    function toggleLightningMode() {
-      lightningEnabled = !lightningEnabled;
-      document.getElementById('btnLightning').classList.toggle('active', lightningEnabled);
-    }
-
-    function toggleMode() {
-      isShuffle = !isShuffle;
-      document.getElementById('btnMode').innerText = isShuffle ? 'ALEATORIO' : 'CONTINUO';
-    }
-
-    function setMicVol(v) {
-      document.getElementById('valMic').innerText = `${Math.round(v * 100)}%`;
-      if (micGainNode && audioContext && !micMuted) micGainNode.gain.setValueAtTime(parseFloat(v), audioContext.currentTime);
-    }
-
-    function setMusicVol(v) {
-      document.getElementById('valMusic').innerText = `${Math.round(v * 100)}%`;
-      const val = parseFloat(v);
-      if (gainNodeA && gainNodeB && audioContext && !isCrossfading) {
-        gainNodeA.gain.setValueAtTime(val, audioContext.currentTime);
-        gainNodeB.gain.setValueAtTime(val, audioContext.currentTime);
+      if (ws) {
+        try { ws.close(); } catch (e) {}
+        ws = null;
       }
+      document.getElementById('liveBadge').textContent = 'IDLE / OFF';
+      document.getElementById('liveBadge').classList.remove('live');
+      const btn = document.getElementById('btnStream');
+      btn.textContent = '▶ CONECTAR Y TRANSMITIR';
+      btn.classList.remove('live');
+      document.getElementById('timerText').textContent = '00:00:00';
+      writeLog('Transmisión detenida.');
     }
 
-    function saveSettings() {
-      ['host', 'port', 'mount', 'user', 'password'].forEach(id => {
+    window.addEventListener('DOMContentLoaded', () => {
+      Object.keys(DEFAULT_CFG).forEach(id => {
+        const v = localStorage.getItem('butt_v3_' + id);
         const el = document.getElementById(id);
-        if (el) localStorage.setItem(`zeno_${id}`, el.value.trim());
+        if (el) el.value = (v !== null && v !== '') ? v : DEFAULT_CFG[id];
       });
-      localStorage.setItem('zeno_audio_input', document.getElementById('audioInputDevice').value);
-      localStorage.setItem('zeno_audio_output', document.getElementById('audioOutputDevice').value);
-    }
-
-    function handleStingerUpload(num, e) {
-      const f = e.target.files[0]; if (!f) return;
-      const url = URL.createObjectURL(f);
-      if (num === 1) aS1.src = url;
-      if (num === 2) aS2.src = url;
-      if (num === 3) aLight.src = url;
-      log(`Pisador cargado.`);
-    }
-
-    function handleStrictFiles(e) {
-      const raw = Array.from(e.target.files);
-      if (raw.length === 0) return;
-      const wasEmpty = playlist.length === 0;
-
-      raw.forEach(file => {
-        const item = { blob: file, name: file.name, played: false, durationSec: 0, durationStr: '--:--', appliesLightning: false, isRemote: false };
-        const tempAudio = document.createElement('audio');
-        tempAudio.src = URL.createObjectURL(file);
-        tempAudio.onloadedmetadata = () => {
-          const sec = Math.floor(tempAudio.duration);
-          item.durationSec = sec;
-          const m = Math.floor(sec / 60), s = (sec % 60).toString().padStart(2, '0');
-          item.durationStr = `${m}:${s}`;
-          item.appliesLightning = sec >= 60;
-          saveTrackToDB(item);
-          if (document.getElementById('playlistModal').style.display === 'flex') renderPlaylistModal();
-        };
-        playlist.push(item);
-      });
-
-      updateTrackBoxes();
-      log(`${raw.length} pista(s) añadidas.`);
-      if (wasEmpty && (!getActivePlayer().src)) playTrack(0);
-    }
-
-    function renderPlaylistModal() {
-      const container = document.getElementById('playlistContainer'); container.innerHTML = '';
-      if (playlist.length === 0) { container.innerHTML = '<div style="color:var(--text-muted); font-size:0.75rem; text-align:center; padding:20px;">Sin pistas.</div>'; return; }
-
-      playlist.forEach((item, idx) => {
-        const card = document.createElement('div');
-        let cardClass = 'track-item-card', badgeHtml = '';
-        if (idx === currentIndex) { cardClass += ' is-live'; badgeHtml = '<span class="tag-live">AL AIRE</span>'; }
-        else if (idx === (currentIndex + 1) % playlist.length && playlist.length > 1) { cardClass += ' is-next'; badgeHtml = '<span class="tag-next">SIGUIENTE</span>'; }
-
-        card.className = cardClass;
-        card.innerHTML = `
-          <div class="track-item-info">
-            <div class="track-item-title">${idx + 1}. ${item.name}</div>
-            <div class="track-item-meta"><span>⏱ ${item.durationStr}</span> ${badgeHtml}</div>
-          </div>
-          <div class="track-item-actions">
-            <button class="btn-action-small" onclick="moveTrackUp(${idx})">▲</button>
-            <button class="btn-action-small" onclick="moveTrackDown(${idx})">▼</button>
-            <button class="btn-action-small btn-del" onclick="deleteTrack(${idx})">🗑</button>
-          </div>`;
-        container.appendChild(card);
-      });
-    }
-
-    function moveTrackUp(idx) {
-      if (idx <= 0) return;
-      const t = playlist[idx]; playlist[idx] = playlist[idx - 1]; playlist[idx - 1] = t;
-      updateTrackBoxes(); renderPlaylistModal();
-    }
-    function moveTrackDown(idx) {
-      if (idx >= playlist.length - 1) return;
-      const t = playlist[idx]; playlist[idx] = playlist[idx + 1]; playlist[idx + 1] = t;
-      updateTrackBoxes(); renderPlaylistModal();
-    }
-    function deleteTrack(idx) {
-      if (idx === currentIndex && playlist.length > 1) triggerCrossfadeToNext();
-      playlist.splice(idx, 1);
-      if (currentIndex >= playlist.length) currentIndex = Math.max(0, playlist.length - 1);
-      updateTrackBoxes(); renderPlaylistModal();
-    }
-
-    function updateTrackBoxes() {
-      if (playlist.length === 0) return;
-      const currentItem = playlist[currentIndex];
-      document.getElementById('track1').innerText = currentItem ? currentItem.name : 'Sin pista';
-      document.getElementById('track2').innerText = playlist.length > 1 ? playlist[(currentIndex + 1) % playlist.length].name : 'En espera...';
-      document.getElementById('track3').innerText = playlist.length > 2 ? playlist[(currentIndex + 2) % playlist.length].name : 'En espera...';
-    }
-
-    function handleNewAdFile(e) { temporaryAdFile = e.target.files[0]; if (temporaryAdFile) document.getElementById('lblNewAdFileName').innerText = temporaryAdFile.name; }
-    function saveNewAdSlot() {
-      if (!temporaryAdFile) return alert("Selecciona archivo.");
-      adSlots.push({ id: Date.now(), name: document.getElementById('newAdName').value.trim() || 'Tanda', url: URL.createObjectURL(temporaryAdFile), minute: parseInt(document.getElementById('newAdMinute').value) || 30, triggered: false });
-      temporaryAdFile = null; document.getElementById('lblNewAdFileName').innerText = "Sin archivo";
-      renderAdSlotsList(); log("Tanda guardada.");
-    }
-    function renderAdSlotsList() {
-      const c = document.getElementById('adSlotsListContainer'); if (!c) return; c.innerHTML = '';
-      adSlots.forEach((s, idx) => { c.innerHTML += `<div style="display:flex; justify-content:space-between; background:#091226; padding:6px; border-radius:6px; margin-bottom:4px; font-size:0.7rem;"><span>${s.name} (Min ${s.minute})</span><button class="btn-action-small btn-del" onclick="adSlots.splice(${idx},1);renderAdSlotsList()">🗑</button></div>`; });
-    }
-    function checkAndPlayScheduledAd() { return false; }
-
-    function handleClockFileSelect(e) { clockTempFile = e.target.files[0]; if (clockTempFile) document.getElementById('lblClockTempName').innerText = clockTempFile.name; }
-    function addClockSlot() {
-      if (!clockTempFile) return;
-      clockSlots.push({ id: Date.now(), name: clockTempFile.name, url: URL.createObjectURL(clockTempFile) });
-      clockTempFile = null; document.getElementById('lblClockTempName').innerText = "Sin archivo";
-      renderClockSlots();
-    }
-    function renderClockSlots() {
-      const c = document.getElementById('clockSlotsContainer'); document.getElementById('clockCountDisplay').innerText = clockSlots.length; c.innerHTML = '';
-      clockSlots.forEach((s, idx) => { c.innerHTML += `<div class="clock-slot-item"><span>${s.name}</span><button style="background:var(--c-red); border:none; color:#fff; padding:2px 8px; border-radius:4px;" onclick="clockSlots.splice(${idx},1);renderClockSlots()">🗑</button></div>`; });
-    }
-    function toggleClockActiveState() {
-      clockFunctionActive = !clockFunctionActive;
-      const b = document.getElementById('btnToggleClockActive');
-      b.innerText = clockFunctionActive ? "ACTIVADO" : "DESACTIVADO";
-      b.style.background = clockFunctionActive ? "var(--c-green)" : "#334155";
-      b.style.color = clockFunctionActive ? "#000" : "#fff";
-    }
-
-    function togglePasswordVisibility() { const p = document.getElementById('password'); p.type = p.type === 'password' ? 'text' : 'password'; }
-    function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; refreshAudioDevices(); }
-    function closeSettingsModal() { saveSettings(); document.getElementById('settingsModal').style.display = 'none'; }
-    function openCalendarModal() { renderAdSlotsList(); document.getElementById('calendarModal').style.display = 'flex'; }
-    function closeCalendarModal() { document.getElementById('calendarModal').style.display = 'none'; }
-    function openPlaylistModal() { renderPlaylistModal(); document.getElementById('playlistModal').style.display = 'flex'; }
-    function closePlaylistModal() { document.getElementById('playlistModal').style.display = 'none'; }
-    function openHelpModal() { document.getElementById('helpModal').style.display = 'flex'; }
-    function closeHelpModal() { document.getElementById('helpModal').style.display = 'none'; }
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      buildLedBlocks();
-      startDjVisualLoop();
-      ['host', 'port', 'mount', 'user', 'password'].forEach(id => {
-        const val = localStorage.getItem(`zeno_${id}`);
-        if (val) document.getElementById(id).value = val;
-      });
-      refreshAudioDevices();
-      try { await initIndexedDB(); await loadTracksFromDB(); } catch(e){}
+      saveCfg();
+      loadDevices();
     });
   </script>
 </body>
