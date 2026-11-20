@@ -14,11 +14,8 @@
       --border: rgba(192, 132, 252, 0.35);
       --text: #faf5ff;
       --muted: #d8b4fe;
-      --purple-glow: #a855f7;
       --violet-bright: #c084fc;
       --magenta: #e879f9;
-      --green: #10b981;
-      --amber: #f59e0b;
       --red: #ef4444;
     }
 
@@ -51,7 +48,6 @@
         0 24px 60px rgba(8, 2, 20, 0.78),
         0 0 0 1px rgba(255, 255, 255, 0.06) inset,
         0 10px 0 #140529;
-      transform: translateY(-2px);
       backdrop-filter: blur(12px);
     }
 
@@ -71,7 +67,6 @@
       background: linear-gradient(90deg, #ffffff, var(--violet-bright), var(--magenta));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 6px 20px rgba(192, 132, 252, 0.25);
     }
 
     .brand-sub {
@@ -81,10 +76,7 @@
       margin-top: 2px;
     }
 
-    .header-btns {
-      display: flex;
-      gap: 8px;
-    }
+    .header-btns { display: flex; gap: 8px; }
 
     .btn-3d-sec {
       background: linear-gradient(180deg, #4c1d95, #3b0764);
@@ -158,16 +150,8 @@
       color: var(--muted);
     }
 
-    .meters-top strong {
-      font-family: ui-monospace, monospace;
-      color: #fff;
-    }
-
-    .bar-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .meters-top strong { font-family: ui-monospace, monospace; color: #fff; }
+    .bar-row { display: flex; align-items: center; gap: 10px; }
 
     .ch-label {
       width: 20px;
@@ -261,7 +245,7 @@
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(8, 2, 18, 0.78);
+      background: rgba(8, 2, 18, 0.82);
       backdrop-filter: blur(6px);
       display: none;
       align-items: center;
@@ -274,7 +258,7 @@
 
     .modal-card-3d {
       width: 100%;
-      max-width: 490px;
+      max-width: 510px;
       max-height: 90vh;
       overflow-y: auto;
       background: #1d0b38;
@@ -297,7 +281,7 @@
 
     .modal-head h2 { font-size: 0.95rem; font-weight: 900; color: var(--violet-bright); }
 
-    label { display: block; font-size: 0.68rem; font-weight: 800; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; }
+    label { display: block; font-size: 0.68rem; font-weight: 800; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
 
     input, select {
       width: 100%;
@@ -315,6 +299,54 @@
     .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .row-inline { display: flex; gap: 8px; align-items: center; }
 
+    .source-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .app-tile-btn {
+      background: linear-gradient(180deg, #321361, #210a44);
+      border: 1px solid rgba(192, 132, 252, 0.38);
+      border-radius: 13px;
+      padding: 10px;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-align: left;
+      box-shadow: 0 4px 0 #130429;
+      transition: transform 0.1s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .app-tile-btn:hover { border-color: var(--magenta); filter: brightness(1.08); }
+    .app-tile-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #130429; }
+
+    .app-tile-btn.active {
+      background: linear-gradient(180deg, #6d28d9, #4c1d95);
+      border-color: #f0abfc;
+      box-shadow: 0 4px 0 #2e1065, 0 0 14px rgba(232, 121, 249, 0.45);
+    }
+
+    .app-icon-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ico-sys { background: linear-gradient(135deg, #0284c7, #38bdf8); }
+    .ico-sal { background: linear-gradient(135deg, #059669, #10b981); }
+    .ico-yt  { background: linear-gradient(135deg, #dc2626, #ef4444); }
+    .ico-win { background: linear-gradient(135deg, #7c3aed, #c084fc); }
+
+    .app-tile-info strong { display: block; font-size: 0.74rem; font-weight: 800; line-height: 1.15; }
+    .app-tile-info span { display: block; font-size: 0.62rem; color: #e9d5ff; opacity: 0.85; margin-top: 2px; }
+
     .detail-box {
       background: rgba(43, 17, 79, 0.75);
       border: 1px solid rgba(192, 132, 252, 0.28);
@@ -331,7 +363,7 @@
       font-size: 0.66rem;
       color: #c4b5fd;
       line-height: 1.35;
-      margin-top: 3px;
+      margin-top: 4px;
     }
   </style>
 </head>
@@ -378,7 +410,7 @@
       CONECTAR
     </button>
 
-    <div class="mini-log" id="logBox">&gt; Galaxia FM BUTT listo. Pulsa Conectar o abre Ajustes.</div>
+    <div class="mini-log" id="logBox">&gt; Galaxia FM BUTT listo. Rutas de entrada y salida aisladas sin eco.</div>
   </main>
 
   <!-- MODAL DETALLES -->
@@ -440,28 +472,77 @@
       </div>
 
       <div>
-        <label>1. Entrada desde Consola / Cable 2×1</label>
+        <label>1. Entrada desde Consola / Cable 2×1 (Solo Aire)</label>
         <div class="row-inline">
           <select id="inputDevice" onchange="switchConsoleInput()"></select>
           <button type="button" class="btn-3d-sec" onclick="loadDevices()">↻</button>
         </div>
+        <div class="hint-text">Esta entrada va únicamente al aire (nunca se reenvía a la salida de consola para evitar eco).</div>
       </div>
 
       <div>
-        <label>2. Capturar Todos los Sonidos del Sistema (Salamandra / YouTube)</label>
-        <button type="button" class="btn-3d-sec" id="btnCapturePc" style="width:100%;" onclick="togglePcSystemAudio()">
-          Capturar Todo el Audio del Sistema
-        </button>
-        <div class="hint-text">Elige <b>Pantalla completa</b> y activa <b>Compartir audio del sistema</b> para captar Salamandra, YouTube y todo lo que suene en el PC.</div>
+        <label>2. Capturar Audio de Aplicativos o Sistema</label>
+        <div class="source-cards-grid">
+          <button type="button" class="app-tile-btn" id="tileSystem" onclick="captureAppAudio('system')">
+            <div class="app-icon-badge ico-sys">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff">
+                <path d="M3 4.5L11 3.4V11.3H3V4.5ZM12.2 3.2L21 2V11.3H12.2V3.2ZM3 12.5H11V20.4L3 19.3V12.5ZM12.2 12.5H21V21.8L12.2 20.6V12.5Z"/>
+              </svg>
+            </div>
+            <div class="app-tile-info">
+              <strong>Todo el Sistema</strong>
+              <span>Salamandra + PC</span>
+            </div>
+          </button>
+
+          <button type="button" class="app-tile-btn" id="tileSalamandra" onclick="captureAppAudio('salamandra')">
+            <div class="app-icon-badge ico-sal">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <polygon points="10 8 16 12 10 16 10 8" fill="#fff"/>
+              </svg>
+            </div>
+            <div class="app-tile-info">
+              <strong>Salamandra + Web</strong>
+              <span>Automatizador + Nav.</span>
+            </div>
+          </button>
+
+          <button type="button" class="app-tile-btn" id="tileYoutube" onclick="captureAppAudio('youtube')">
+            <div class="app-icon-badge ico-yt">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="#fff">
+                <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/>
+              </svg>
+            </div>
+            <div class="app-tile-info">
+              <strong>YouTube / Pestaña</strong>
+              <span>Navegador con audio</span>
+            </div>
+          </button>
+
+          <button type="button" class="app-tile-btn" id="tileWindow" onclick="captureAppAudio('window')">
+            <div class="app-icon-badge ico-win">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2">
+                <rect x="3" y="4" width="18" height="16" rx="3"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+              </svg>
+            </div>
+            <div class="app-tile-info">
+              <strong>Captar Ventana</strong>
+              <span>App individual</span>
+            </div>
+          </button>
+        </div>
+        <div class="hint-text" id="captureStatusHint">Pulsa un aplicativo arriba y activa <b>Compartir audio</b>. Pulsa de nuevo el activo para detenerlo.</div>
       </div>
 
       <div>
-        <label>3. Enviar Audio del PC hacia la Consola (Salida Física)</label>
+        <label>3. Enviar Audio Capturado hacia la Consola (Salida Dedicada)</label>
         <div class="row-inline">
           <select id="outputDevice" onchange="switchConsoleOutput()"></select>
           <button type="button" class="btn-3d-sec" onclick="loadDevices()">↻</button>
         </div>
-        <div class="hint-text">Selecciona la tarjeta/salida conectada a tu consola para que Salamandra y YouTube suenen en la consola y al aire sin retroalimentación.</div>
+        <div class="hint-text">Déjalo en <b>No reenviar</b> si ya llega el sonido a la consola por la salida principal del PC y evitar eco.</div>
       </div>
 
       <div class="row-2">
@@ -470,13 +551,13 @@
           <input type="range" id="consoleGainSlider" min="0" max="2" step="0.05" value="1" oninput="updateGains()">
         </div>
         <div>
-          <label>Vol. Sistema PC: <span id="pcGainVal">100%</span></label>
+          <label>Vol. Apps / PC: <span id="pcGainVal">100%</span></label>
           <input type="range" id="pcGainSlider" min="0" max="1.5" step="0.05" value="1" oninput="updateGains()">
         </div>
       </div>
 
       <div>
-        <label>Envío a Consola Física: <span id="outGainVal">100%</span></label>
+        <label>Envío a Consola Dedicada: <span id="outGainVal">100%</span></label>
         <input type="range" id="outGainSlider" min="0" max="1.5" step="0.05" value="1" oninput="updateGains()">
       </div>
 
@@ -494,7 +575,7 @@
     </div>
   </div>
 
-  <!-- ELEMENTO DE SALIDA DEDICADO PARA ENVIAR EL AUDIO DEL SISTEMA HACIA LA CONSOLA -->
+  <!-- SALIDA AISLADA HACIA CONSOLA (SIN MEZCLAR ENTRADA DE MIC/CONSOLA PARA EVITAR ECO) -->
   <audio id="consoleMonitorOut" autoplay playsinline style="display:none;"></audio>
 
   <script>
@@ -523,6 +604,7 @@
     let pcGain = null;
     let consoleOutGain = null;
     let consoleOutDest = null;
+    let currentOutputSinkId = "";
 
     let splitter = null;
     let analyserL = null;
@@ -537,6 +619,7 @@
 
     let pcCaptureStream = null;
     let pcCaptureSource = null;
+    let activeCaptureMode = null;
 
     function openModal(id) {
       document.getElementById(id).classList.add('open');
@@ -560,7 +643,7 @@
     function saveCfg() {
       ['host', 'port', 'mount', 'user', 'password', 'bitrate'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) localStorage.setItem('gfm_butt_v2_' + id, el.value);
+        if (el) localStorage.setItem('gfm_butt_v4_' + id, el.value);
       });
       const host = document.getElementById('host').value.trim() || DEFAULT_CFG.host;
       const port = document.getElementById('port').value.trim() || DEFAULT_CFG.port;
@@ -587,54 +670,83 @@
         const devices = await navigator.mediaDevices.enumerateDevices();
         const inSel = document.getElementById('inputDevice');
         const outSel = document.getElementById('outputDevice');
-        const savedIn = localStorage.getItem('gfm_butt_v2_input_dev') || '';
-        const savedOut = localStorage.getItem('gfm_butt_v2_output_dev') || '';
+        const savedIn = localStorage.getItem('gfm_butt_v4_input_dev') || '';
+        const savedOut = localStorage.getItem('gfm_butt_v4_output_dev') || '';
 
         inSel.innerHTML = '<option value="">Entrada por defecto del sistema</option>';
-        outSel.innerHTML = '<option value="">No reenviar (usar salida normal de Windows)</option>';
+        outSel.innerHTML = '<option value="">No reenviar (evita duplicado y eco)</option>';
 
-        devices.forEach(d => {
-          if (d.kind === 'audioinput') {
-            const opt = document.createElement('option');
-            opt.value = d.deviceId;
-            opt.text = d.label || `Entrada (${d.deviceId.slice(0, 6)})`;
-            if (d.deviceId === savedIn) opt.selected = true;
-            inSel.appendChild(opt);
-          } else if (d.kind === 'audiooutput') {
-            const opt = document.createElement('option');
-            opt.value = d.deviceId;
-            opt.text = d.label || `Salida (${d.deviceId.slice(0, 6)})`;
-            if (d.deviceId === savedOut) opt.selected = true;
-            outSel.appendChild(opt);
-          }
+        const inputList = devices.filter(d => d.kind === 'audioinput');
+        const outputList = devices.filter(d => d.kind === 'audiooutput');
+
+        inputList.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.deviceId;
+          opt.text = d.label || `Entrada (${d.deviceId.slice(0, 6)})`;
+          if (d.deviceId === savedIn) opt.selected = true;
+          inSel.appendChild(opt);
         });
+
+        outputList.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.deviceId;
+          opt.text = d.label || `Salida (${d.deviceId.slice(0, 6)})`;
+          if (d.deviceId === savedOut) opt.selected = true;
+          outSel.appendChild(opt);
+        });
+
+        // Evita que la misma tarjeta de entrada sea elegida como salida dedicada y cause eco
+        if (inSel.value && outSel.value && inSel.value === outSel.value) {
+          outSel.value = '';
+          localStorage.setItem('gfm_butt_v4_output_dev', '');
+          writeLog('Bloqueo anti-eco: entrada y salida no pueden ser el mismo dispositivo.');
+        }
       } catch (e) {}
     }
 
     async function applyConsoleOutputRouting() {
       const outEl = document.getElementById('consoleMonitorOut');
+      const inId = document.getElementById('inputDevice').value;
       const sinkId = document.getElementById('outputDevice').value;
-      localStorage.setItem('gfm_butt_v2_output_dev', sinkId);
 
-      if (!outEl || !consoleOutDest) return;
-      outEl.srcObject = consoleOutDest.stream;
-
-      if (!sinkId) {
-        outEl.muted = true;
+      if (inId && sinkId && inId === sinkId) {
+        document.getElementById('outputDevice').value = '';
+        localStorage.setItem('gfm_butt_v4_output_dev', '');
+        currentOutputSinkId = '';
+        if (outEl) {
+          outEl.muted = true;
+          outEl.srcObject = null;
+        }
+        writeLog('Eco evitado: la salida dedicada no puede coincidir con la entrada.');
         return;
       }
 
+      localStorage.setItem('gfm_butt_v4_output_dev', sinkId);
+      currentOutputSinkId = sinkId;
+
+      if (!outEl || !consoleOutDest) return;
+
+      if (!sinkId) {
+        outEl.muted = true;
+        outEl.srcObject = null;
+        return;
+      }
+
+      outEl.srcObject = consoleOutDest.stream;
       outEl.muted = false;
+
       if (typeof outEl.setSinkId === 'function') {
         try {
           await outEl.setSinkId(sinkId);
           await outEl.play().catch(() => {});
-          writeLog('Audio del PC enviado hacia la salida de consola.');
+          writeLog('Salida dedicada activa sin bucle de retorno.');
         } catch (err) {
-          writeLog('No se pudo asignar la salida física seleccionada.');
+          outEl.muted = true;
+          writeLog('No se pudo asignar salida dedicada; se mantiene silenciada para evitar eco.');
         }
       } else {
-        writeLog('Este navegador no soporta selección de salida física (usa Chrome/Edge en PC).');
+        outEl.muted = true;
+        writeLog('Salida dedicada desactivada por compatibilidad del navegador.');
       }
     }
 
@@ -645,7 +757,7 @@
 
     async function attachConsoleInput() {
       const devId = document.getElementById('inputDevice').value;
-      localStorage.setItem('gfm_butt_v2_input_dev', devId);
+      localStorage.setItem('gfm_butt_v4_input_dev', devId);
       if (consoleStream) {
         consoleStream.getTracks().forEach(t => t.stop());
         consoleStream = null;
@@ -663,9 +775,11 @@
         consoleStream = await navigator.mediaDevices.getUserMedia(constraints);
         ensureAudioGraph();
         consoleSource = audioCtx.createMediaStreamSource(consoleStream);
+        // Solo va a la mezcla al aire (masterGain), nunca a consoleOutGain
         consoleSource.connect(consoleGain);
+        await applyConsoleOutputRouting();
         startLevelsLoop();
-        writeLog('Consola / entrada 2×1 conectada.');
+        writeLog('Entrada de consola conectada solo hacia el aire.');
       } catch (err) {
         writeLog('Sin entrada física activa (continúa sin bloqueo).');
       }
@@ -675,63 +789,120 @@
       await attachConsoleInput();
     }
 
-    async function togglePcSystemAudio() {
-      const btn = document.getElementById('btnCapturePc');
+    function setTileHighlight(mode) {
+      ['tileSystem', 'tileSalamandra', 'tileYoutube', 'tileWindow'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+      });
+      const map = {
+        system: 'tileSystem',
+        salamandra: 'tileSalamandra',
+        youtube: 'tileYoutube',
+        window: 'tileWindow'
+      };
+      if (mode && map[mode]) {
+        const activeEl = document.getElementById(map[mode]);
+        if (activeEl) activeEl.classList.add('active');
+      }
+    }
+
+    function stopPcCapture() {
       if (pcCaptureStream) {
         pcCaptureStream.getTracks().forEach(t => t.stop());
         pcCaptureStream = null;
-        if (pcCaptureSource) {
-          try { pcCaptureSource.disconnect(); } catch (e) {}
-          pcCaptureSource = null;
-        }
-        btn.textContent = 'Capturar Todo el Audio del Sistema';
-        writeLog('Captura de audio del sistema detenida.');
+      }
+      if (pcCaptureSource) {
+        try { pcCaptureSource.disconnect(); } catch (e) {}
+        pcCaptureSource = null;
+      }
+      activeCaptureMode = null;
+      setTileHighlight(null);
+      document.getElementById('captureStatusHint').innerHTML =
+        'Pulsa un aplicativo arriba y activa <b>Compartir audio</b>. Pulsa de nuevo el activo para detenerlo.';
+    }
+
+    async function captureAppAudio(mode) {
+      if (pcCaptureStream && activeCaptureMode === mode) {
+        stopPcCapture();
+        writeLog('Captura de aplicativo detenida.');
         return;
+      }
+
+      if (pcCaptureStream) {
+        stopPcCapture();
       }
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-        writeLog('Navegador sin soporte de captura de audio del sistema.');
+        writeLog('Navegador sin soporte de captura de audio.');
         return;
       }
 
-      try {
-        pcCaptureStream = await navigator.mediaDevices.getDisplayMedia({
-          video: { displaySurface: 'monitor' },
-          audio: {
-            echoCancellation: false,
-            noiseSuppression: false,
-            autoGainControl: false
-          },
-          systemAudio: 'include'
-        });
+      const modeConfigs = {
+        system: {
+          label: 'Todo el Sistema (Salamandra + PC)',
+          options: {
+            video: { displaySurface: 'monitor' },
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            systemAudio: 'include'
+          }
+        },
+        salamandra: {
+          label: 'Salamandra + Navegador',
+          options: {
+            video: { displaySurface: 'monitor' },
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            systemAudio: 'include'
+          }
+        },
+        youtube: {
+          label: 'YouTube / Pestaña Navegador',
+          options: {
+            video: { displaySurface: 'browser' },
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            preferCurrentTab: false
+          }
+        },
+        window: {
+          label: 'Ventana de Aplicación',
+          options: {
+            video: { displaySurface: 'window' },
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            systemAudio: 'include'
+          }
+        }
+      };
 
+      const chosen = modeConfigs[mode] || modeConfigs.system;
+
+      try {
+        pcCaptureStream = await navigator.mediaDevices.getDisplayMedia(chosen.options);
         const audioTracks = pcCaptureStream.getAudioTracks();
         if (!audioTracks.length) {
-          writeLog('Elige "Pantalla completa" y marca "Compartir audio del sistema".');
-          pcCaptureStream.getTracks().forEach(t => t.stop());
-          pcCaptureStream = null;
+          writeLog('No se compartió audio. Marca "Compartir audio del sistema / pestaña".');
+          stopPcCapture();
           return;
         }
 
         ensureAudioGraph();
         pcCaptureSource = audioCtx.createMediaStreamSource(new MediaStream(audioTracks));
-        // 1. Va al master que sale al aire
         pcCaptureSource.connect(pcGain);
-        // 2. Va también a la salida física hacia la consola (sin mezclar el retorno de la consola para evitar eco)
         pcCaptureSource.connect(consoleOutGain);
         await applyConsoleOutputRouting();
         startLevelsLoop();
 
+        activeCaptureMode = mode;
+        setTileHighlight(mode);
+        document.getElementById('captureStatusHint').innerHTML =
+          `Activo: <b>${chosen.label}</b>. Pulsa la tarjeta para detener.`;
+
         audioTracks[0].onended = () => {
-          pcCaptureStream = null;
-          btn.textContent = 'Capturar Todo el Audio del Sistema';
-          writeLog('Audio del sistema desconectado.');
+          stopPcCapture();
+          writeLog('Captura de audio finalizada.');
         };
 
-        btn.textContent = 'Audio del Sistema Activo ✓';
-        writeLog('Todo el audio del sistema (Salamandra/YouTube) activo al aire y hacia consola.');
+        writeLog(`Capturando: ${chosen.label}.`);
       } catch (e) {
-        writeLog('Captura de audio del sistema cancelada.');
+        writeLog('Selección cancelada.');
       }
     }
 
@@ -761,11 +932,11 @@
         pcGain.gain.value = parseFloat(document.getElementById('pcGainSlider').value || 1);
         consoleOutGain.gain.value = parseFloat(document.getElementById('outGainSlider').value || 1);
 
-        // Mezcla al aire: Consola + Audio del sistema
+        // Ruta 1 (Al aire): Consola + Audio de apps/PC
         consoleGain.connect(masterGain);
         pcGain.connect(masterGain);
 
-        // Salida física hacia consola: solo Audio del sistema (Salamandra/YouTube)
+        // Ruta 2 (Salida dedicada): Solo audio de apps/PC (nunca consoleGain para evitar eco)
         consoleOutGain.connect(consoleOutDest);
 
         masterGain.connect(splitter);
@@ -1030,7 +1201,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       Object.keys(DEFAULT_CFG).forEach(id => {
-        const v = localStorage.getItem('gfm_butt_v2_' + id);
+        const v = localStorage.getItem('gfm_butt_v4_' + id);
         const el = document.getElementById(id);
         if (el) el.value = (v !== null && v !== '') ? v : DEFAULT_CFG[id];
       });
