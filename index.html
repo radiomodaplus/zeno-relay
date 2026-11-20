@@ -3,19 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Galaxia FM — BUTT Oficial 3D (v1.0)</title>
+  <title>Galaxia FM — BUTT Oficial 3D Pro Audio (v1.0)</title>
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   <style>
     :root {
       --bg-1: #120724;
       --bg-2: #240b44;
-      --panel: rgba(27, 11, 51, 0.92);
+      --panel: rgba(27, 11, 51, 0.94);
       --surface: rgba(43, 17, 79, 0.88);
       --border: rgba(192, 132, 252, 0.35);
       --text: #faf5ff;
       --muted: #d8b4fe;
       --violet-bright: #c084fc;
       --magenta: #e879f9;
+      --green: #10b981;
+      --amber: #f59e0b;
       --red: #ef4444;
     }
 
@@ -24,8 +26,8 @@
     body {
       min-height: 100vh;
       background:
-        radial-gradient(circle at 20% 15%, rgba(168, 85, 247, 0.32), transparent 45%),
-        radial-gradient(circle at 80% 85%, rgba(217, 70, 239, 0.24), transparent 45%),
+        radial-gradient(circle at 20% 15%, rgba(168, 85, 247, 0.34), transparent 45%),
+        radial-gradient(circle at 80% 85%, rgba(217, 70, 239, 0.26), transparent 45%),
         linear-gradient(145deg, var(--bg-1), var(--bg-2));
       color: var(--text);
       display: flex;
@@ -36,16 +38,16 @@
 
     .butt-3d-shell {
       width: 100%;
-      max-width: 560px;
+      max-width: 580px;
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 22px;
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
       box-shadow:
-        0 24px 60px rgba(8, 2, 20, 0.78),
+        0 24px 60px rgba(8, 2, 20, 0.82),
         0 0 0 1px rgba(255, 255, 255, 0.06) inset,
         0 10px 0 #140529;
       backdrop-filter: blur(12px);
@@ -101,7 +103,7 @@
       background: var(--surface);
       border: 1px solid rgba(192, 132, 252, 0.28);
       border-radius: 16px;
-      padding: 12px 14px;
+      padding: 11px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -110,7 +112,7 @@
     }
 
     .status-label { font-size: 0.65rem; text-transform: uppercase; color: var(--muted); font-weight: 800; }
-    .status-url { font-family: ui-monospace, monospace; font-size: 0.8rem; color: #f3e8ff; font-weight: 700; word-break: break-all; margin-top: 2px; }
+    .status-url { font-family: ui-monospace, monospace; font-size: 0.78rem; color: #f3e8ff; font-weight: 700; word-break: break-all; margin-top: 2px; }
 
     .pill-status {
       padding: 6px 12px;
@@ -130,6 +132,7 @@
       box-shadow: 0 0 16px rgba(239, 68, 68, 0.45);
     }
 
+    /* BARRAS DE SONIDO + CONTROL DE VOLUMEN EN PANTALLA PRINCIPAL */
     .meters-3d {
       background: var(--surface);
       border: 1px solid rgba(192, 132, 252, 0.28);
@@ -150,6 +153,16 @@
       color: var(--muted);
     }
 
+    .quality-badge {
+      background: rgba(16, 185, 129, 0.18);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.64rem;
+      font-weight: 900;
+    }
+
     .meters-top strong { font-family: ui-monospace, monospace; color: #fff; }
     .bar-row { display: flex; align-items: center; gap: 10px; }
 
@@ -163,7 +176,7 @@
 
     .bar-track {
       flex: 1;
-      height: 16px;
+      height: 15px;
       background: #120624;
       border: 1px solid rgba(192, 132, 252, 0.3);
       border-radius: 999px;
@@ -191,7 +204,7 @@
 
     .wave-3d {
       width: 100%;
-      height: 58px;
+      height: 52px;
       background: #120624;
       border: 1px solid rgba(192, 132, 252, 0.3);
       border-radius: 12px;
@@ -199,9 +212,64 @@
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
     }
 
+    /* CONTROLES DE VOLUMEN EN VIVO EN LA PANTALLA PRINCIPAL */
+    .faders-card-3d {
+      background: rgba(34, 12, 64, 0.9);
+      border: 1px solid rgba(192, 132, 252, 0.32);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 4px 0 #16052e;
+    }
+
+    .fader-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .fader-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .fader-head span:last-child {
+      font-family: ui-monospace, monospace;
+      color: #fff;
+      font-weight: 900;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      background: #120624;
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      border-radius: 999px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #f0abfc, #9333ea);
+      border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+    }
+
     .btn-main-3d {
       width: 100%;
-      padding: 16px;
+      padding: 15px;
       font-size: 1rem;
       font-weight: 900;
       letter-spacing: 0.5px;
@@ -238,7 +306,7 @@
       font-family: ui-monospace, monospace;
       font-size: 0.7rem;
       color: #e9d5ff;
-      height: 68px;
+      height: 64px;
       overflow-y: auto;
     }
 
@@ -283,7 +351,7 @@
 
     label { display: block; font-size: 0.68rem; font-weight: 800; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
 
-    input, select {
+    input[type="text"], input[type="number"], input[type="password"], select {
       width: 100%;
       background: #110524;
       border: 1px solid rgba(192, 132, 252, 0.35);
@@ -372,7 +440,7 @@
     <header class="header-3d">
       <div>
         <div class="brand-title">GALAXIA FM · BUTT</div>
-        <div class="brand-sub">Supía, Caldas · Transmisión en Tiempo Real</div>
+        <div class="brand-sub">Supía, Caldas · Sonido HD Broadcast</div>
       </div>
       <div class="header-btns">
         <button type="button" class="btn-3d-sec" onclick="openModal('detailsModal')">Detalles</button>
@@ -382,7 +450,7 @@
 
     <section class="status-card-3d">
       <div>
-        <div class="status-label">Emisión · Tiempo: <span id="timerText">00:00:00</span></div>
+        <div class="status-label">Emisión · Tiempo: <span id="timerText">00:00:00</span> · <span id="codecBadge">MP3 192k ESTÉREO</span></div>
         <div class="status-url" id="endpointText">link.zeno.fm:80/xksclgx3mfcuv</div>
       </div>
       <span class="pill-status" id="statusPill">DESCONECTADO</span>
@@ -390,7 +458,7 @@
 
     <section class="meters-3d">
       <div class="meters-top">
-        <span>NIVELES DE SONIDO</span>
+        <span>NIVELES DE SONIDO <span class="quality-badge">DSP LIMPIO + LIMITADOR</span></span>
         <strong id="dbText">-∞ dB</strong>
       </div>
       <div class="bar-row">
@@ -403,14 +471,43 @@
         <div class="bar-track"><div class="bar-fill" id="barR"></div></div>
         <span class="bar-pct" id="pctR">0%</span>
       </div>
-      <canvas id="waveCanvas" class="wave-3d" width="510" height="58"></canvas>
+      <canvas id="waveCanvas" class="wave-3d" width="510" height="52"></canvas>
+    </section>
+
+    <!-- CONTROLES DIRECTOS DE VOLUMEN EN VIVO -->
+    <section class="faders-card-3d">
+      <div class="fader-row">
+        <div class="fader-head">
+          <span>VOLUMEN MASTER AL AIRE (LIMPIO)</span>
+          <span id="masterGainVal">100%</span>
+        </div>
+        <input type="range" id="masterGainSlider" min="0" max="1.5" step="0.02" value="1" oninput="updateGains()">
+      </div>
+
+      <div class="row-2">
+        <div class="fader-row">
+          <div class="fader-head">
+            <span>CONSOLA / CABLE 2×1</span>
+            <span id="consoleGainVal">100%</span>
+          </div>
+          <input type="range" id="consoleGainSlider" min="0" max="1.6" step="0.02" value="1" oninput="updateGains()">
+        </div>
+
+        <div class="fader-row">
+          <div class="fader-head">
+            <span>SALAMANDRA / PC</span>
+            <span id="pcGainVal">100%</span>
+          </div>
+          <input type="range" id="pcGainSlider" min="0" max="1.5" step="0.02" value="1" oninput="updateGains()">
+        </div>
+      </div>
     </section>
 
     <button type="button" class="btn-main-3d" id="btnConnect" onclick="toggleStream()">
       CONECTAR
     </button>
 
-    <div class="mini-log" id="logBox">&gt; Galaxia FM BUTT listo. Rutas de entrada y salida aisladas sin eco.</div>
+    <div class="mini-log" id="logBox">&gt; Motor de audio estéreo HD listo. Sin eco y con limitador anti-distorsión.</div>
   </main>
 
   <!-- MODAL DETALLES -->
@@ -457,11 +554,11 @@
           <input type="text" id="user" value="source" oninput="saveCfg()">
         </div>
         <div>
-          <label>Bitrate MP3</label>
+          <label>Calidad MP3 Estéreo</label>
           <select id="bitrate" onchange="saveCfg()">
-            <option value="96">96 kbps</option>
-            <option value="128" selected>128 kbps</option>
-            <option value="192">192 kbps</option>
+            <option value="128">128 kbps Estéreo</option>
+            <option value="192" selected>192 kbps Alta Calidad</option>
+            <option value="256">256 kbps Estudio HD</option>
           </select>
         </div>
       </div>
@@ -477,7 +574,7 @@
           <select id="inputDevice" onchange="switchConsoleInput()"></select>
           <button type="button" class="btn-3d-sec" onclick="loadDevices()">↻</button>
         </div>
-        <div class="hint-text">Esta entrada va únicamente al aire (nunca se reenvía a la salida de consola para evitar eco).</div>
+        <div class="hint-text">Captura directa sin cancelación de eco del navegador para conservar toda la fidelidad musical.</div>
       </div>
 
       <div>
@@ -545,20 +642,9 @@
         <div class="hint-text">Déjalo en <b>No reenviar</b> si ya llega el sonido a la consola por la salida principal del PC y evitar eco.</div>
       </div>
 
-      <div class="row-2">
-        <div>
-          <label>Entrada Consola: <span id="consoleGainVal">100%</span></label>
-          <input type="range" id="consoleGainSlider" min="0" max="2" step="0.05" value="1" oninput="updateGains()">
-        </div>
-        <div>
-          <label>Vol. Apps / PC: <span id="pcGainVal">100%</span></label>
-          <input type="range" id="pcGainSlider" min="0" max="1.5" step="0.05" value="1" oninput="updateGains()">
-        </div>
-      </div>
-
       <div>
         <label>Envío a Consola Dedicada: <span id="outGainVal">100%</span></label>
-        <input type="range" id="outGainSlider" min="0" max="1.5" step="0.05" value="1" oninput="updateGains()">
+        <input type="range" id="outGainSlider" min="0" max="1.5" step="0.02" value="1" oninput="updateGains()">
       </div>
 
       <div>
@@ -575,7 +661,6 @@
     </div>
   </div>
 
-  <!-- SALIDA AISLADA HACIA CONSOLA (SIN MEZCLAR ENTRADA DE MIC/CONSOLA PARA EVITAR ECO) -->
   <audio id="consoleMonitorOut" autoplay playsinline style="display:none;"></audio>
 
   <script>
@@ -587,7 +672,7 @@
       mount: "/xksclgx3mfcuv",
       user: "source",
       password: "9xhKMMT4",
-      bitrate: "128"
+      bitrate: "192"
     };
 
     let isLive = false;
@@ -597,6 +682,7 @@
     let reconnectTimer = null;
     let timerInterval = null;
     let startTs = 0;
+    let wakeLock = null;
 
     let audioCtx = null;
     let masterGain = null;
@@ -604,7 +690,12 @@
     let pcGain = null;
     let consoleOutGain = null;
     let consoleOutDest = null;
-    let currentOutputSinkId = "";
+
+    // Procesadores de calidad broadcast limpia
+    let subsonicFilter = null;
+    let warmthEq = null;
+    let clarityEq = null;
+    let masterLimiter = null;
 
     let splitter = null;
     let analyserL = null;
@@ -643,25 +734,41 @@
     function saveCfg() {
       ['host', 'port', 'mount', 'user', 'password', 'bitrate'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) localStorage.setItem('gfm_butt_v4_' + id, el.value);
+        if (el) localStorage.setItem('gfm_butt_pro_' + id, el.value);
       });
       const host = document.getElementById('host').value.trim() || DEFAULT_CFG.host;
       const port = document.getElementById('port').value.trim() || DEFAULT_CFG.port;
       let mount = document.getElementById('mount').value.trim() || DEFAULT_CFG.mount;
       if (!mount.startsWith('/')) mount = '/' + mount;
+      const br = document.getElementById('bitrate').value || '192';
+
       document.getElementById('endpointText').textContent = `${host}:${port}${mount}`;
+      document.getElementById('codecBadge').textContent = `MP3 ${br}k ESTÉREO`;
     }
 
     function updateGains() {
+      const mVal = parseFloat(document.getElementById('masterGainSlider').value || 1);
       const cVal = parseFloat(document.getElementById('consoleGainSlider').value || 1);
       const pVal = parseFloat(document.getElementById('pcGainSlider').value || 1);
       const oVal = parseFloat(document.getElementById('outGainSlider').value || 1);
+
+      document.getElementById('masterGainVal').textContent = `${Math.round(mVal * 100)}%`;
       document.getElementById('consoleGainVal').textContent = `${Math.round(cVal * 100)}%`;
       document.getElementById('pcGainVal').textContent = `${Math.round(pVal * 100)}%`;
       document.getElementById('outGainVal').textContent = `${Math.round(oVal * 100)}%`;
-      if (consoleGain && audioCtx) consoleGain.gain.setTargetAtTime(cVal, audioCtx.currentTime, 0.05);
-      if (pcGain && audioCtx) pcGain.gain.setTargetAtTime(pVal, audioCtx.currentTime, 0.05);
-      if (consoleOutGain && audioCtx) consoleOutGain.gain.setTargetAtTime(oVal, audioCtx.currentTime, 0.05);
+
+      localStorage.setItem('gfm_butt_pro_g_master', mVal);
+      localStorage.setItem('gfm_butt_pro_g_console', cVal);
+      localStorage.setItem('gfm_butt_pro_g_pc', pVal);
+      localStorage.setItem('gfm_butt_pro_g_out', oVal);
+
+      if (audioCtx) {
+        const now = audioCtx.currentTime;
+        if (masterGain) masterGain.gain.setTargetAtTime(mVal, now, 0.04);
+        if (consoleGain) consoleGain.gain.setTargetAtTime(cVal, now, 0.04);
+        if (pcGain) pcGain.gain.setTargetAtTime(pVal, now, 0.04);
+        if (consoleOutGain) consoleOutGain.gain.setTargetAtTime(oVal, now, 0.04);
+      }
     }
 
     async function loadDevices() {
@@ -670,8 +777,8 @@
         const devices = await navigator.mediaDevices.enumerateDevices();
         const inSel = document.getElementById('inputDevice');
         const outSel = document.getElementById('outputDevice');
-        const savedIn = localStorage.getItem('gfm_butt_v4_input_dev') || '';
-        const savedOut = localStorage.getItem('gfm_butt_v4_output_dev') || '';
+        const savedIn = localStorage.getItem('gfm_butt_pro_input_dev') || '';
+        const savedOut = localStorage.getItem('gfm_butt_pro_output_dev') || '';
 
         inSel.innerHTML = '<option value="">Entrada por defecto del sistema</option>';
         outSel.innerHTML = '<option value="">No reenviar (evita duplicado y eco)</option>';
@@ -695,11 +802,9 @@
           outSel.appendChild(opt);
         });
 
-        // Evita que la misma tarjeta de entrada sea elegida como salida dedicada y cause eco
         if (inSel.value && outSel.value && inSel.value === outSel.value) {
           outSel.value = '';
-          localStorage.setItem('gfm_butt_v4_output_dev', '');
-          writeLog('Bloqueo anti-eco: entrada y salida no pueden ser el mismo dispositivo.');
+          localStorage.setItem('gfm_butt_pro_output_dev', '');
         }
       } catch (e) {}
     }
@@ -711,19 +816,16 @@
 
       if (inId && sinkId && inId === sinkId) {
         document.getElementById('outputDevice').value = '';
-        localStorage.setItem('gfm_butt_v4_output_dev', '');
-        currentOutputSinkId = '';
+        localStorage.setItem('gfm_butt_pro_output_dev', '');
         if (outEl) {
           outEl.muted = true;
           outEl.srcObject = null;
         }
-        writeLog('Eco evitado: la salida dedicada no puede coincidir con la entrada.');
+        writeLog('Bloqueo anti-eco: entrada y salida no pueden ser el mismo dispositivo.');
         return;
       }
 
-      localStorage.setItem('gfm_butt_v4_output_dev', sinkId);
-      currentOutputSinkId = sinkId;
-
+      localStorage.setItem('gfm_butt_pro_output_dev', sinkId);
       if (!outEl || !consoleOutDest) return;
 
       if (!sinkId) {
@@ -739,14 +841,13 @@
         try {
           await outEl.setSinkId(sinkId);
           await outEl.play().catch(() => {});
-          writeLog('Salida dedicada activa sin bucle de retorno.');
+          writeLog('Salida dedicada hacia consola activa sin bucle.');
         } catch (err) {
           outEl.muted = true;
-          writeLog('No se pudo asignar salida dedicada; se mantiene silenciada para evitar eco.');
+          writeLog('No se pudo asignar salida dedicada.');
         }
       } else {
         outEl.muted = true;
-        writeLog('Salida dedicada desactivada por compatibilidad del navegador.');
       }
     }
 
@@ -757,7 +858,7 @@
 
     async function attachConsoleInput() {
       const devId = document.getElementById('inputDevice').value;
-      localStorage.setItem('gfm_butt_v4_input_dev', devId);
+      localStorage.setItem('gfm_butt_pro_input_dev', devId);
       if (consoleStream) {
         consoleStream.getTracks().forEach(t => t.stop());
         consoleStream = null;
@@ -767,19 +868,30 @@
         consoleSource = null;
       }
       try {
+        // Audio puro sin procesamiento agresivo del navegador para máxima fidelidad
         const constraints = {
           audio: devId
-            ? { deviceId: { exact: devId }, echoCancellation: false, noiseSuppression: false, autoGainControl: false }
-            : { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+            ? {
+                deviceId: { exact: devId },
+                channelCount: 2,
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false
+              }
+            : {
+                channelCount: 2,
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false
+              }
         };
         consoleStream = await navigator.mediaDevices.getUserMedia(constraints);
         ensureAudioGraph();
         consoleSource = audioCtx.createMediaStreamSource(consoleStream);
-        // Solo va a la mezcla al aire (masterGain), nunca a consoleOutGain
         consoleSource.connect(consoleGain);
         await applyConsoleOutputRouting();
         startLevelsLoop();
-        writeLog('Entrada de consola conectada solo hacia el aire.');
+        writeLog('Consola / entrada 2×1 conectada en estéreo limpio.');
       } catch (err) {
         writeLog('Sin entrada física activa (continúa sin bloqueo).');
       }
@@ -842,7 +954,7 @@
           label: 'Todo el Sistema (Salamandra + PC)',
           options: {
             video: { displaySurface: 'monitor' },
-            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            audio: { channelCount: 2, echoCancellation: false, noiseSuppression: false, autoGainControl: false },
             systemAudio: 'include'
           }
         },
@@ -850,7 +962,7 @@
           label: 'Salamandra + Navegador',
           options: {
             video: { displaySurface: 'monitor' },
-            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            audio: { channelCount: 2, echoCancellation: false, noiseSuppression: false, autoGainControl: false },
             systemAudio: 'include'
           }
         },
@@ -858,7 +970,7 @@
           label: 'YouTube / Pestaña Navegador',
           options: {
             video: { displaySurface: 'browser' },
-            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            audio: { channelCount: 2, echoCancellation: false, noiseSuppression: false, autoGainControl: false },
             preferCurrentTab: false
           }
         },
@@ -866,7 +978,7 @@
           label: 'Ventana de Aplicación',
           options: {
             video: { displaySurface: 'window' },
-            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+            audio: { channelCount: 2, echoCancellation: false, noiseSuppression: false, autoGainControl: false },
             systemAudio: 'include'
           }
         }
@@ -900,7 +1012,7 @@
           writeLog('Captura de audio finalizada.');
         };
 
-        writeLog(`Capturando: ${chosen.label}.`);
+        writeLog(`Capturando en HD: ${chosen.label}.`);
       } catch (e) {
         writeLog('Selección cancelada.');
       }
@@ -908,41 +1020,76 @@
 
     function ensureAudioGraph() {
       if (!audioCtx || audioCtx.state === 'closed') {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)({
+          sampleRate: 44100,
+          latencyHint: 'interactive'
+        });
       }
       if (audioCtx.state === 'suspended') audioCtx.resume();
 
       if (!masterGain) {
-        masterGain = audioCtx.createGain();
         consoleGain = audioCtx.createGain();
         pcGain = audioCtx.createGain();
+        masterGain = audioCtx.createGain();
+
         consoleOutGain = audioCtx.createGain();
         consoleOutDest = audioCtx.createMediaStreamDestination();
+
+        // 1. Filtro subsónico para eliminar ruidos graves eléctricos o golpes (35 Hz)
+        subsonicFilter = audioCtx.createBiquadFilter();
+        subsonicFilter.type = 'highpass';
+        subsonicFilter.frequency.value = 35;
+        subsonicFilter.Q.value = 0.7;
+
+        // 2. Calidez suave en graves musicales (120 Hz)
+        warmthEq = audioCtx.createBiquadFilter();
+        warmthEq.type = 'lowshelf';
+        warmthEq.frequency.value = 120;
+        warmthEq.gain.value = 1.5;
+
+        // 3. Brillo y claridad de estudio (8500 Hz)
+        clarityEq = audioCtx.createBiquadFilter();
+        clarityEq.type = 'highshelf';
+        clarityEq.frequency.value = 8500;
+        clarityEq.gain.value = 2.0;
+
+        // 4. Limitador / Compresor Broadcast para sonido limpio sin saturación
+        masterLimiter = audioCtx.createDynamicsCompressor();
+        masterLimiter.threshold.setValueAtTime(-3.5, audioCtx.currentTime);
+        masterLimiter.knee.setValueAtTime(6.0, audioCtx.currentTime);
+        masterLimiter.ratio.setValueAtTime(12.0, audioCtx.currentTime);
+        masterLimiter.attack.setValueAtTime(0.002, audioCtx.currentTime);
+        masterLimiter.release.setValueAtTime(0.12, audioCtx.currentTime);
 
         splitter = audioCtx.createChannelSplitter(2);
         analyserL = audioCtx.createAnalyser();
         analyserR = audioCtx.createAnalyser();
         waveAnalyser = audioCtx.createAnalyser();
 
-        analyserL.fftSize = 128;
-        analyserR.fftSize = 128;
+        analyserL.fftSize = 256;
+        analyserR.fftSize = 256;
         waveAnalyser.fftSize = 256;
 
-        consoleGain.gain.value = parseFloat(document.getElementById('consoleGainSlider').value || 1);
-        pcGain.gain.value = parseFloat(document.getElementById('pcGainSlider').value || 1);
-        consoleOutGain.gain.value = parseFloat(document.getElementById('outGainSlider').value || 1);
-
-        // Ruta 1 (Al aire): Consola + Audio de apps/PC
+        // Conexión de entradas al Master
         consoleGain.connect(masterGain);
         pcGain.connect(masterGain);
 
-        // Ruta 2 (Salida dedicada): Solo audio de apps/PC (nunca consoleGain para evitar eco)
+        // Salida dedicada solo de Apps/PC hacia consola
         consoleOutGain.connect(consoleOutDest);
 
-        masterGain.connect(splitter);
+        // Cadena de procesamiento Broadcast limpio
+        masterGain.connect(subsonicFilter);
+        subsonicFilter.connect(warmthEq);
+        warmthEq.connect(clarityEq);
+        clarityEq.connect(masterLimiter);
+
+        // Medición estéreo L/R post-limitador (señal real que sale al aire)
+        masterLimiter.connect(splitter);
         splitter.connect(analyserL, 0);
         splitter.connect(analyserR, 1);
-        masterGain.connect(waveAnalyser);
+        masterLimiter.connect(waveAnalyser);
+
+        updateGains();
       }
     }
 
@@ -959,7 +1106,7 @@
         const v = Math.abs((buf[i] - 128) / 128);
         if (v > peak) peak = v;
       }
-      return Math.min(100, Math.round(peak * 145));
+      return Math.min(100, Math.round(peak * 135));
     }
 
     function startLevelsLoop() {
@@ -1038,6 +1185,21 @@
       }, 1000);
     }
 
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator && !wakeLock) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (e) {}
+    }
+
+    function releaseWakeLock() {
+      if (wakeLock) {
+        try { wakeLock.release(); } catch (e) {}
+        wakeLock = null;
+      }
+    }
+
     function sendMetadata() {
       const title = document.getElementById('songTitle').value.trim();
       if (!title || !ws || ws.readyState !== WebSocket.OPEN) return;
@@ -1050,7 +1212,7 @@
         try { ws.close(); } catch (e) {}
         ws = null;
       }
-      writeLog(`Conectando a ${host}:${port}${mount}...`);
+      writeLog(`Conectando en estéreo ${bitrate} kbps a ${host}:${port}${mount}...`);
       ws = new WebSocket(RELAY_URL);
       ws.binaryType = 'arraybuffer';
 
@@ -1058,6 +1220,7 @@
         ws.send(JSON.stringify({
           action: 'AUTH_ICECAST',
           host, port, mount, user, password, bitrate,
+          channels: 2,
           contentType: 'audio/mpeg'
         }));
         clearInterval(pingTimer);
@@ -1073,7 +1236,7 @@
           const data = JSON.parse(ev.data);
           if (data.status === 'SUCCESS') {
             clearTimeout(authRetryTimer);
-            beginAudioEncoding(bitrate);
+            beginStereoEncoding(bitrate);
           } else if (data.status === 'ERROR') {
             writeLog(`Aviso servidor: ${data.message}. Reintentando...`);
             clearTimeout(authRetryTimer);
@@ -1082,6 +1245,7 @@
                 ws.send(JSON.stringify({
                   action: 'AUTH_ICECAST',
                   host, port, mount, user, password, bitrate,
+                  channels: 2,
                   contentType: 'audio/mpeg'
                 }));
               }
@@ -1113,7 +1277,7 @@
       let mount = document.getElementById('mount').value.trim();
       const user = document.getElementById('user').value.trim() || 'source';
       const password = document.getElementById('password').value.trim();
-      const bitrate = parseInt(document.getElementById('bitrate').value, 10) || 128;
+      const bitrate = parseInt(document.getElementById('bitrate').value, 10) || 192;
 
       if (!host || !port || !mount || !password) {
         alert('Completa los datos del servidor en Ajustes.');
@@ -1131,6 +1295,7 @@
       btn.textContent = 'DESCONECTAR';
       btn.classList.add('live');
 
+      await requestWakeLock();
       ensureAudioGraph();
       await attachConsoleInput();
       await applyConsoleOutputRouting();
@@ -1140,7 +1305,7 @@
       openSocket(host, port, mount, user, password, bitrate);
     }
 
-    function beginAudioEncoding(bitrate) {
+    function beginStereoEncoding(bitrate) {
       if (processor) {
         try { processor.disconnect(); } catch (e) {}
         processor = null;
@@ -1148,33 +1313,43 @@
       sendMetadata();
 
       if (typeof lamejs !== 'undefined') {
-        mp3Encoder = new lamejs.Mp3Encoder(1, audioCtx.sampleRate, bitrate);
+        // Codificador MP3 Estéreo Real (2 canales)
+        mp3Encoder = new lamejs.Mp3Encoder(2, audioCtx.sampleRate, bitrate);
       }
 
-      processor = audioCtx.createScriptProcessor(4096, 1, 1);
+      processor = audioCtx.createScriptProcessor(4096, 2, 2);
       processor.onaudioprocess = (e) => {
         if (!isLive || !ws || ws.readyState !== WebSocket.OPEN || !mp3Encoder) return;
-        const ch = e.inputBuffer.getChannelData(0);
-        const pcm = new Int16Array(ch.length);
-        for (let i = 0; i < ch.length; i++) {
-          const s = Math.max(-1, Math.min(1, ch[i]));
-          pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        const left = e.inputBuffer.getChannelData(0);
+        const right = e.inputBuffer.numberOfChannels > 1 ? e.inputBuffer.getChannelData(1) : left;
+
+        const pcmL = new Int16Array(left.length);
+        const pcmR = new Int16Array(right.length);
+
+        for (let i = 0; i < left.length; i++) {
+          const sL = Math.max(-1, Math.min(1, left[i]));
+          const sR = Math.max(-1, Math.min(1, right[i]));
+          pcmL[i] = sL < 0 ? sL * 0x8000 : sL * 0x7FFF;
+          pcmR[i] = sR < 0 ? sR * 0x8000 : sR * 0x7FFF;
         }
-        const mp3 = mp3Encoder.encodeBuffer(pcm);
+
+        const mp3 = mp3Encoder.encodeBuffer(pcmL, pcmR);
         if (mp3.length > 0) ws.send(mp3.buffer);
       };
 
-      masterGain.connect(processor);
+      // Toma la señal limpia después del limitador broadcast
+      masterLimiter.connect(processor);
       const muteOut = audioCtx.createGain();
       muteOut.gain.value = 0;
       processor.connect(muteOut);
       muteOut.connect(audioCtx.destination);
 
-      writeLog('¡Al aire con Galaxia FM!');
+      writeLog(`¡Al aire en Estéreo ${bitrate} kbps con Galaxia FM!`);
     }
 
     function stopStream() {
       isLive = false;
+      releaseWakeLock();
       clearInterval(pingTimer);
       clearTimeout(authRetryTimer);
       clearTimeout(reconnectTimer);
@@ -1201,10 +1376,22 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       Object.keys(DEFAULT_CFG).forEach(id => {
-        const v = localStorage.getItem('gfm_butt_v4_' + id);
+        const v = localStorage.getItem('gfm_butt_pro_' + id);
         const el = document.getElementById(id);
         if (el) el.value = (v !== null && v !== '') ? v : DEFAULT_CFG[id];
       });
+
+      const savedMaster = localStorage.getItem('gfm_butt_pro_g_master');
+      const savedConsole = localStorage.getItem('gfm_butt_pro_g_console');
+      const savedPc = localStorage.getItem('gfm_butt_pro_g_pc');
+      const savedOut = localStorage.getItem('gfm_butt_pro_g_out');
+
+      if (savedMaster !== null) document.getElementById('masterGainSlider').value = savedMaster;
+      if (savedConsole !== null) document.getElementById('consoleGainSlider').value = savedConsole;
+      if (savedPc !== null) document.getElementById('pcGainSlider').value = savedPc;
+      if (savedOut !== null) document.getElementById('outGainSlider').value = savedOut;
+
+      updateGains();
       saveCfg();
       loadDevices();
     });
