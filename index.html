@@ -27,6 +27,25 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 8px; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
+    /* DISEÑO ADAPTADO PARA COMPUTADOR SIN ALTERAR MÓVIL */
+    @media (min-width: 768px) {
+      body {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 14px 18px;
+      }
+      .queue-grid {
+        display: grid !important;
+        grid-template-columns: 1.4fr 1fr 1fr;
+        gap: 8px !important;
+      }
+      .desktop-action-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+    }
+
     .studio-clock-bar {
       background: #02040a; border: 1px solid #1a2c4e; border-radius: 8px;
       padding: 6px 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
@@ -208,7 +227,7 @@
     .file-loader input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
     .btn-load-files {
       width: 100%; padding: 10px; background: linear-gradient(90deg, #1d4ed8, #0284c7);
-      color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 0.72rem; text-align: center;
+      color: #fff; border: none; border-radius: 8px; font-weight: 800; font-size: 0.72rem; text-align: center; cursor: pointer;
     }
 
     .btn-main-stream {
@@ -236,7 +255,7 @@
     
     .form-group { margin-bottom: 8px; }
     .form-group label { display: block; font-size: 0.68rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
-    .form-group input { width: 100%; padding: 8px; background: #030712; border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none; }
+    .form-group input, .form-group select { width: 100%; padding: 8px; background: #030712; border: 1px solid var(--border); border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none; }
     
     .file-select-box {
       background: #111a33; border: 1px dashed var(--border); border-radius: 8px;
@@ -285,7 +304,7 @@
 </head>
 <body>
 
-  <!-- RELOJ DIGITAL COLOMBIA -->
+  <!-- RELOJ DIGITAL OFICIAL COLOMBIA -->
   <div class="studio-clock-bar">
     <div>
       <div style="font-size:0.55rem; color:var(--text-muted); font-weight:900;">HORA COLOMBIA</div>
@@ -373,7 +392,6 @@
         <button class="air-nav-btn" onclick="skipToNextTrack()">⏭</button>
       </div>
 
-      <!-- CONSOLA DIGITAL ONDAS Y LEDS -->
       <div class="dj-rack-meter">
         <div class="rack-header">
           <span>CONSOLE DIGITAL STEREO & WAVE</span>
@@ -449,9 +467,16 @@
     <button id="btnMode" class="btn-ctrl" onclick="toggleMode()">CONTINUO</button>
   </div>
 
-  <div class="file-loader" style="margin-bottom:6px;">
-    <div class="btn-load-files">📂 CARGAR MÚSICA LOCAL</div>
-    <input type="file" id="fileTracks" multiple accept="audio/*, video/*" onchange="handleStrictFiles(event)">
+  <div class="desktop-action-row">
+    <div class="file-loader" style="margin-bottom:6px;">
+      <div class="btn-load-files">📂 CARGAR MÚSICA LOCAL</div>
+      <input type="file" id="fileTracks" multiple accept="audio/*, video/*" onchange="handleStrictFiles(event)">
+    </div>
+
+    <div class="file-loader" style="margin-bottom:6px;">
+      <div class="btn-load-files" style="background:linear-gradient(90deg, #7c3aed, #4f46e5);">📁 CARGAR CARPETAS (1×1 ALEATORIO)</div>
+      <input type="file" id="folderTracks" webkitdirectory directory multiple accept="audio/*, video/*" onchange="handleFolderUpload(event)">
+    </div>
   </div>
 
   <button class="btn-ctrl" style="width:100%; padding:10px; background:linear-gradient(90deg, #0284c7, #0369a1); font-weight:900; margin-bottom:6px;" onclick="openR2CloudModal()">
@@ -565,7 +590,7 @@
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div style="font-size:0.85rem; font-weight:900; color:#38bdf8;">⚙ AJUSTES ZENO MEDIA</div>
+        <div style="font-size:0.85rem; font-weight:900; color:#38bdf8;">⚙ AJUSTES ZENO MEDIA & CONSOLA</div>
         <button class="btn-icon" style="width:26px; height:26px;" onclick="closeSettingsModal()">✕</button>
       </div>
       <div class="form-group"><label>Host</label><input type="text" id="host" value="link.zeno.fm"></div>
@@ -575,6 +600,22 @@
       </div>
       <div class="form-group"><label>Usuario</label><input type="text" id="user" value="source"></div>
       <div class="form-group"><label>Contraseña</label><input type="password" id="password"></div>
+
+      <div style="font-size:0.7rem; font-weight:900; color:var(--c-blue); margin:8px 0 4px 0;">🎛️ CONSOLA EXTERNA / TARJETA DE SONIDO PC (2×1)</div>
+      <div class="form-group">
+        <label>Entrada Audio / Consola / Micrófono</label>
+        <select id="audioInputDevice" onchange="handleAudioDeviceChange()">
+          <option value="">Dispositivo por defecto del sistema</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Salida Audio / Monitoreo / Consola</label>
+        <select id="audioOutputDevice" onchange="handleAudioOutputDeviceChange()">
+          <option value="">Salida por defecto del sistema</option>
+        </select>
+      </div>
+      <button class="btn-ctrl" style="width:100%; margin-bottom:8px;" onclick="refreshAudioDevices()">🔄 DETECTAR CONSOLA / INTERFAZ AUDIO</button>
+
       <div class="vol-row" style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
         <span style="font-size:0.68rem; font-weight:800; color:var(--text-muted); width:75px;">🎤 Mic</span>
         <input type="range" id="volMic" min="0" max="1.5" step="0.05" value="1.0" oninput="setMicVol(this.value)" style="flex:1;">
@@ -655,6 +696,161 @@
       toggleBroadcast();
     }
 
+    // ==========================================
+    // CARGA DE CARPETAS (1 × 1 SIN REPETIR)
+    // ==========================================
+    function handleFolderUpload(e) {
+      const files = Array.from(e.target.files || []).filter(f => f.type.startsWith('audio/') || f.type.startsWith('video/'));
+      if (files.length === 0) return;
+
+      const folderMap = new Map();
+      files.forEach(file => {
+        const parts = (file.webkitRelativePath || '').split('/');
+        const folderName = parts.length > 1 ? parts[0] : 'Carpeta';
+        if (!folderMap.has(folderName)) folderMap.set(folderName, []);
+        folderMap.get(folderName).push(file);
+      });
+
+      const wasEmpty = playlist.length === 0;
+
+      folderMap.forEach((folderFiles, folderName) => {
+        const pool = [...folderFiles];
+        const pickRandomNonRepeating = () => {
+          if (pool.length === 0) {
+            pool.push(...folderFiles);
+          }
+          const randIdx = Math.floor(Math.random() * pool.length);
+          const chosen = pool.splice(randIdx, 1)[0];
+          return chosen;
+        };
+
+        const firstTrack = pickRandomNonRepeating();
+        const item = {
+          blob: firstTrack,
+          name: folderName, // Solo muestra el nombre de la carpeta
+          folderName: folderName,
+          folderPool: pool,
+          folderAllFiles: folderFiles,
+          pickNextFromFolder: pickRandomNonRepeating,
+          played: false,
+          durationSec: 0,
+          durationStr: '--:--',
+          appliesLightning: false,
+          isRemote: false,
+          isFolderSlot: true
+        };
+
+        const tempAudio = document.createElement('audio');
+        tempAudio.src = URL.createObjectURL(firstTrack);
+        tempAudio.onloadedmetadata = () => {
+          const sec = Math.floor(tempAudio.duration);
+          item.durationSec = sec;
+          const m = Math.floor(sec / 60), s = (sec % 60).toString().padStart(2, '0');
+          item.durationStr = `${m}:${s}`;
+          item.appliesLightning = sec >= 60;
+          if (document.getElementById('playlistModal').style.display === 'flex') renderPlaylistModal();
+        };
+
+        playlist.push(item);
+      });
+
+      updateTrackBoxes();
+      log(`📁 ${folderMap.size} carpeta(s) cargadas (1×1 aleatorio sin repetir).`);
+      e.target.value = '';
+      if (wasEmpty && (!getActivePlayer() || !getActivePlayer().src)) playTrack(0);
+    }
+
+    function resolveTrackSource(item) {
+      if (item.isRemote) return item.blob;
+      if (item.isFolderSlot && typeof item.pickNextFromFolder === 'function') {
+        const nextFile = item.pickNextFromFolder();
+        item.blob = nextFile;
+        return URL.createObjectURL(nextFile);
+      }
+      return URL.createObjectURL(item.blob);
+    }
+
+    // ==========================================
+    // CONSOLA EXTERNA / DISPOSITIVOS DE AUDIO PC
+    // ==========================================
+    async function refreshAudioDevices() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+      try {
+        // Solicita permiso breve para desbloquear etiquetas de dispositivos de consola/tarjeta
+        const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        tempStream.getTracks().forEach(t => t.stop());
+
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const inputSelect = document.getElementById('audioInputDevice');
+        const outputSelect = document.getElementById('audioOutputDevice');
+
+        const savedInput = localStorage.getItem('zeno_audio_input') || '';
+        const savedOutput = localStorage.getItem('zeno_audio_output') || '';
+
+        inputSelect.innerHTML = '<option value="">Entrada por defecto del sistema</option>';
+        outputSelect.innerHTML = '<option value="">Salida por defecto del sistema</option>';
+
+        devices.forEach(dev => {
+          const opt = document.createElement('option');
+          opt.value = dev.deviceId;
+          opt.text = dev.label || `${dev.kind} (${dev.deviceId.slice(0, 6)})`;
+          if (dev.kind === 'audioinput') {
+            if (dev.deviceId === savedInput) opt.selected = true;
+            inputSelect.appendChild(opt);
+          } else if (dev.kind === 'audiooutput') {
+            if (dev.deviceId === savedOutput) opt.selected = true;
+            outputSelect.appendChild(opt);
+          }
+        });
+        log("🎛️ Dispositivos de audio / consola detectados.");
+      } catch (e) {
+        log("🎛️ Usa el selector o concede permiso de audio para ver dispositivos.");
+      }
+    }
+
+    async function handleAudioDeviceChange() {
+      const devId = document.getElementById('audioInputDevice').value;
+      localStorage.setItem('zeno_audio_input', devId);
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(t => t.stop());
+        mediaStream = null;
+      }
+      if (micSourceNode) {
+        try { micSourceNode.disconnect(); } catch(e){}
+        micSourceNode = null;
+      }
+      if (isLive) {
+        try {
+          const constraints = {
+            audio: devId
+              ? { deviceId: { exact: devId }, echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+              : { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+          };
+          mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+          if (audioContext && masterMixerNode) {
+            micSourceNode = audioContext.createMediaStreamSource(mediaStream);
+            micSourceNode.connect(micFilterNode);
+            log("🎛️ Entrada de consola / micrófono actualizada al aire.");
+          }
+        } catch(e){}
+      }
+    }
+
+    async function handleAudioOutputDeviceChange() {
+      const sinkId = document.getElementById('audioOutputDevice').value;
+      localStorage.setItem('zeno_audio_output', sinkId);
+      const targets = [playerA, playerB, aS1, aS2, aLight, aClock, aAds];
+      for (const el of targets) {
+        if (el && typeof el.setSinkId === 'function') {
+          try { await el.setSinkId(sinkId); } catch(e){}
+        }
+      }
+      if (audioContext && typeof audioContext.setSinkId === 'function') {
+        try { await audioContext.setSinkId(sinkId); } catch(e){}
+      }
+      log("🎛️ Salida de audio hacia consola / tarjeta actualizada.");
+    }
+
     function openR2CloudModal() { document.getElementById('r2CloudModal').style.display = 'flex'; }
     function closeR2CloudModal() { document.getElementById('r2CloudModal').style.display = 'none'; }
 
@@ -721,7 +917,7 @@
     }
 
     async function saveTrackToDB(tObj) {
-      if (!dbInstance || tObj.isRemote) return;
+      if (!dbInstance || tObj.isRemote || tObj.isFolderSlot) return;
       try {
         const tx = dbInstance.transaction("tracks", "readwrite");
         tx.objectStore("tracks").add({ name: tObj.name, blob: tObj.blob, durationSec: tObj.durationSec, durationStr: tObj.durationStr, appliesLightning: tObj.appliesLightning, played: tObj.played });
@@ -791,6 +987,7 @@
           gainNodeB.connect(musicAnalyser);
 
           musicAnalyser.connect(masterMixerNode);
+          handleAudioOutputDeviceChange();
         }
       } catch(e) {}
     }
@@ -870,7 +1067,7 @@
       const musicVol = parseFloat(document.getElementById('volMusic').value || 0.75);
 
       g.gain.setValueAtTime(musicVol, audioContext.currentTime);
-      p.src = item.isRemote ? item.blob : URL.createObjectURL(item.blob);
+      p.src = resolveTrackSource(item);
       p.load();
       p.play().catch(e => console.log(e));
       document.getElementById('btnPlayMusic').innerText = '⏸ PAUSA';
@@ -904,11 +1101,10 @@
       const musicVol = parseFloat(document.getElementById('volMusic').value || 0.75);
       const now = audioContext.currentTime;
 
-      incomingPlayer.src = nextItem.isRemote ? nextItem.blob : URL.createObjectURL(nextItem.blob);
+      incomingPlayer.src = resolveTrackSource(nextItem);
       incomingPlayer.load();
       incomingGain.gain.setValueAtTime(0.0, now);
       incomingPlayer.play().then(() => {
-        // Fundido cruzado de precisión en 2 segundos
         incomingGain.gain.setTargetAtTime(musicVol, now, 0.6);
         outgoingGain.gain.setTargetAtTime(0.0, now, 0.6);
 
@@ -969,7 +1165,6 @@
       updateParallelLedMeters(0, 0);
     }
 
-    // Monitorización de tiempo para disparar Crossfade a los 2 segundos finales
     setInterval(() => {
       const p = getActivePlayer();
       if (!p || p.paused || isNaN(p.duration) || isNaN(p.currentTime)) return;
@@ -1014,14 +1209,20 @@
       }
       if (!mount.startsWith('/')) mount = '/' + mount;
 
-      log("Solicitando permiso de micrófono...");
+      const selectedInputId = document.getElementById('audioInputDevice').value;
+      log("Solicitando permiso de audio / consola...");
       try {
         if (!mediaStream) {
-          mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+          const constraints = {
+            audio: selectedInputId
+              ? { deviceId: { exact: selectedInputId }, echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+              : { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+          };
+          mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
         }
-        log('<span style="color:var(--c-green)">Micrófono autorizado. Inicia en MUTE.</span>');
+        log('<span style="color:var(--c-green)">Entrada de audio autorizada. Inicia en MUTE.</span>');
       } catch (err) {
-        alert("No se pudo acceder al micrófono.");
+        alert("No se pudo acceder al micrófono o consola.");
         return;
       }
 
@@ -1157,9 +1358,6 @@
       log("⏹ Transmisión detenida.");
     }
 
-    // ==========================================
-    // CONTROL DE MICRÓFONO
-    // ==========================================
     function toggleMic() {
       const btn = document.getElementById('btnMic');
       const baseVol = parseFloat(document.getElementById('volMusic').value || 0.75);
@@ -1250,6 +1448,8 @@
         const el = document.getElementById(id);
         if (el) localStorage.setItem(`zeno_${id}`, el.value.trim());
       });
+      localStorage.setItem('zeno_audio_input', document.getElementById('audioInputDevice').value);
+      localStorage.setItem('zeno_audio_output', document.getElementById('audioOutputDevice').value);
     }
 
     function handleStingerUpload(num, e) {
@@ -1370,7 +1570,7 @@
     }
 
     function togglePasswordVisibility() { const p = document.getElementById('password'); p.type = p.type === 'password' ? 'text' : 'password'; }
-    function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
+    function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; refreshAudioDevices(); }
     function closeSettingsModal() { saveSettings(); document.getElementById('settingsModal').style.display = 'none'; }
     function openCalendarModal() { renderAdSlotsList(); document.getElementById('calendarModal').style.display = 'flex'; }
     function closeCalendarModal() { document.getElementById('calendarModal').style.display = 'none'; }
@@ -1386,6 +1586,7 @@
         const val = localStorage.getItem(`zeno_${id}`);
         if (val) document.getElementById(id).value = val;
       });
+      refreshAudioDevices();
       try { await initIndexedDB(); await loadTracksFromDB(); } catch(e){}
     });
   </script>
