@@ -3,148 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BUTT Web Real-Time — Diseño Claro & Niveles</title>
+  <title>Galaxia FM — BUTT Oficial 3D (v1.0)</title>
   <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
   <style>
     :root {
-      --bg: #eef2f7;
-      --panel: #ffffff;
-      --box: #f8fafc;
-      --border: #cbd5e1;
-      --text: #0f172a;
-      --muted: #475569;
-      --green: #059669;
-      --cyan: #0284c7;
-      --red: #dc2626;
-      --amber: #d97706;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      padding: 14px;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-    }
-    .butt-app {
-      width: 100%;
-      max-width: 740px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
-    }
-    .top-status {
-      background: var(--box);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-    .status-title { font-size: 0.7rem; color: var(--muted); font-weight: 800; text-transform: uppercase; }
-    .status-endpoint { font-family: ui-monospace, monospace; font-size: 0.85rem; color: var(--cyan); font-weight: 700; word-break: break-all; }
-    .badge {
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      font-weight: 900;
-      background: #e2e8f0;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .badge.live {
-      background: #fee2e2;
-      color: var(--red);
-      border: 1px solid #fca5a5;
-    }
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .metric-card {
-      background: var(--box);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px;
-      text-align: center;
-    }
-    .metric-card small { display: block; font-size: 0.62rem; color: var(--muted); font-weight: 800; }
-    .metric-card strong { font-family: ui-monospace, monospace; font-size: 0.92rem; color: var(--text); }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    @media (max-width: 620px) {
-      .grid-2 { grid-template-columns: 1fr; }
-    }
-    .card {
-      background: var(--box);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .card h3 { font-size: 0.74rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.4px; }
-    label { display: block; font-size: 0.68rem; color: var(--muted); font-weight: 700; margin-bottom: 3px; }
-    input, select {
-      width: 100%;
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 8px 10px;
-      color: var(--text);
-      font-size: 0.82rem;
-      outline: none;
-    }
-    input:focus, select:focus { border-color: var(--cyan); }
-    .row-inline { display: flex; gap: 6px; }
-    button {
-      border: none;
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-weight: 800;
-      font-size: 0.78rem;
-      cursor: pointer;
-      color: #fff;
-      background: #334155;
-    }
-    button:hover { filter: brightness(1.06); }
-    .btn-pc { background: #0284c7; }
-    .btn-pc.active { background: #059669; }
-    .btn-stream {
-      width: 100%;
-      padding: 14px;
-      font-size: 0.95rem;
-      background: linear-gradient(135deg, #0284c7, #0369a1);
-      border-radius: 10px;
-    }
-    .btn-stream.live {
-      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      --bg-1: #120724;
+      --bg-2: #240b44;
+      --panel: rgba(27, 11, 51, 0.92);
+      --surface: rgba(43, 17, 79, 0.88);
+      --border: rgba(192, 132, 252, 0.35);
+      --text: #faf5ff;
+      --muted: #d8b4fe;
+      --purple-glow: #a855f7;
+      --violet-bright: #c084fc;
+      --magenta: #e879f9;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
     }
 
-    /* NIVELES DE EMISORA TIPO CONSOLA */
-    .levels-panel {
-      background: #ffffff;
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(168, 85, 247, 0.32), transparent 45%),
+        radial-gradient(circle at 80% 85%, rgba(217, 70, 239, 0.24), transparent 45%),
+        linear-gradient(145deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    /* CONTENEDOR PRINCIPAL 3D CENTRADO */
+    .butt-3d-shell {
+      width: 100%;
+      max-width: 560px;
+      background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
+      border-radius: 22px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow:
+        0 24px 60px rgba(8, 2, 20, 0.78),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        0 10px 0 #140529;
+      transform: translateY(-2px);
+      backdrop-filter: blur(12px);
+    }
+
+    .header-3d {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(192, 132, 252, 0.22);
+    }
+
+    .brand-title {
+      font-size: 1.18rem;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      background: linear-gradient(90deg, #ffffff, var(--violet-bright), var(--magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 6px 20px rgba(192, 132, 252, 0.25);
+    }
+
+    .brand-sub {
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .header-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-3d-sec {
+      background: linear-gradient(180deg, #4c1d95, #3b0764);
+      color: #fff;
+      border: 1px solid rgba(216, 180, 254, 0.45);
+      border-radius: 12px;
+      padding: 9px 13px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #1e0338, 0 8px 16px rgba(0, 0, 0, 0.35);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.15s ease;
+    }
+
+    .btn-3d-sec:hover { filter: brightness(1.12); }
+    .btn-3d-sec:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #1e0338, 0 3px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    .status-card-3d {
+      background: var(--surface);
+      border: 1px solid rgba(192, 132, 252, 0.28);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 4px 0 #16052e;
+    }
+
+    .status-label { font-size: 0.65rem; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+    .status-url { font-family: ui-monospace, monospace; font-size: 0.8rem; color: #f3e8ff; font-weight: 700; word-break: break-all; margin-top: 2px; }
+
+    .pill-status {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      background: rgba(15, 23, 42, 0.75);
+      color: var(--muted);
+      border: 1px solid rgba(216, 180, 254, 0.25);
+      white-space: nowrap;
+    }
+
+    .pill-status.live {
+      background: rgba(239, 68, 68, 0.22);
+      color: #fecaca;
+      border-color: rgba(248, 113, 113, 0.75);
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.45);
+    }
+
+    /* BARRAS DE SONIDO 3D */
+    .meters-3d {
+      background: var(--surface);
+      border: 1px solid rgba(192, 132, 252, 0.28);
+      border-radius: 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 4px 0 #16052e;
     }
-    .levels-header {
+
+    .meters-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -152,195 +159,322 @@
       font-weight: 800;
       color: var(--muted);
     }
-    .levels-header strong {
+
+    .meters-top strong {
       font-family: ui-monospace, monospace;
-      color: var(--text);
+      color: #fff;
     }
-    .meter-row {
+
+    .bar-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
-    .meter-tag {
-      width: 22px;
-      font-size: 0.72rem;
+
+    .ch-label {
+      width: 20px;
+      font-size: 0.76rem;
       font-weight: 900;
-      color: var(--muted);
+      color: var(--violet-bright);
       text-align: center;
     }
-    .vu-wrap {
+
+    .bar-track {
       flex: 1;
-      height: 14px;
-      background: #e2e8f0;
-      border: 1px solid #cbd5e1;
-      border-radius: 7px;
+      height: 16px;
+      background: #120624;
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      border-radius: 999px;
       overflow: hidden;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.65);
     }
-    .vu-fill {
+
+    .bar-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #10b981 62%, #f59e0b 84%, #ef4444 100%);
+      background: linear-gradient(90deg, #10b981 0%, #a855f7 55%, #ec4899 85%, #ef4444 100%);
+      border-radius: 999px;
+      box-shadow: 0 0 12px rgba(192, 132, 252, 0.55);
       transition: width 0.05s linear;
     }
-    .meter-pct {
+
+    .bar-pct {
       width: 44px;
       text-align: right;
       font-family: ui-monospace, monospace;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       font-weight: 800;
-      color: var(--text);
-    }
-    .scope-canvas {
-      width: 100%;
-      height: 54px;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      display: block;
+      color: #fff;
     }
 
-    .log-box {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 10px;
+    .wave-3d {
+      width: 100%;
+      height: 58px;
+      background: #120624;
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      border-radius: 12px;
+      display: block;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+    }
+
+    /* BOTÓN PRINCIPAL CONECTAR / DESCONECTAR */
+    .btn-main-3d {
+      width: 100%;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: #fff;
+      background: linear-gradient(180deg, #9333ea, #6b21a8);
+      border: 1px solid rgba(233, 213, 255, 0.55);
+      border-radius: 15px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #3b0764, 0 14px 28px rgba(147, 51, 234, 0.45);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.15s ease;
+    }
+
+    .btn-main-3d:hover { filter: brightness(1.08); }
+    .btn-main-3d:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #3b0764, 0 6px 14px rgba(147, 51, 234, 0.35);
+    }
+
+    .btn-main-3d.live {
+      background: linear-gradient(180deg, #ef4444, #b91c1c);
+      border-color: rgba(254, 202, 202, 0.65);
+      box-shadow: 0 6px 0 #7f1d1d, 0 14px 28px rgba(239, 68, 68, 0.45);
+    }
+
+    .btn-main-3d.live:active {
+      box-shadow: 0 2px 0 #7f1d1d, 0 6px 14px rgba(239, 68, 68, 0.35);
+    }
+
+    .mini-log {
+      background: rgba(15, 5, 30, 0.85);
+      border: 1px solid rgba(192, 132, 252, 0.22);
+      border-radius: 12px;
+      padding: 8px 12px;
       font-family: ui-monospace, monospace;
-      font-size: 0.72rem;
-      color: #0f172a;
-      height: 88px;
+      font-size: 0.7rem;
+      color: #e9d5ff;
+      height: 68px;
       overflow-y: auto;
     }
-    .vol-line { display: flex; align-items: center; gap: 8px; }
-    .vol-line span { font-size: 0.7rem; width: 42px; text-align: right; font-family: ui-monospace, monospace; color: var(--text); }
+
+    /* MODALES (AJUSTES Y DETALLES) */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 2, 18, 0.78);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 999;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-card-3d {
+      width: 100%;
+      max-width: 480px;
+      max-height: 88vh;
+      overflow-y: auto;
+      background: #1d0b38;
+      border: 1px solid rgba(192, 132, 252, 0.45);
+      border-radius: 20px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 8px 0 #100421;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(192, 132, 252, 0.25);
+    }
+
+    .modal-head h2 { font-size: 0.95rem; font-weight: 900; color: var(--violet-bright); }
+
+    label { display: block; font-size: 0.68rem; font-weight: 800; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; }
+
+    input, select {
+      width: 100%;
+      background: #110524;
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      border-radius: 10px;
+      padding: 8px 10px;
+      color: #fff;
+      font-size: 0.82rem;
+      outline: none;
+    }
+
+    input:focus, select:focus { border-color: var(--magenta); }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .row-inline { display: flex; gap: 8px; align-items: center; }
+
+    .detail-box {
+      background: rgba(43, 17, 79, 0.75);
+      border: 1px solid rgba(192, 132, 252, 0.28);
+      border-radius: 14px;
+      padding: 14px;
+      line-height: 1.55;
+      font-size: 0.84rem;
+      color: #f3e8ff;
+    }
+
+    .detail-box strong { color: var(--magenta); }
   </style>
 </head>
 <body>
-  <div class="butt-app">
-    <div class="top-status">
+  <!-- PANTALLA PRINCIPAL: SOLO CONECTAR/DESCONECTAR, BARRAS DE SONIDO, AJUSTES Y DETALLES -->
+  <main class="butt-3d-shell">
+    <header class="header-3d">
       <div>
-        <div class="status-title">BUTT STREAM — ICECAST / ZENO</div>
-        <div class="status-endpoint" id="endpointLabel">link.zeno.fm:80/xksclgx3mfcuv</div>
+        <div class="brand-title">GALAXIA FM · BUTT</div>
+        <div class="brand-sub">Supía, Caldas · Transmisión en Tiempo Real</div>
       </div>
-      <span class="badge" id="liveBadge">IDLE / OFF</span>
-    </div>
+      <div class="header-btns">
+        <button type="button" class="btn-3d-sec" onclick="openModal('detailsModal')">Detalles</button>
+        <button type="button" class="btn-3d-sec" onclick="openModal('settingsModal')">Ajustes</button>
+      </div>
+    </header>
 
-    <div class="metrics">
-      <div class="metric-card">
-        <small>TIEMPO AL AIRE</small>
-        <strong id="timerText">00:00:00</strong>
+    <section class="status-card-3d">
+      <div>
+        <div class="status-label">Emisión · Tiempo: <span id="timerText">00:00:00</span></div>
+        <div class="status-url" id="endpointText">link.zeno.fm:80/xksclgx3mfcuv</div>
       </div>
-      <div class="metric-card">
-        <small>DATOS ENVIADOS</small>
-        <strong id="bytesText">0.0 KB</strong>
-      </div>
-      <div class="metric-card">
-        <small>FORMATO</small>
-        <strong id="codecText">MP3 128k</strong>
-      </div>
-    </div>
+      <span class="pill-status" id="statusPill">DESCONECTADO</span>
+    </section>
 
-    <div class="grid-2">
-      <div class="card">
-        <h3>1. Servidor (Icecast)</h3>
-        <div>
-          <label>Dirección / Host</label>
-          <input type="text" id="host" value="link.zeno.fm" oninput="saveCfg()">
-        </div>
-        <div class="row-inline">
-          <div style="flex:1;">
-            <label>Puerto</label>
-            <input type="number" id="port" value="80" oninput="saveCfg()">
-          </div>
-          <div style="flex:2;">
-            <label>Punto de montaje</label>
-            <input type="text" id="mount" value="/xksclgx3mfcuv" oninput="saveCfg()">
-          </div>
-        </div>
-        <div class="row-inline">
-          <div style="flex:1;">
-            <label>Usuario</label>
-            <input type="text" id="user" value="source" oninput="saveCfg()">
-          </div>
-          <div style="flex:1;">
-            <label>Bitrate</label>
-            <select id="bitrate" onchange="saveCfg()">
-              <option value="96">96 kbps</option>
-              <option value="128" selected>128 kbps</option>
-              <option value="192">192 kbps</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label>Contraseña</label>
-          <input type="password" id="password" value="9xhKMMT4" placeholder="Contraseña de fuente" oninput="saveCfg()">
-        </div>
+    <section class="meters-3d">
+      <div class="meters-top">
+        <span>NIVELES DE SONIDO</span>
+        <strong id="dbText">-∞ dB</strong>
       </div>
+      <div class="bar-row">
+        <span class="ch-label">L</span>
+        <div class="bar-track"><div class="bar-fill" id="barL"></div></div>
+        <span class="bar-pct" id="pctL">0%</span>
+      </div>
+      <div class="bar-row">
+        <span class="ch-label">R</span>
+        <div class="bar-track"><div class="bar-fill" id="barR"></div></div>
+        <span class="bar-pct" id="pctR">0%</span>
+      </div>
+      <canvas id="waveCanvas" class="wave-3d" width="510" height="58"></canvas>
+    </section>
 
-      <div class="card">
-        <h3>2. Consola 2×1 y Audio del PC</h3>
-        <div>
-          <label>Entrada Consola / Cable 2×1 / Line-In</label>
-          <div class="row-inline">
-            <select id="inputDevice" onchange="switchConsoleInput()"></select>
-            <button type="button" onclick="loadDevices()" title="Detectar entradas">↻</button>
-          </div>
-        </div>
-        <div>
-          <label>Ganancia Consola / Entrada</label>
-          <div class="vol-line">
-            <input type="range" id="consoleGainSlider" min="0" max="2" step="0.05" value="1" oninput="updateGains()">
-            <span id="consoleGainVal">100%</span>
-          </div>
-        </div>
-        <div>
-          <label>Audio que suena en el PC (Pestaña / Sistema)</label>
-          <div class="row-inline">
-            <button type="button" class="btn-pc" id="btnCapturePc" onclick="togglePcSystemAudio()" style="flex:1;">
-              💻 Capturar Audio del PC
-            </button>
-          </div>
-        </div>
-        <div>
-          <label>Ganancia Audio del PC</label>
-          <div class="vol-line">
-            <input type="range" id="pcGainSlider" min="0" max="1.5" step="0.05" value="0.85" oninput="updateGains()">
-            <span id="pcGainVal">85%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="padding:10px 12px;">
-      <div class="row-inline">
-        <input type="text" id="songTitle" placeholder="Título actual en vivo" value="Radio Moda - En Vivo">
-        <button type="button" class="btn-pc" onclick="sendMetadata()">📡 Enviar Título</button>
-      </div>
-    </div>
-
-    <!-- NIVELES DE EMISORA AL RECIBIR SONIDO -->
-    <div class="levels-panel">
-      <div class="levels-header">
-        <span>NIVELES DE EMISORA (CONSOLA + PC)</span>
-        <strong id="dbReadout">-∞ dB</strong>
-      </div>
-      <div class="meter-row">
-        <span class="meter-tag">L</span>
-        <div class="vu-wrap"><div class="vu-fill" id="vuLeft"></div></div>
-        <span class="meter-pct" id="pctLeft">0%</span>
-      </div>
-      <div class="meter-row">
-        <span class="meter-tag">R</span>
-        <div class="vu-wrap"><div class="vu-fill" id="vuRight"></div></div>
-        <span class="meter-pct" id="pctRight">0%</span>
-      </div>
-      <canvas id="waveCanvas" class="scope-canvas" width="680" height="54"></canvas>
-    </div>
-
-    <button type="button" class="btn-stream" id="btnStream" onclick="toggleStream()">
-      ▶ CONECTAR Y TRANSMITIR
+    <button type="button" class="btn-main-3d" id="btnConnect" onclick="toggleStream()">
+      CONECTAR
     </button>
 
-    <div class="log-box" id="logBox">&gt; Datos de Zeno actualizados. Listo para iniciar.</div>
+    <div class="mini-log" id="logBox">&gt; Galaxia FM BUTT listo. Pulsa Conectar o abre Ajustes.</div>
+  </main>
+
+  <!-- MODAL DETALLES -->
+  <div class="modal-backdrop" id="detailsModal" onclick="backdropClose(event, 'detailsModal')">
+    <div class="modal-card-3d">
+      <div class="modal-head">
+        <h2>Detalles Oficiales</h2>
+        <button type="button" class="btn-3d-sec" onclick="closeModal('detailsModal')">✕</button>
+      </div>
+      <div class="detail-box">
+        Este <strong>BUTT</strong> es oficial de la emisora <strong>Galaxia FM</strong> del municipio de <strong>Supía</strong> en el departamento de <strong>Caldas</strong>, creado por <strong>Ideal a Tu Web</strong> — <strong>noviembre del 2026, primera versión</strong>.
+      </div>
+      <button type="button" class="btn-3d-sec" style="width:100%;" onclick="closeModal('detailsModal')">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- MODAL AJUSTES -->
+  <div class="modal-backdrop" id="settingsModal" onclick="backdropClose(event, 'settingsModal')">
+    <div class="modal-card-3d">
+      <div class="modal-head">
+        <h2>Ajustes de Transmisión y Audio</h2>
+        <button type="button" class="btn-3d-sec" onclick="closeModal('settingsModal')">✕</button>
+      </div>
+
+      <div>
+        <label>Servidor / Host</label>
+        <input type="text" id="host" value="link.zeno.fm" oninput="saveCfg()">
+      </div>
+
+      <div class="row-2">
+        <div>
+          <label>Puerto</label>
+          <input type="number" id="port" value="80" oninput="saveCfg()">
+        </div>
+        <div>
+          <label>Punto de montaje</label>
+          <input type="text" id="mount" value="/xksclgx3mfcuv" oninput="saveCfg()">
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div>
+          <label>Usuario</label>
+          <input type="text" id="user" value="source" oninput="saveCfg()">
+        </div>
+        <div>
+          <label>Bitrate MP3</label>
+          <select id="bitrate" onchange="saveCfg()">
+            <option value="96">96 kbps</option>
+            <option value="128" selected>128 kbps</option>
+            <option value="192">192 kbps</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label>Contraseña</label>
+        <input type="password" id="password" value="9xhKMMT4" oninput="saveCfg()">
+      </div>
+
+      <div>
+        <label>Entrada Consola / Cable 2×1 / Micrófono</label>
+        <div class="row-inline">
+          <select id="inputDevice" onchange="switchConsoleInput()"></select>
+          <button type="button" class="btn-3d-sec" onclick="loadDevices()">↻</button>
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div>
+          <label>Ganancia Consola: <span id="consoleGainVal">100%</span></label>
+          <input type="range" id="consoleGainSlider" min="0" max="2" step="0.05" value="1" oninput="updateGains()">
+        </div>
+        <div>
+          <label>Ganancia Audio PC: <span id="pcGainVal">85%</span></label>
+          <input type="range" id="pcGainSlider" min="0" max="1.5" step="0.05" value="0.85" oninput="updateGains()">
+        </div>
+      </div>
+
+      <div>
+        <label>Audio que suena en el PC</label>
+        <button type="button" class="btn-3d-sec" id="btnCapturePc" style="width:100%;" onclick="togglePcSystemAudio()">
+          Capturar Audio del PC
+        </button>
+      </div>
+
+      <div>
+        <label>Título en vivo (Metadatos)</label>
+        <div class="row-inline">
+          <input type="text" id="songTitle" value="Galaxia FM Supía — En Vivo">
+          <button type="button" class="btn-3d-sec" onclick="sendMetadata()">Enviar</button>
+        </div>
+      </div>
+
+      <button type="button" class="btn-main-3d" style="padding:12px; font-size:0.88rem;" onclick="closeModal('settingsModal')">
+        Guardar y Volver
+      </button>
+    </div>
   </div>
 
   <script>
@@ -362,7 +496,6 @@
     let reconnectTimer = null;
     let timerInterval = null;
     let startTs = 0;
-    let bytesSent = 0;
 
     let audioCtx = null;
     let masterGain = null;
@@ -382,6 +515,19 @@
     let pcCaptureStream = null;
     let pcCaptureSource = null;
 
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+      if (id === 'settingsModal') loadDevices();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function backdropClose(e, id) {
+      if (e.target.id === id) closeModal(id);
+    }
+
     function writeLog(msg) {
       const box = document.getElementById('logBox');
       box.innerHTML += `<br>&gt; ${msg}`;
@@ -391,16 +537,13 @@
     function saveCfg() {
       ['host', 'port', 'mount', 'user', 'password', 'bitrate'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) localStorage.setItem('butt_v3_' + id, el.value);
+        if (el) localStorage.setItem('gfm_butt_v1_' + id, el.value);
       });
       const host = document.getElementById('host').value.trim() || DEFAULT_CFG.host;
       const port = document.getElementById('port').value.trim() || DEFAULT_CFG.port;
       let mount = document.getElementById('mount').value.trim() || DEFAULT_CFG.mount;
       if (!mount.startsWith('/')) mount = '/' + mount;
-      const br = document.getElementById('bitrate').value;
-
-      document.getElementById('endpointLabel').textContent = `${host}:${port}${mount}`;
-      document.getElementById('codecText').textContent = `MP3 ${br}k`;
+      document.getElementById('endpointText').textContent = `${host}:${port}${mount}`;
     }
 
     function updateGains() {
@@ -417,7 +560,7 @@
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const sel = document.getElementById('inputDevice');
-        const saved = localStorage.getItem('butt_v3_input_dev') || '';
+        const saved = localStorage.getItem('gfm_butt_v1_input_dev') || '';
         sel.innerHTML = '<option value="">Entrada por defecto del sistema</option>';
         devices.filter(d => d.kind === 'audioinput').forEach(d => {
           const opt = document.createElement('option');
@@ -431,7 +574,7 @@
 
     async function attachConsoleInput() {
       const devId = document.getElementById('inputDevice').value;
-      localStorage.setItem('butt_v3_input_dev', devId);
+      localStorage.setItem('gfm_butt_v1_input_dev', devId);
       if (consoleStream) {
         consoleStream.getTracks().forEach(t => t.stop());
         consoleStream = null;
@@ -470,14 +613,13 @@
           try { pcCaptureSource.disconnect(); } catch (e) {}
           pcCaptureSource = null;
         }
-        btn.classList.remove('active');
-        btn.textContent = '💻 Capturar Audio del PC';
+        btn.textContent = 'Capturar Audio del PC';
         writeLog('Captura de audio del PC detenida.');
         return;
       }
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-        writeLog('Tu navegador no soporta captura de audio de PC.');
+        writeLog('Navegador sin soporte de captura de audio del PC.');
         return;
       }
 
@@ -488,7 +630,7 @@
         });
         const audioTracks = pcCaptureStream.getAudioTracks();
         if (!audioTracks.length) {
-          writeLog('No se compartió audio del PC. Marca "Compartir audio".');
+          writeLog('Marca "Compartir audio" al elegir la ventana/pestaña.');
           pcCaptureStream.getTracks().forEach(t => t.stop());
           pcCaptureStream = null;
           return;
@@ -501,14 +643,12 @@
 
         audioTracks[0].onended = () => {
           pcCaptureStream = null;
-          btn.classList.remove('active');
-          btn.textContent = '💻 Capturar Audio del PC';
+          btn.textContent = 'Capturar Audio del PC';
           writeLog('Audio del PC desconectado.');
         };
 
-        btn.classList.add('active');
-        btn.textContent = '✅ Audio del PC Activo';
-        writeLog('Audio del PC enrutado al master.');
+        btn.textContent = 'Audio del PC Activo ✓';
+        writeLog('Audio del PC activo en Galaxia FM.');
       } catch (e) {
         writeLog('Captura de audio del PC cancelada.');
       }
@@ -560,16 +700,16 @@
         const v = Math.abs((buf[i] - 128) / 128);
         if (v > peak) peak = v;
       }
-      return Math.min(100, Math.round(peak * 140));
+      return Math.min(100, Math.round(peak * 145));
     }
 
     function startLevelsLoop() {
       if (levelAnimId) return;
-      const vuL = document.getElementById('vuLeft');
-      const vuR = document.getElementById('vuRight');
-      const pctL = document.getElementById('pctLeft');
-      const pctR = document.getElementById('pctRight');
-      const dbEl = document.getElementById('dbReadout');
+      const barL = document.getElementById('barL');
+      const barR = document.getElementById('barR');
+      const pctL = document.getElementById('pctL');
+      const pctR = document.getElementById('pctR');
+      const dbText = document.getElementById('dbText');
       const canvas = document.getElementById('waveCanvas');
       const ctx = canvas.getContext('2d');
 
@@ -579,13 +719,13 @@
 
       function tick() {
         if (!hasActiveSoundSource()) {
-          vuL.style.width = '0%';
-          vuR.style.width = '0%';
+          barL.style.width = '0%';
+          barR.style.width = '0%';
           pctL.textContent = '0%';
           pctR.textContent = '0%';
-          dbEl.textContent = '-∞ dB';
+          dbText.textContent = '-∞ dB';
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.strokeStyle = '#cbd5e1';
+          ctx.strokeStyle = 'rgba(192, 132, 252, 0.35)';
           ctx.lineWidth = 1.5;
           ctx.beginPath();
           ctx.moveTo(0, canvas.height / 2);
@@ -599,17 +739,17 @@
         const rPct = getPeakPercent(analyserR, bufR);
         const maxPct = Math.max(lPct, rPct);
 
-        vuL.style.width = lPct + '%';
-        vuR.style.width = rPct + '%';
+        barL.style.width = lPct + '%';
+        barR.style.width = rPct + '%';
         pctL.textContent = lPct + '%';
         pctR.textContent = rPct + '%';
-        dbEl.textContent = maxPct > 1
+        dbText.textContent = maxPct > 1
           ? `${Math.max(-60, Math.round(20 * Math.log10(maxPct / 100)))} dB`
           : '-∞ dB';
 
         waveAnalyser.getByteTimeDomainData(waveBuf);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = '#0284c7';
+        ctx.strokeStyle = '#e879f9';
         ctx.lineWidth = 2;
         ctx.beginPath();
         const step = canvas.width / waveBuf.length;
@@ -626,9 +766,8 @@
       levelAnimId = requestAnimationFrame(tick);
     }
 
-    function startStats() {
+    function startTimer() {
       startTs = Date.now();
-      bytesSent = 0;
       clearInterval(timerInterval);
       timerInterval = setInterval(() => {
         if (!isLive) return;
@@ -637,9 +776,6 @@
         const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
         const s = String(sec % 60).padStart(2, '0');
         document.getElementById('timerText').textContent = `${h}:${m}:${s}`;
-        document.getElementById('bytesText').textContent = bytesSent > 1048576
-          ? `${(bytesSent / 1048576).toFixed(2)} MB`
-          : `${(bytesSent / 1024).toFixed(1)} KB`;
       }, 1000);
     }
 
@@ -680,7 +816,7 @@
             clearTimeout(authRetryTimer);
             beginAudioEncoding(bitrate);
           } else if (data.status === 'ERROR') {
-            writeLog(`Aviso servidor: ${data.message}. Reintentando en 4s...`);
+            writeLog(`Aviso servidor: ${data.message}. Reintentando...`);
             clearTimeout(authRetryTimer);
             authRetryTimer = setTimeout(() => {
               if (isLive && ws && ws.readyState === WebSocket.OPEN) {
@@ -695,15 +831,13 @@
         } catch (e) {}
       };
 
-      ws.onerror = () => {
-        writeLog('Aviso de red; manteniendo audio activo...');
-      };
+      ws.onerror = () => writeLog('Aviso de red; manteniendo audio activo...');
 
       ws.onclose = () => {
         clearInterval(pingTimer);
         clearTimeout(authRetryTimer);
         if (isLive) {
-          writeLog('Conexión interrumpida. Reconectando en tiempo real...');
+          writeLog('Reconectando en tiempo real...');
           clearTimeout(reconnectTimer);
           reconnectTimer = setTimeout(() => {
             if (isLive) openSocket(host, port, mount, user, password, bitrate);
@@ -723,22 +857,25 @@
       const bitrate = parseInt(document.getElementById('bitrate').value, 10) || 128;
 
       if (!host || !port || !mount || !password) {
-        alert('Completa Host, Puerto, Punto de montaje y Contraseña.');
+        alert('Completa los datos del servidor en Ajustes.');
+        openModal('settingsModal');
         return;
       }
       if (!mount.startsWith('/')) mount = '/' + mount;
 
       isLive = true;
-      document.getElementById('liveBadge').textContent = 'LIVE / ON AIR';
-      document.getElementById('liveBadge').classList.add('live');
-      const btn = document.getElementById('btnStream');
-      btn.textContent = '⏹ DETENER TRANSMISIÓN';
+      const pill = document.getElementById('statusPill');
+      pill.textContent = 'EN VIVO';
+      pill.classList.add('live');
+
+      const btn = document.getElementById('btnConnect');
+      btn.textContent = 'DESCONECTAR';
       btn.classList.add('live');
 
       ensureAudioGraph();
       await attachConsoleInput();
       await loadDevices();
-      startStats();
+      startTimer();
       startLevelsLoop();
       openSocket(host, port, mount, user, password, bitrate);
     }
@@ -764,10 +901,7 @@
           pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
         }
         const mp3 = mp3Encoder.encodeBuffer(pcm);
-        if (mp3.length > 0) {
-          ws.send(mp3.buffer);
-          bytesSent += mp3.length;
-        }
+        if (mp3.length > 0) ws.send(mp3.buffer);
       };
 
       masterGain.connect(processor);
@@ -776,7 +910,7 @@
       processor.connect(muteOut);
       muteOut.connect(audioCtx.destination);
 
-      writeLog('¡Al aire! Transmitiendo en tiempo real.');
+      writeLog('¡Al aire con Galaxia FM!');
     }
 
     function stopStream() {
@@ -793,18 +927,21 @@
         try { ws.close(); } catch (e) {}
         ws = null;
       }
-      document.getElementById('liveBadge').textContent = 'IDLE / OFF';
-      document.getElementById('liveBadge').classList.remove('live');
-      const btn = document.getElementById('btnStream');
-      btn.textContent = '▶ CONECTAR Y TRANSMITIR';
+      const pill = document.getElementById('statusPill');
+      pill.textContent = 'DESCONECTADO';
+      pill.classList.remove('live');
+
+      const btn = document.getElementById('btnConnect');
+      btn.textContent = 'CONECTAR';
       btn.classList.remove('live');
+
       document.getElementById('timerText').textContent = '00:00:00';
-      writeLog('Transmisión detenida.');
+      writeLog('Desconectado.');
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       Object.keys(DEFAULT_CFG).forEach(id => {
-        const v = localStorage.getItem('butt_v3_' + id);
+        const v = localStorage.getItem('gfm_butt_v1_' + id);
         const el = document.getElementById(id);
         if (el) el.value = (v !== null && v !== '') ? v : DEFAULT_CFG[id];
       });
