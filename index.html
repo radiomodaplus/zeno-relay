@@ -37,7 +37,6 @@
       padding: 16px;
     }
 
-    /* CONTENEDOR PRINCIPAL 3D CENTRADO */
     .butt-3d-shell {
       width: 100%;
       max-width: 560px;
@@ -139,7 +138,6 @@
       box-shadow: 0 0 16px rgba(239, 68, 68, 0.45);
     }
 
-    /* BARRAS DE SONIDO 3D */
     .meters-3d {
       background: var(--surface);
       border: 1px solid rgba(192, 132, 252, 0.28);
@@ -217,7 +215,6 @@
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
     }
 
-    /* BOTÓN PRINCIPAL CONECTAR / DESCONECTAR */
     .btn-main-3d {
       width: 100%;
       padding: 16px;
@@ -261,7 +258,6 @@
       overflow-y: auto;
     }
 
-    /* MODALES (AJUSTES Y DETALLES) */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -278,8 +274,8 @@
 
     .modal-card-3d {
       width: 100%;
-      max-width: 480px;
-      max-height: 88vh;
+      max-width: 490px;
+      max-height: 90vh;
       overflow-y: auto;
       background: #1d0b38;
       border: 1px solid rgba(192, 132, 252, 0.45);
@@ -287,7 +283,7 @@
       padding: 18px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 11px;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 8px 0 #100421;
     }
 
@@ -330,10 +326,16 @@
     }
 
     .detail-box strong { color: var(--magenta); }
+
+    .hint-text {
+      font-size: 0.66rem;
+      color: #c4b5fd;
+      line-height: 1.35;
+      margin-top: 3px;
+    }
   </style>
 </head>
 <body>
-  <!-- PANTALLA PRINCIPAL: SOLO CONECTAR/DESCONECTAR, BARRAS DE SONIDO, AJUSTES Y DETALLES -->
   <main class="butt-3d-shell">
     <header class="header-3d">
       <div>
@@ -397,7 +399,7 @@
   <div class="modal-backdrop" id="settingsModal" onclick="backdropClose(event, 'settingsModal')">
     <div class="modal-card-3d">
       <div class="modal-head">
-        <h2>Ajustes de Transmisión y Audio</h2>
+        <h2>Ajustes de Transmisión y Consola</h2>
         <button type="button" class="btn-3d-sec" onclick="closeModal('settingsModal')">✕</button>
       </div>
 
@@ -438,29 +440,44 @@
       </div>
 
       <div>
-        <label>Entrada Consola / Cable 2×1 / Micrófono</label>
+        <label>1. Entrada desde Consola / Cable 2×1</label>
         <div class="row-inline">
           <select id="inputDevice" onchange="switchConsoleInput()"></select>
           <button type="button" class="btn-3d-sec" onclick="loadDevices()">↻</button>
         </div>
       </div>
 
+      <div>
+        <label>2. Capturar Todos los Sonidos del Sistema (Salamandra / YouTube)</label>
+        <button type="button" class="btn-3d-sec" id="btnCapturePc" style="width:100%;" onclick="togglePcSystemAudio()">
+          Capturar Todo el Audio del Sistema
+        </button>
+        <div class="hint-text">Elige <b>Pantalla completa</b> y activa <b>Compartir audio del sistema</b> para captar Salamandra, YouTube y todo lo que suene en el PC.</div>
+      </div>
+
+      <div>
+        <label>3. Enviar Audio del PC hacia la Consola (Salida Física)</label>
+        <div class="row-inline">
+          <select id="outputDevice" onchange="switchConsoleOutput()"></select>
+          <button type="button" class="btn-3d-sec" onclick="loadDevices()">↻</button>
+        </div>
+        <div class="hint-text">Selecciona la tarjeta/salida conectada a tu consola para que Salamandra y YouTube suenen en la consola y al aire sin retroalimentación.</div>
+      </div>
+
       <div class="row-2">
         <div>
-          <label>Ganancia Consola: <span id="consoleGainVal">100%</span></label>
+          <label>Entrada Consola: <span id="consoleGainVal">100%</span></label>
           <input type="range" id="consoleGainSlider" min="0" max="2" step="0.05" value="1" oninput="updateGains()">
         </div>
         <div>
-          <label>Ganancia Audio PC: <span id="pcGainVal">85%</span></label>
-          <input type="range" id="pcGainSlider" min="0" max="1.5" step="0.05" value="0.85" oninput="updateGains()">
+          <label>Vol. Sistema PC: <span id="pcGainVal">100%</span></label>
+          <input type="range" id="pcGainSlider" min="0" max="1.5" step="0.05" value="1" oninput="updateGains()">
         </div>
       </div>
 
       <div>
-        <label>Audio que suena en el PC</label>
-        <button type="button" class="btn-3d-sec" id="btnCapturePc" style="width:100%;" onclick="togglePcSystemAudio()">
-          Capturar Audio del PC
-        </button>
+        <label>Envío a Consola Física: <span id="outGainVal">100%</span></label>
+        <input type="range" id="outGainSlider" min="0" max="1.5" step="0.05" value="1" oninput="updateGains()">
       </div>
 
       <div>
@@ -476,6 +493,9 @@
       </button>
     </div>
   </div>
+
+  <!-- ELEMENTO DE SALIDA DEDICADO PARA ENVIAR EL AUDIO DEL SISTEMA HACIA LA CONSOLA -->
+  <audio id="consoleMonitorOut" autoplay playsinline style="display:none;"></audio>
 
   <script>
     const RELAY_URL = "wss://zeno-relay.onrender.com";
@@ -501,6 +521,9 @@
     let masterGain = null;
     let consoleGain = null;
     let pcGain = null;
+    let consoleOutGain = null;
+    let consoleOutDest = null;
+
     let splitter = null;
     let analyserL = null;
     let analyserR = null;
@@ -537,7 +560,7 @@
     function saveCfg() {
       ['host', 'port', 'mount', 'user', 'password', 'bitrate'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) localStorage.setItem('gfm_butt_v1_' + id, el.value);
+        if (el) localStorage.setItem('gfm_butt_v2_' + id, el.value);
       });
       const host = document.getElementById('host').value.trim() || DEFAULT_CFG.host;
       const port = document.getElementById('port').value.trim() || DEFAULT_CFG.port;
@@ -548,33 +571,81 @@
 
     function updateGains() {
       const cVal = parseFloat(document.getElementById('consoleGainSlider').value || 1);
-      const pVal = parseFloat(document.getElementById('pcGainSlider').value || 0.85);
+      const pVal = parseFloat(document.getElementById('pcGainSlider').value || 1);
+      const oVal = parseFloat(document.getElementById('outGainSlider').value || 1);
       document.getElementById('consoleGainVal').textContent = `${Math.round(cVal * 100)}%`;
       document.getElementById('pcGainVal').textContent = `${Math.round(pVal * 100)}%`;
+      document.getElementById('outGainVal').textContent = `${Math.round(oVal * 100)}%`;
       if (consoleGain && audioCtx) consoleGain.gain.setTargetAtTime(cVal, audioCtx.currentTime, 0.05);
       if (pcGain && audioCtx) pcGain.gain.setTargetAtTime(pVal, audioCtx.currentTime, 0.05);
+      if (consoleOutGain && audioCtx) consoleOutGain.gain.setTargetAtTime(oVal, audioCtx.currentTime, 0.05);
     }
 
     async function loadDevices() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
-        const sel = document.getElementById('inputDevice');
-        const saved = localStorage.getItem('gfm_butt_v1_input_dev') || '';
-        sel.innerHTML = '<option value="">Entrada por defecto del sistema</option>';
-        devices.filter(d => d.kind === 'audioinput').forEach(d => {
-          const opt = document.createElement('option');
-          opt.value = d.deviceId;
-          opt.text = d.label || `Entrada (${d.deviceId.slice(0, 6)})`;
-          if (d.deviceId === saved) opt.selected = true;
-          sel.appendChild(opt);
+        const inSel = document.getElementById('inputDevice');
+        const outSel = document.getElementById('outputDevice');
+        const savedIn = localStorage.getItem('gfm_butt_v2_input_dev') || '';
+        const savedOut = localStorage.getItem('gfm_butt_v2_output_dev') || '';
+
+        inSel.innerHTML = '<option value="">Entrada por defecto del sistema</option>';
+        outSel.innerHTML = '<option value="">No reenviar (usar salida normal de Windows)</option>';
+
+        devices.forEach(d => {
+          if (d.kind === 'audioinput') {
+            const opt = document.createElement('option');
+            opt.value = d.deviceId;
+            opt.text = d.label || `Entrada (${d.deviceId.slice(0, 6)})`;
+            if (d.deviceId === savedIn) opt.selected = true;
+            inSel.appendChild(opt);
+          } else if (d.kind === 'audiooutput') {
+            const opt = document.createElement('option');
+            opt.value = d.deviceId;
+            opt.text = d.label || `Salida (${d.deviceId.slice(0, 6)})`;
+            if (d.deviceId === savedOut) opt.selected = true;
+            outSel.appendChild(opt);
+          }
         });
       } catch (e) {}
     }
 
+    async function applyConsoleOutputRouting() {
+      const outEl = document.getElementById('consoleMonitorOut');
+      const sinkId = document.getElementById('outputDevice').value;
+      localStorage.setItem('gfm_butt_v2_output_dev', sinkId);
+
+      if (!outEl || !consoleOutDest) return;
+      outEl.srcObject = consoleOutDest.stream;
+
+      if (!sinkId) {
+        outEl.muted = true;
+        return;
+      }
+
+      outEl.muted = false;
+      if (typeof outEl.setSinkId === 'function') {
+        try {
+          await outEl.setSinkId(sinkId);
+          await outEl.play().catch(() => {});
+          writeLog('Audio del PC enviado hacia la salida de consola.');
+        } catch (err) {
+          writeLog('No se pudo asignar la salida física seleccionada.');
+        }
+      } else {
+        writeLog('Este navegador no soporta selección de salida física (usa Chrome/Edge en PC).');
+      }
+    }
+
+    async function switchConsoleOutput() {
+      ensureAudioGraph();
+      await applyConsoleOutputRouting();
+    }
+
     async function attachConsoleInput() {
       const devId = document.getElementById('inputDevice').value;
-      localStorage.setItem('gfm_butt_v1_input_dev', devId);
+      localStorage.setItem('gfm_butt_v2_input_dev', devId);
       if (consoleStream) {
         consoleStream.getTracks().forEach(t => t.stop());
         consoleStream = null;
@@ -613,24 +684,30 @@
           try { pcCaptureSource.disconnect(); } catch (e) {}
           pcCaptureSource = null;
         }
-        btn.textContent = 'Capturar Audio del PC';
-        writeLog('Captura de audio del PC detenida.');
+        btn.textContent = 'Capturar Todo el Audio del Sistema';
+        writeLog('Captura de audio del sistema detenida.');
         return;
       }
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-        writeLog('Navegador sin soporte de captura de audio del PC.');
+        writeLog('Navegador sin soporte de captura de audio del sistema.');
         return;
       }
 
       try {
         pcCaptureStream = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+          video: { displaySurface: 'monitor' },
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false
+          },
+          systemAudio: 'include'
         });
+
         const audioTracks = pcCaptureStream.getAudioTracks();
         if (!audioTracks.length) {
-          writeLog('Marca "Compartir audio" al elegir la ventana/pestaña.');
+          writeLog('Elige "Pantalla completa" y marca "Compartir audio del sistema".');
           pcCaptureStream.getTracks().forEach(t => t.stop());
           pcCaptureStream = null;
           return;
@@ -638,19 +715,23 @@
 
         ensureAudioGraph();
         pcCaptureSource = audioCtx.createMediaStreamSource(new MediaStream(audioTracks));
+        // 1. Va al master que sale al aire
         pcCaptureSource.connect(pcGain);
+        // 2. Va también a la salida física hacia la consola (sin mezclar el retorno de la consola para evitar eco)
+        pcCaptureSource.connect(consoleOutGain);
+        await applyConsoleOutputRouting();
         startLevelsLoop();
 
         audioTracks[0].onended = () => {
           pcCaptureStream = null;
-          btn.textContent = 'Capturar Audio del PC';
-          writeLog('Audio del PC desconectado.');
+          btn.textContent = 'Capturar Todo el Audio del Sistema';
+          writeLog('Audio del sistema desconectado.');
         };
 
-        btn.textContent = 'Audio del PC Activo ✓';
-        writeLog('Audio del PC activo en Galaxia FM.');
+        btn.textContent = 'Audio del Sistema Activo ✓';
+        writeLog('Todo el audio del sistema (Salamandra/YouTube) activo al aire y hacia consola.');
       } catch (e) {
-        writeLog('Captura de audio del PC cancelada.');
+        writeLog('Captura de audio del sistema cancelada.');
       }
     }
 
@@ -664,6 +745,8 @@
         masterGain = audioCtx.createGain();
         consoleGain = audioCtx.createGain();
         pcGain = audioCtx.createGain();
+        consoleOutGain = audioCtx.createGain();
+        consoleOutDest = audioCtx.createMediaStreamDestination();
 
         splitter = audioCtx.createChannelSplitter(2);
         analyserL = audioCtx.createAnalyser();
@@ -675,10 +758,15 @@
         waveAnalyser.fftSize = 256;
 
         consoleGain.gain.value = parseFloat(document.getElementById('consoleGainSlider').value || 1);
-        pcGain.gain.value = parseFloat(document.getElementById('pcGainSlider').value || 0.85);
+        pcGain.gain.value = parseFloat(document.getElementById('pcGainSlider').value || 1);
+        consoleOutGain.gain.value = parseFloat(document.getElementById('outGainSlider').value || 1);
 
+        // Mezcla al aire: Consola + Audio del sistema
         consoleGain.connect(masterGain);
         pcGain.connect(masterGain);
+
+        // Salida física hacia consola: solo Audio del sistema (Salamandra/YouTube)
+        consoleOutGain.connect(consoleOutDest);
 
         masterGain.connect(splitter);
         splitter.connect(analyserL, 0);
@@ -874,6 +962,7 @@
 
       ensureAudioGraph();
       await attachConsoleInput();
+      await applyConsoleOutputRouting();
       await loadDevices();
       startTimer();
       startLevelsLoop();
@@ -941,7 +1030,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       Object.keys(DEFAULT_CFG).forEach(id => {
-        const v = localStorage.getItem('gfm_butt_v1_' + id);
+        const v = localStorage.getItem('gfm_butt_v2_' + id);
         const el = document.getElementById(id);
         if (el) el.value = (v !== null && v !== '') ? v : DEFAULT_CFG[id];
       });
