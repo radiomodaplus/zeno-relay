@@ -16,8 +16,8 @@
       --muted: #d8b4fe;
       --violet-bright: #c084fc;
       --magenta: #e879f9;
+      --cyan: #38bdf8;
       --green: #10b981;
-      --amber: #f59e0b;
       --red: #ef4444;
     }
 
@@ -45,7 +45,7 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 13px;
       box-shadow:
         0 24px 60px rgba(8, 2, 20, 0.82),
         0 0 0 1px rgba(255, 255, 255, 0.06) inset,
@@ -53,12 +53,41 @@
       backdrop-filter: blur(12px);
     }
 
+    /* BARRA DE HORA Y FECHA DE COLOMBIA EN TIEMPO REAL */
+    .co-clock-bar {
+      background: rgba(16, 5, 34, 0.92);
+      border: 1px solid rgba(192, 132, 252, 0.32);
+      border-radius: 14px;
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+    }
+
+    .co-clock-time {
+      font-family: ui-monospace, monospace;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--cyan);
+      letter-spacing: 0.8px;
+    }
+
+    .co-clock-date {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: right;
+    }
+
     .header-3d {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      padding-bottom: 12px;
+      padding-bottom: 10px;
       border-bottom: 1px solid rgba(192, 132, 252, 0.22);
     }
 
@@ -111,13 +140,22 @@
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 4px 0 #16052e;
     }
 
-    .status-label { font-size: 0.65rem; text-transform: uppercase; color: var(--muted); font-weight: 800; }
-    .status-url { font-family: ui-monospace, monospace; font-size: 0.78rem; color: #f3e8ff; font-weight: 700; word-break: break-all; margin-top: 2px; }
+    .status-label { font-size: 0.66rem; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+    .live-crono {
+      font-family: ui-monospace, monospace;
+      color: #fff;
+      background: rgba(147, 51, 234, 0.35);
+      border: 1px solid rgba(216, 180, 254, 0.45);
+      padding: 1px 7px;
+      border-radius: 6px;
+      font-weight: 900;
+    }
+    .status-url { font-family: ui-monospace, monospace; font-size: 0.78rem; color: #f3e8ff; font-weight: 700; word-break: break-all; margin-top: 4px; }
 
     .pill-status {
       padding: 6px 12px;
       border-radius: 999px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 900;
       background: rgba(15, 23, 42, 0.75);
       color: var(--muted);
@@ -132,15 +170,20 @@
       box-shadow: 0 0 16px rgba(239, 68, 68, 0.45);
     }
 
-    /* BARRAS DE SONIDO + CONTROL DE VOLUMEN EN PANTALLA PRINCIPAL */
+    .pill-status.backup {
+      background: rgba(245, 158, 11, 0.22);
+      color: #fde68a;
+      border-color: rgba(251, 191, 36, 0.75);
+    }
+
     .meters-3d {
       background: var(--surface);
       border: 1px solid rgba(192, 132, 252, 0.28);
       border-radius: 16px;
-      padding: 14px;
+      padding: 13px 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 9px;
       box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 4px 0 #16052e;
     }
 
@@ -159,7 +202,7 @@
       border: 1px solid rgba(16, 185, 129, 0.45);
       padding: 2px 8px;
       border-radius: 999px;
-      font-size: 0.64rem;
+      font-size: 0.62rem;
       font-weight: 900;
     }
 
@@ -204,7 +247,7 @@
 
     .wave-3d {
       width: 100%;
-      height: 52px;
+      height: 50px;
       background: #120624;
       border: 1px solid rgba(192, 132, 252, 0.3);
       border-radius: 12px;
@@ -212,7 +255,6 @@
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
     }
 
-    /* CONTROLES DE VOLUMEN EN VIVO EN LA PANTALLA PRINCIPAL */
     .faders-card-3d {
       background: rgba(34, 12, 64, 0.9);
       border: 1px solid rgba(192, 132, 252, 0.32);
@@ -224,11 +266,7 @@
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35), 0 4px 0 #16052e;
     }
 
-    .fader-row {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+    .fader-row { display: flex; flex-direction: column; gap: 4px; }
 
     .fader-head {
       display: flex;
@@ -437,6 +475,15 @@
 </head>
 <body>
   <main class="butt-3d-shell">
+    <!-- FECHA Y HORA COLOMBIA EN TIEMPO REAL -->
+    <div class="co-clock-bar">
+      <div>
+        <div style="font-size:0.56rem; font-weight:900; color:var(--muted); text-transform:uppercase;">Hora Colombia (COT)</div>
+        <div class="co-clock-time" id="coTimeText">--:--:--</div>
+      </div>
+      <div class="co-clock-date" id="coDateText">Cargando fecha...</div>
+    </div>
+
     <header class="header-3d">
       <div>
         <div class="brand-title">GALAXIA FM · BUTT</div>
@@ -450,7 +497,9 @@
 
     <section class="status-card-3d">
       <div>
-        <div class="status-label">Emisión · Tiempo: <span id="timerText">00:00:00</span> · <span id="codecBadge">MP3 192k ESTÉREO</span></div>
+        <div class="status-label">
+          Al Aire: <span class="live-crono" id="timerText">00:00:00</span> · <span id="codecBadge">MP3 192k ESTÉREO</span>
+        </div>
         <div class="status-url" id="endpointText">link.zeno.fm:80/xksclgx3mfcuv</div>
       </div>
       <span class="pill-status" id="statusPill">DESCONECTADO</span>
@@ -458,7 +507,7 @@
 
     <section class="meters-3d">
       <div class="meters-top">
-        <span>NIVELES DE SONIDO <span class="quality-badge">DSP LIMPIO + LIMITADOR</span></span>
+        <span>NIVELES DE SONIDO <span class="quality-badge">DSP + RESPALDO ACTIVO</span></span>
         <strong id="dbText">-∞ dB</strong>
       </div>
       <div class="bar-row">
@@ -471,10 +520,9 @@
         <div class="bar-track"><div class="bar-fill" id="barR"></div></div>
         <span class="bar-pct" id="pctR">0%</span>
       </div>
-      <canvas id="waveCanvas" class="wave-3d" width="510" height="52"></canvas>
+      <canvas id="waveCanvas" class="wave-3d" width="510" height="50"></canvas>
     </section>
 
-    <!-- CONTROLES DIRECTOS DE VOLUMEN EN VIVO -->
     <section class="faders-card-3d">
       <div class="fader-row">
         <div class="fader-head">
@@ -507,7 +555,7 @@
       CONECTAR
     </button>
 
-    <div class="mini-log" id="logBox">&gt; Motor de audio estéreo HD listo. Sin eco y con limitador anti-distorsión.</div>
+    <div class="mini-log" id="logBox">&gt; Galaxia FM BUTT listo. Respaldo de transmisión y reloj de Colombia activos.</div>
   </main>
 
   <!-- MODAL DETALLES -->
@@ -676,13 +724,21 @@
     };
 
     let isLive = false;
+    let isAuthenticated = false;
     let ws = null;
     let pingTimer = null;
     let authRetryTimer = null;
     let reconnectTimer = null;
+    let reconnectAttempts = 0;
+
+    // Cronómetro continuo desde que se pulsa CONECTAR
     let timerInterval = null;
     let startTs = 0;
     let wakeLock = null;
+
+    // Buffer de respaldo para evitar interrupciones ante microcortes de red
+    const BACKUP_QUEUE_MAX = 120;
+    let backupAudioQueue = [];
 
     let audioCtx = null;
     let masterGain = null;
@@ -691,7 +747,6 @@
     let consoleOutGain = null;
     let consoleOutDest = null;
 
-    // Procesadores de calidad broadcast limpia
     let subsonicFilter = null;
     let warmthEq = null;
     let clarityEq = null;
@@ -712,6 +767,32 @@
     let pcCaptureSource = null;
     let activeCaptureMode = null;
 
+    // Fecha y hora de Colombia en tiempo real
+    function updateColombiaClock() {
+      try {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('es-CO', {
+          timeZone: 'America/Bogota',
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+        const dateStr = now.toLocaleDateString('es-CO', {
+          timeZone: 'America/Bogota',
+          weekday: 'short',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+        document.getElementById('coTimeText').textContent = timeStr;
+        document.getElementById('coDateText').textContent = dateStr;
+      } catch (e) {}
+    }
+
+    setInterval(updateColombiaClock, 1000);
+    updateColombiaClock();
+
     function openModal(id) {
       document.getElementById(id).classList.add('open');
       if (id === 'settingsModal') loadDevices();
@@ -731,10 +812,17 @@
       box.scrollTop = box.scrollHeight;
     }
 
+    function setPillState(text, mode) {
+      const pill = document.getElementById('statusPill');
+      pill.textContent = text;
+      pill.classList.remove('live', 'backup');
+      if (mode) pill.classList.add(mode);
+    }
+
     function saveCfg() {
       ['host', 'port', 'mount', 'user', 'password', 'bitrate'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) localStorage.setItem('gfm_butt_pro_' + id, el.value);
+        if (el) localStorage.setItem('gfm_butt_final_' + id, el.value);
       });
       const host = document.getElementById('host').value.trim() || DEFAULT_CFG.host;
       const port = document.getElementById('port').value.trim() || DEFAULT_CFG.port;
@@ -757,10 +845,10 @@
       document.getElementById('pcGainVal').textContent = `${Math.round(pVal * 100)}%`;
       document.getElementById('outGainVal').textContent = `${Math.round(oVal * 100)}%`;
 
-      localStorage.setItem('gfm_butt_pro_g_master', mVal);
-      localStorage.setItem('gfm_butt_pro_g_console', cVal);
-      localStorage.setItem('gfm_butt_pro_g_pc', pVal);
-      localStorage.setItem('gfm_butt_pro_g_out', oVal);
+      localStorage.setItem('gfm_butt_final_g_master', mVal);
+      localStorage.setItem('gfm_butt_final_g_console', cVal);
+      localStorage.setItem('gfm_butt_final_g_pc', pVal);
+      localStorage.setItem('gfm_butt_final_g_out', oVal);
 
       if (audioCtx) {
         const now = audioCtx.currentTime;
@@ -777,16 +865,13 @@
         const devices = await navigator.mediaDevices.enumerateDevices();
         const inSel = document.getElementById('inputDevice');
         const outSel = document.getElementById('outputDevice');
-        const savedIn = localStorage.getItem('gfm_butt_pro_input_dev') || '';
-        const savedOut = localStorage.getItem('gfm_butt_pro_output_dev') || '';
+        const savedIn = localStorage.getItem('gfm_butt_final_input_dev') || '';
+        const savedOut = localStorage.getItem('gfm_butt_final_output_dev') || '';
 
         inSel.innerHTML = '<option value="">Entrada por defecto del sistema</option>';
         outSel.innerHTML = '<option value="">No reenviar (evita duplicado y eco)</option>';
 
-        const inputList = devices.filter(d => d.kind === 'audioinput');
-        const outputList = devices.filter(d => d.kind === 'audiooutput');
-
-        inputList.forEach(d => {
+        devices.filter(d => d.kind === 'audioinput').forEach(d => {
           const opt = document.createElement('option');
           opt.value = d.deviceId;
           opt.text = d.label || `Entrada (${d.deviceId.slice(0, 6)})`;
@@ -794,7 +879,7 @@
           inSel.appendChild(opt);
         });
 
-        outputList.forEach(d => {
+        devices.filter(d => d.kind === 'audiooutput').forEach(d => {
           const opt = document.createElement('option');
           opt.value = d.deviceId;
           opt.text = d.label || `Salida (${d.deviceId.slice(0, 6)})`;
@@ -804,7 +889,7 @@
 
         if (inSel.value && outSel.value && inSel.value === outSel.value) {
           outSel.value = '';
-          localStorage.setItem('gfm_butt_pro_output_dev', '');
+          localStorage.setItem('gfm_butt_final_output_dev', '');
         }
       } catch (e) {}
     }
@@ -816,16 +901,16 @@
 
       if (inId && sinkId && inId === sinkId) {
         document.getElementById('outputDevice').value = '';
-        localStorage.setItem('gfm_butt_pro_output_dev', '');
+        localStorage.setItem('gfm_butt_final_output_dev', '');
         if (outEl) {
           outEl.muted = true;
           outEl.srcObject = null;
         }
-        writeLog('Bloqueo anti-eco: entrada y salida no pueden ser el mismo dispositivo.');
+        writeLog('Bloqueo anti-eco: entrada y salida no pueden ser iguales.');
         return;
       }
 
-      localStorage.setItem('gfm_butt_pro_output_dev', sinkId);
+      localStorage.setItem('gfm_butt_final_output_dev', sinkId);
       if (!outEl || !consoleOutDest) return;
 
       if (!sinkId) {
@@ -841,10 +926,8 @@
         try {
           await outEl.setSinkId(sinkId);
           await outEl.play().catch(() => {});
-          writeLog('Salida dedicada hacia consola activa sin bucle.');
         } catch (err) {
           outEl.muted = true;
-          writeLog('No se pudo asignar salida dedicada.');
         }
       } else {
         outEl.muted = true;
@@ -858,7 +941,7 @@
 
     async function attachConsoleInput() {
       const devId = document.getElementById('inputDevice').value;
-      localStorage.setItem('gfm_butt_pro_input_dev', devId);
+      localStorage.setItem('gfm_butt_final_input_dev', devId);
       if (consoleStream) {
         consoleStream.getTracks().forEach(t => t.stop());
         consoleStream = null;
@@ -868,22 +951,10 @@
         consoleSource = null;
       }
       try {
-        // Audio puro sin procesamiento agresivo del navegador para máxima fidelidad
         const constraints = {
           audio: devId
-            ? {
-                deviceId: { exact: devId },
-                channelCount: 2,
-                echoCancellation: false,
-                noiseSuppression: false,
-                autoGainControl: false
-              }
-            : {
-                channelCount: 2,
-                echoCancellation: false,
-                noiseSuppression: false,
-                autoGainControl: false
-              }
+            ? { deviceId: { exact: devId }, channelCount: 2, echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+            : { channelCount: 2, echoCancellation: false, noiseSuppression: false, autoGainControl: false }
         };
         consoleStream = await navigator.mediaDevices.getUserMedia(constraints);
         ensureAudioGraph();
@@ -891,9 +962,9 @@
         consoleSource.connect(consoleGain);
         await applyConsoleOutputRouting();
         startLevelsLoop();
-        writeLog('Consola / entrada 2×1 conectada en estéreo limpio.');
+        writeLog('Consola / entrada 2×1 activa en estéreo limpio.');
       } catch (err) {
-        writeLog('Sin entrada física activa (continúa sin bloqueo).');
+        writeLog('Sin entrada física activa; respaldo de transmisión activo.');
       }
     }
 
@@ -990,7 +1061,7 @@
         pcCaptureStream = await navigator.mediaDevices.getDisplayMedia(chosen.options);
         const audioTracks = pcCaptureStream.getAudioTracks();
         if (!audioTracks.length) {
-          writeLog('No se compartió audio. Marca "Compartir audio del sistema / pestaña".');
+          writeLog('Marca "Compartir audio del sistema / pestaña" al elegir.');
           stopPcCapture();
           return;
         }
@@ -1009,7 +1080,7 @@
 
         audioTracks[0].onended = () => {
           stopPcCapture();
-          writeLog('Captura de audio finalizada.');
+          writeLog('Captura finalizada; la emisión continúa con respaldo.');
         };
 
         writeLog(`Capturando en HD: ${chosen.label}.`);
@@ -1025,7 +1096,9 @@
           latencyHint: 'interactive'
         });
       }
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
 
       if (!masterGain) {
         consoleGain = audioCtx.createGain();
@@ -1035,25 +1108,21 @@
         consoleOutGain = audioCtx.createGain();
         consoleOutDest = audioCtx.createMediaStreamDestination();
 
-        // 1. Filtro subsónico para eliminar ruidos graves eléctricos o golpes (35 Hz)
         subsonicFilter = audioCtx.createBiquadFilter();
         subsonicFilter.type = 'highpass';
         subsonicFilter.frequency.value = 35;
         subsonicFilter.Q.value = 0.7;
 
-        // 2. Calidez suave en graves musicales (120 Hz)
         warmthEq = audioCtx.createBiquadFilter();
         warmthEq.type = 'lowshelf';
         warmthEq.frequency.value = 120;
         warmthEq.gain.value = 1.5;
 
-        // 3. Brillo y claridad de estudio (8500 Hz)
         clarityEq = audioCtx.createBiquadFilter();
         clarityEq.type = 'highshelf';
         clarityEq.frequency.value = 8500;
         clarityEq.gain.value = 2.0;
 
-        // 4. Limitador / Compresor Broadcast para sonido limpio sin saturación
         masterLimiter = audioCtx.createDynamicsCompressor();
         masterLimiter.threshold.setValueAtTime(-3.5, audioCtx.currentTime);
         masterLimiter.knee.setValueAtTime(6.0, audioCtx.currentTime);
@@ -1070,20 +1139,15 @@
         analyserR.fftSize = 256;
         waveAnalyser.fftSize = 256;
 
-        // Conexión de entradas al Master
         consoleGain.connect(masterGain);
         pcGain.connect(masterGain);
-
-        // Salida dedicada solo de Apps/PC hacia consola
         consoleOutGain.connect(consoleOutDest);
 
-        // Cadena de procesamiento Broadcast limpio
         masterGain.connect(subsonicFilter);
         subsonicFilter.connect(warmthEq);
         warmthEq.connect(clarityEq);
         clarityEq.connect(masterLimiter);
 
-        // Medición estéreo L/R post-limitador (señal real que sale al aire)
         masterLimiter.connect(splitter);
         splitter.connect(analyserL, 0);
         splitter.connect(analyserR, 1);
@@ -1172,8 +1236,10 @@
       levelAnimId = requestAnimationFrame(tick);
     }
 
-    function startTimer() {
+    // Cronómetro exacto desde el momento en que se pulsa CONECTAR
+    function startLiveCrono() {
       startTs = Date.now();
+      document.getElementById('timerText').textContent = '00:00:00';
       clearInterval(timerInterval);
       timerInterval = setInterval(() => {
         if (!isLive) return;
@@ -1182,7 +1248,7 @@
         const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
         const s = String(sec % 60).padStart(2, '0');
         document.getElementById('timerText').textContent = `${h}:${m}:${s}`;
-      }, 1000);
+      }, 250);
     }
 
     async function requestWakeLock() {
@@ -1200,6 +1266,34 @@
       }
     }
 
+    function flushBackupQueue() {
+      if (!ws || ws.readyState !== WebSocket.OPEN || !isAuthenticated) return;
+      while (backupAudioQueue.length > 0) {
+        const chunk = backupAudioQueue.shift();
+        try {
+          ws.send(chunk);
+        } catch (e) {
+          backupAudioQueue.unshift(chunk);
+          break;
+        }
+      }
+    }
+
+    function sendMp3WithBackup(mp3Buffer) {
+      if (ws && ws.readyState === WebSocket.OPEN && isAuthenticated) {
+        flushBackupQueue();
+        try {
+          ws.send(mp3Buffer);
+          return;
+        } catch (e) {}
+      }
+      // Respaldo automático en búfer circular ante microcorte de red
+      if (backupAudioQueue.length >= BACKUP_QUEUE_MAX) {
+        backupAudioQueue.shift();
+      }
+      backupAudioQueue.push(mp3Buffer);
+    }
+
     function sendMetadata() {
       const title = document.getElementById('songTitle').value.trim();
       if (!title || !ws || ws.readyState !== WebSocket.OPEN) return;
@@ -1207,16 +1301,34 @@
       writeLog(`Título enviado: ${title}`);
     }
 
+    function scheduleStableReconnect(host, port, mount, user, password, bitrate) {
+      if (!isLive) return;
+      clearTimeout(reconnectTimer);
+      isAuthenticated = false;
+      setPillState('RESPALDO / RECONECTANDO', 'backup');
+      const delay = Math.min(4000, 1200 + reconnectAttempts * 500);
+      reconnectAttempts++;
+      reconnectTimer = setTimeout(() => {
+        if (isLive) openSocket(host, port, mount, user, password, bitrate);
+      }, delay);
+    }
+
     function openSocket(host, port, mount, user, password, bitrate) {
+      if (!isLive) return;
       if (ws) {
-        try { ws.close(); } catch (e) {}
+        try {
+          ws.onclose = null;
+          ws.close();
+        } catch (e) {}
         ws = null;
       }
-      writeLog(`Conectando en estéreo ${bitrate} kbps a ${host}:${port}${mount}...`);
+      isAuthenticated = false;
+      writeLog(`Enlace activo (${bitrate} kbps) hacia ${host}:${port}${mount}...`);
       ws = new WebSocket(RELAY_URL);
       ws.binaryType = 'arraybuffer';
 
       ws.onopen = () => {
+        reconnectAttempts = 0;
         ws.send(JSON.stringify({
           action: 'AUTH_ICECAST',
           host, port, mount, user, password, bitrate,
@@ -1228,7 +1340,7 @@
           if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({ action: 'PING' }));
           }
-        }, 8000);
+        }, 6000);
       };
 
       ws.onmessage = (ev) => {
@@ -1236,9 +1348,15 @@
           const data = JSON.parse(ev.data);
           if (data.status === 'SUCCESS') {
             clearTimeout(authRetryTimer);
-            beginStereoEncoding(bitrate);
+            isAuthenticated = true;
+            setPillState('EN VIVO', 'live');
+            flushBackupQueue();
+            sendMetadata();
+            writeLog('¡Transmisión estable al aire con Galaxia FM!');
           } else if (data.status === 'ERROR') {
-            writeLog(`Aviso servidor: ${data.message}. Reintentando...`);
+            isAuthenticated = false;
+            setPillState('RESPALDO ACTIVO', 'backup');
+            writeLog(`Respaldo activo (${data.message}). Reintentando enlace...`);
             clearTimeout(authRetryTimer);
             authRetryTimer = setTimeout(() => {
               if (isLive && ws && ws.readyState === WebSocket.OPEN) {
@@ -1248,25 +1366,69 @@
                   channels: 2,
                   contentType: 'audio/mpeg'
                 }));
+              } else if (isLive) {
+                scheduleStableReconnect(host, port, mount, user, password, bitrate);
               }
-            }, 4000);
+            }, 2500);
           }
         } catch (e) {}
       };
 
-      ws.onerror = () => writeLog('Aviso de red; manteniendo audio activo...');
+      ws.onerror = () => {
+        if (isLive) {
+          setPillState('RESPALDO ACTIVO', 'backup');
+        }
+      };
 
       ws.onclose = () => {
         clearInterval(pingTimer);
         clearTimeout(authRetryTimer);
         if (isLive) {
-          writeLog('Reconectando en tiempo real...');
-          clearTimeout(reconnectTimer);
-          reconnectTimer = setTimeout(() => {
-            if (isLive) openSocket(host, port, mount, user, password, bitrate);
-          }, 2500);
+          scheduleStableReconnect(host, port, mount, user, password, bitrate);
         }
       };
+    }
+
+    function beginStereoEncoding(bitrate) {
+      if (processor) {
+        try { processor.disconnect(); } catch (e) {}
+        processor = null;
+      }
+
+      if (typeof lamejs !== 'undefined') {
+        mp3Encoder = new lamejs.Mp3Encoder(2, audioCtx.sampleRate, bitrate);
+      }
+
+      processor = audioCtx.createScriptProcessor(4096, 2, 2);
+      processor.onaudioprocess = (e) => {
+        if (!isLive || !mp3Encoder) return;
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(() => {});
+        }
+        const left = e.inputBuffer.getChannelData(0);
+        const right = e.inputBuffer.numberOfChannels > 1 ? e.inputBuffer.getChannelData(1) : left;
+
+        const pcmL = new Int16Array(left.length);
+        const pcmR = new Int16Array(right.length);
+
+        for (let i = 0; i < left.length; i++) {
+          const sL = Math.max(-1, Math.min(1, left[i]));
+          const sR = Math.max(-1, Math.min(1, right[i]));
+          pcmL[i] = sL < 0 ? sL * 0x8000 : sL * 0x7FFF;
+          pcmR[i] = sR < 0 ? sR * 0x8000 : sR * 0x7FFF;
+        }
+
+        const mp3 = mp3Encoder.encodeBuffer(pcmL, pcmR);
+        if (mp3.length > 0) {
+          sendMp3WithBackup(mp3.buffer);
+        }
+      };
+
+      masterLimiter.connect(processor);
+      const muteOut = audioCtx.createGain();
+      muteOut.gain.value = 0;
+      processor.connect(muteOut);
+      muteOut.connect(audioCtx.destination);
     }
 
     async function toggleStream() {
@@ -1287,104 +1449,77 @@
       if (!mount.startsWith('/')) mount = '/' + mount;
 
       isLive = true;
-      const pill = document.getElementById('statusPill');
-      pill.textContent = 'EN VIVO';
-      pill.classList.add('live');
+      reconnectAttempts = 0;
+      backupAudioQueue = [];
 
+      setPillState('CONECTANDO', 'backup');
       const btn = document.getElementById('btnConnect');
       btn.textContent = 'DESCONECTAR';
       btn.classList.add('live');
 
       await requestWakeLock();
       ensureAudioGraph();
+      beginStereoEncoding(bitrate);
+      startLiveCrono();
       await attachConsoleInput();
       await applyConsoleOutputRouting();
       await loadDevices();
-      startTimer();
       startLevelsLoop();
       openSocket(host, port, mount, user, password, bitrate);
     }
 
-    function beginStereoEncoding(bitrate) {
-      if (processor) {
-        try { processor.disconnect(); } catch (e) {}
-        processor = null;
-      }
-      sendMetadata();
-
-      if (typeof lamejs !== 'undefined') {
-        // Codificador MP3 Estéreo Real (2 canales)
-        mp3Encoder = new lamejs.Mp3Encoder(2, audioCtx.sampleRate, bitrate);
-      }
-
-      processor = audioCtx.createScriptProcessor(4096, 2, 2);
-      processor.onaudioprocess = (e) => {
-        if (!isLive || !ws || ws.readyState !== WebSocket.OPEN || !mp3Encoder) return;
-        const left = e.inputBuffer.getChannelData(0);
-        const right = e.inputBuffer.numberOfChannels > 1 ? e.inputBuffer.getChannelData(1) : left;
-
-        const pcmL = new Int16Array(left.length);
-        const pcmR = new Int16Array(right.length);
-
-        for (let i = 0; i < left.length; i++) {
-          const sL = Math.max(-1, Math.min(1, left[i]));
-          const sR = Math.max(-1, Math.min(1, right[i]));
-          pcmL[i] = sL < 0 ? sL * 0x8000 : sL * 0x7FFF;
-          pcmR[i] = sR < 0 ? sR * 0x8000 : sR * 0x7FFF;
-        }
-
-        const mp3 = mp3Encoder.encodeBuffer(pcmL, pcmR);
-        if (mp3.length > 0) ws.send(mp3.buffer);
-      };
-
-      // Toma la señal limpia después del limitador broadcast
-      masterLimiter.connect(processor);
-      const muteOut = audioCtx.createGain();
-      muteOut.gain.value = 0;
-      processor.connect(muteOut);
-      muteOut.connect(audioCtx.destination);
-
-      writeLog(`¡Al aire en Estéreo ${bitrate} kbps con Galaxia FM!`);
-    }
-
     function stopStream() {
       isLive = false;
+      isAuthenticated = false;
+      backupAudioQueue = [];
       releaseWakeLock();
       clearInterval(pingTimer);
       clearTimeout(authRetryTimer);
       clearTimeout(reconnectTimer);
       clearInterval(timerInterval);
+
       if (processor) {
         try { processor.disconnect(); } catch (e) {}
         processor = null;
       }
       if (ws) {
-        try { ws.close(); } catch (e) {}
+        try {
+          ws.onclose = null;
+          ws.close();
+        } catch (e) {}
         ws = null;
       }
-      const pill = document.getElementById('statusPill');
-      pill.textContent = 'DESCONECTADO';
-      pill.classList.remove('live');
 
+      setPillState('DESCONECTADO', null);
       const btn = document.getElementById('btnConnect');
       btn.textContent = 'CONECTAR';
       btn.classList.remove('live');
 
       document.getElementById('timerText').textContent = '00:00:00';
-      writeLog('Desconectado.');
+      writeLog('Transmisión detenida.');
     }
+
+    // Mantiene el motor de audio activo en segundo plano al cambiar de ventana o pestaña
+    document.addEventListener('visibilitychange', async () => {
+      if (!document.hidden && isLive) {
+        await requestWakeLock();
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(() => {});
+        }
+      }
+    });
 
     window.addEventListener('DOMContentLoaded', () => {
       Object.keys(DEFAULT_CFG).forEach(id => {
-        const v = localStorage.getItem('gfm_butt_pro_' + id);
+        const v = localStorage.getItem('gfm_butt_final_' + id);
         const el = document.getElementById(id);
         if (el) el.value = (v !== null && v !== '') ? v : DEFAULT_CFG[id];
       });
 
-      const savedMaster = localStorage.getItem('gfm_butt_pro_g_master');
-      const savedConsole = localStorage.getItem('gfm_butt_pro_g_console');
-      const savedPc = localStorage.getItem('gfm_butt_pro_g_pc');
-      const savedOut = localStorage.getItem('gfm_butt_pro_g_out');
+      const savedMaster = localStorage.getItem('gfm_butt_final_g_master');
+      const savedConsole = localStorage.getItem('gfm_butt_final_g_console');
+      const savedPc = localStorage.getItem('gfm_butt_final_g_pc');
+      const savedOut = localStorage.getItem('gfm_butt_final_g_out');
 
       if (savedMaster !== null) document.getElementById('masterGainSlider').value = savedMaster;
       if (savedConsole !== null) document.getElementById('consoleGainSlider').value = savedConsole;
